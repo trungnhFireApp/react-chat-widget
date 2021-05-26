@@ -10,7 +10,7 @@ const autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: {
-    main: path.resolve(__dirname, 'storefont/index.js'),
+    main: path.resolve(__dirname, 'livechat/index.js'),
   },
   output: {
     path: path.join(__dirname, '/dist'),

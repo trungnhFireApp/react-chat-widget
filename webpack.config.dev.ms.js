@@ -8,7 +8,7 @@ const autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: {
-    main: path.resolve(__dirname, 'storefont/index.js'),
+    main: path.resolve(__dirname, 'livechat/index.js'),
     vendor: ['react', 'react-dom']
   },
   output: {
@@ -85,7 +85,7 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
-      template: './storefont/index.html'
+      template: './livechat/index.html'
     }),
     new webpack.ProvidePlugin({
       'React': 'react'
