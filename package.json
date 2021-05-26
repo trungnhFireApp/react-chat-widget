@@ -8,8 +8,8 @@
   "license": "MIT",
   "types": "./lib/index.d.ts",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.dev.js",
-    "build": "webpack --config ./webpack.config.prod.js",
+    "start": "webpack-dev-server --config webpack.config.dev.ms.js",
+    "build": "webpack --config ./webpack.config.prod.ms.js",
     "test": "jest --coverage"
   },
   "keywords": [
@@ -68,7 +68,7 @@
     "husky": "^4.2.3",
     "jest": "^25.1.0",
     "mini-css-extract-plugin": "^0.4.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.0",
     "optimize-css-assets-webpack-plugin": "^4.0.3",
     "postcss-flexbugs-fixes": "^3.3.0",
     "postcss-loader": "^2.1.3",
