@@ -7,87 +7,99 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const dotenv = require('dotenv')
 
-module.exports = {
-  entry: {
-    main: path.resolve(__dirname, 'livechat/index.js'),
-  },
-  output: {
-    path: path.join(__dirname, '/dist'),
-    filename: '[name].js'
-  },
-  target: 'web',
-  mode: 'production',
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js']
-  },
-  module: {
-    rules: [
-      {
-        test: /\.ts(x?)$/,
-        exclude: [/node_modules/, /dev/],
-        use: ['babel-loader', 'ts-loader']
-      },
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        loader: "source-map-loader"
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.scss$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'style-loader',
-            options: { hmr: true }
-          },
-          'css-loader',
-          {
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: () => [
-                require('postcss-flexbugs-fixes'), // eslint-disable-line
-                autoprefixer({
-                  browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie <9'],
-                  flexbox: 'no-2009'
-                })
-              ]
+module.exports = () => {
+  //load env
+  const env = dotenv.config().parsed;
+
+  const envKeys = Object.keys(env).reduce((prev, next) => {
+    prev[`process.env.${next}`] = JSON.stringify(env[next]);
+    return prev;
+  }, {});
+
+  return {
+    entry: {
+      main: path.resolve(__dirname, 'livechat/index.js'),
+    },
+    output: {
+      path: path.join(__dirname, '/dist'),
+      filename: '[name].js'
+    },
+    target: 'web',
+    mode: 'production',
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js']
+    },
+    module: {
+      rules: [
+        {
+          test: /\.ts(x?)$/,
+          exclude: [/node_modules/, /dev/],
+          use: ['babel-loader', 'ts-loader']
+        },
+        {
+          enforce: "pre",
+          test: /\.js$/,
+          loader: "source-map-loader"
+        },
+        {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/
+        },
+        {
+          test: /\.scss$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'style-loader',
+              options: { hmr: true }
+            },
+            'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                ident: 'postcss',
+                plugins: () => [
+                  require('postcss-flexbugs-fixes'), // eslint-disable-line
+                  autoprefixer({
+                    browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie <9'],
+                    flexbox: 'no-2009'
+                  })
+                ]
+              }
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                includePaths: [path.resolve(__dirname,'src/scss')]
+              }
             }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              includePaths: [path.resolve(__dirname,'src/scss')]
-            }
-          }
-        ]
-      },
-      {
-        test: /\.(jpg|png|gif|svg)$/,
-        use: 'url-loader'
-      }
-    ]
-  },
-  plugins: [
-    new CleanWebpackPlugin(['dist']),
-    new MiniCssExtractPlugin({
-      filename: 'styles.css',
-      chunkFileName: '[id].css'
-    })
-  ],
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true
+          ]
+        },
+        {
+          test: /\.(jpg|png|gif|svg)$/,
+          use: 'url-loader'
+        }
+      ]
+    },
+    plugins: [
+      new CleanWebpackPlugin(['dist']),
+      new MiniCssExtractPlugin({
+        filename: 'styles.css',
+        chunkFileName: '[id].css'
       }),
-      new OptimizeCSSAssetsPlugin({})
-    ]
+      new webpack.DefinePlugin(envKeys)
+    ],
+    optimization: {
+      minimizer: [
+        new UglifyJsPlugin({
+          cache: true,
+          parallel: true
+        }),
+        new OptimizeCSSAssetsPlugin({})
+      ]
+    }
   }
 };
