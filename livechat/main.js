@@ -8,14 +8,25 @@ import {
     addLinkSnippet
 } from '../index';
 import { addUserMessage } from '..';
-import socketService from './service/socket';
-import { socketChanel } from './service/socketChanel';
+import socketService, { socketChanel } from './service/socket';
+import { openConversation } from './service/conversion';
+import { findAudience } from './service/audience';
+import { requestCancel } from './utils/request';
+import { getStorage, STORAGE_KEY, setStorage } from './storage';
+import { getConversationInfo, getShopInfo } from './utils/common';
 
 let socketClient = null;
 
 const App = () => {
+    const rc = requestCancel();
+    const cancelToken = rc.token;
+
+    const [hasConversationInfo, setHasConversationInfo] = useState(false);
+    const [loadingConversation, setLoadingConversation] = useState(false);
+
     useEffect(() => {
-        handleInitSocket();
+        checkConverstationInfo();
+        // handleInitSocket();
         // addResponseMessage('Welcome to this awesome chat!');
         // addLinkSnippet({ link: 'https://google.com', title: 'Google' });
         // addResponseMessage(
@@ -25,16 +36,56 @@ const App = () => {
         //     '![vertical](https://d2sofvawe08yqg.cloudfront.net/reintroducing-react/hero2x?1556470143)'
         // );
         return () => {
+            rc.cancel();
             handleDestroySocket();
         };
     }, []);
 
-    const handleInitSocket = () => {
-        const socket = socketService(process.env.SOCKET_URL);
+    useEffect(() => {
+        hasConversationInfo && handleConnectToConversation();
+    }, [hasConversationInfo]);
+
+    const checkConverstationInfo = () => {
+        const conversationInfo = getConversationInfo();
+        setHasConversationInfo(conversationInfo ? true : false);
+    };
+
+    const handleConnectToConversation = () => {
+        if (!socketClient) {
+            const conversationInfo = getConversationInfo();
+            const { shop_id } = getShopInfo();
+            // console.log(
+            //     'conversationInfo :>> ',
+            //     conversationInfo,
+            //     shop_id,
+            //     msUUID
+            // );
+            if (conversationInfo && shop_id) {
+                handleInitSocket(
+                    {
+                        conversation_id: conversationInfo.id,
+                        shop_id: shop_id
+                    },
+                    {
+                        timestamp: conversationInfo.timestamp,
+                        hmac: conversationInfo.hmac
+                    }
+                );
+            }
+        }
+    };
+
+    const handleInitSocket = (query = {}, auth = {}) => {
+        const socket = socketService(process.env.SOCKET_URL, {
+            transport: ['websocket'],
+            query: { ...query },
+            auth: { ...auth }
+        });
         socketClient = socket.getClient();
         socketClient.connect();
         //receive messages
-        socketClient.on(socketChanel.CHAT, handleReceiveMessage);
+        const { id } = getConversationInfo();
+        socketClient.on(id, handleReceiveMessage);
     };
 
     const handleDestroySocket = () => {
@@ -47,7 +98,9 @@ const App = () => {
 
     const handleNewUserMessage = newMessage => {
         // toggleMsgLoader();
-        socketClient.emit(socketChanel.CHAT, newMessage);
+        const { id } = getConversationInfo();
+        socketClient.emit(id, newMessage);
+
         // setTimeout(() => {
         //     toggleMsgLoader();
         //     if (newMessage === 'fruits') {
@@ -76,6 +129,47 @@ const App = () => {
     //     return true;
     // };
 
+    const handleToggle = async toggleValue => {
+        if (toggleValue && !hasConversationInfo && !loadingConversation) {
+            setLoadingConversation(true);
+            await handleGetConversation();
+            handleConnectToConversation();
+            setLoadingConversation(false);
+        }
+    };
+
+    const handleGetAudience = async payload => {
+        const { shop_id, msUUID } = payload;
+        if (msUUID && shop_id) {
+            const req = await findAudience({ uuid: msUUID, shop_id });
+            if (req.code === 1000) {
+                return req.data;
+            }
+        }
+        return null;
+    };
+
+    const handleGetConversation = async () => {
+        if (!hasConversationInfo) {
+            const { shop_id, msUUID } = getShopInfo();
+            const { id = '' } = await handleGetAudience({ shop_id, msUUID });
+            if (shop_id && id) {
+                const rep = await openConversation({
+                    cancelToken,
+                    shop_id: `${shop_id}`,
+                    audience_id: `${id}`
+                });
+                if (rep.code === 1000) {
+                    setStorage({
+                        key: STORAGE_KEY.conversationInfo,
+                        value: JSON.stringify(rep.data)
+                    });
+                    setHasConversationInfo(true);
+                }
+            }
+        }
+    };
+
     return (
         <div>
             <Widget
@@ -86,6 +180,7 @@ const App = () => {
                 // handleQuickButtonClicked={handleQuickButtonClicked}
                 imagePreview
                 // handleSubmit={handleSubmit}
+                handleToggle={handleToggle}
             />
         </div>
     );

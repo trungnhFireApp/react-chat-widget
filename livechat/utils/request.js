@@ -19,7 +19,7 @@ export default async function request(payload = {}) {
             ...params
         } = payload || {};
 
-        const URI_API = process.env.REACT_APP_MANYSALES_API + '/' + v;
+        const URI_API = process.env.API_URL + '/' + v;
         const URI_TYPE = '';
 
         // GET

@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { socketChanel } from './socketChanel';
 let client = null;
 
 const socketService = (socketUrl, socketOptions = {}) => {
@@ -27,8 +28,8 @@ const socketService = (socketUrl, socketOptions = {}) => {
             console.log('reconnect');
         });
 
-        client.on('connect_error', () => {
-            console.log('connect_error');
+        client.on('connect_error', err => {
+            console.log('connect_error', err);
         });
     }
 
@@ -39,5 +40,7 @@ const socketService = (socketUrl, socketOptions = {}) => {
         getClient: () => client
     };
 };
+
+export { socketChanel };
 
 export default socketService;
