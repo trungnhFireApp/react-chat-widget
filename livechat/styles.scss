@@ -1,0 +1,35 @@
+//override widget
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300&display=swap');
+
+.rcw-conversation-container {
+    font-family: 'Roboto', sans-serif;
+    padding-top: 0;
+}
+
+.rcw-conversation-container .rcw-header {
+    background: linear-gradient(to right, #5e7097, #1b4af8);
+    background: #454f5b;
+    padding: 15px 30px;
+    text-align: left;
+}
+
+.rcw-conversation-container .rcw-title {
+    font-weight: 300;
+    font-size: 30px;
+    padding: 10px 0 5px;
+}
+
+.rcw-conversation-container .rcw-sub-title {
+    font-weight: 100;
+    font-size: 14px;
+}
+
+.rcw-conversation-container .avatar {
+    border-radius: unset;
+    width: 45px;
+    height: 45px;
+}
+
+.rcw-launcher {
+    background: #454f5b;
+}

@@ -5,7 +5,9 @@ import {
     addResponseMessage,
     setQuickButtons,
     toggleMsgLoader,
-    addLinkSnippet
+    addLinkSnippet,
+    toggleInputDisabled,
+    toggleWidgetLoader
 } from '../index';
 import { addUserMessage } from '..';
 import socketService, { socketChanel } from './service/socket';
@@ -14,6 +16,7 @@ import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
 import { getStorage, STORAGE_KEY, setStorage } from './storage';
 import { getConversationInfo, getShopInfo } from './utils/common';
+import './styles.scss'
 
 let socketClient = null;
 
@@ -25,9 +28,12 @@ const App = () => {
     const [loadingConversation, setLoadingConversation] = useState(false);
 
     useEffect(() => {
-        checkConverstationInfo();
+        // checkConverstationInfo();
+
+        // toggleInputDisabled()
         // handleInitSocket();
-        // addResponseMessage('Welcome to this awesome chat!');
+
+        addResponseMessage('Welcome to this awesome chat!');
         // addLinkSnippet({ link: 'https://google.com', title: 'Google' });
         // addResponseMessage(
         //     '![](https://raw.githubusercontent.com/Wolox/press-kit/master/logos/logo_banner.png)'
@@ -41,14 +47,21 @@ const App = () => {
         };
     }, []);
 
+
+
     useEffect(() => {
-        hasConversationInfo && handleConnectToConversation();
+        // hasConversationInfo && handleConnectToConversation();
     }, [hasConversationInfo]);
 
     const checkConverstationInfo = () => {
         const conversationInfo = getConversationInfo();
         setHasConversationInfo(conversationInfo ? true : false);
     };
+
+    const handleToggleWidget = () => {
+        toggleInputDisabled()
+        toggleWidgetLoader()
+    }
 
     const handleConnectToConversation = () => {
         if (!socketClient) {
@@ -100,7 +113,6 @@ const App = () => {
         // toggleMsgLoader();
         const { id } = getConversationInfo();
         socketClient.emit(id, newMessage);
-
         // setTimeout(() => {
         //     toggleMsgLoader();
         //     if (newMessage === 'fruits') {
@@ -130,10 +142,10 @@ const App = () => {
     // };
 
     const handleToggle = async toggleValue => {
-        if (toggleValue && !hasConversationInfo && !loadingConversation) {
+        if (toggleValue & !loadingConversation) {
             setLoadingConversation(true);
             await handleGetConversation();
-            handleConnectToConversation();
+            // handleConnectToConversation();
             setLoadingConversation(false);
         }
     };
@@ -146,7 +158,7 @@ const App = () => {
                 return req.data;
             }
         }
-        return null;
+        return {};
     };
 
     const handleGetConversation = async () => {
@@ -160,6 +172,7 @@ const App = () => {
                     audience_id: `${id}`
                 });
                 if (rep.code === 1000) {
+                    stic
                     setStorage({
                         key: STORAGE_KEY.conversationInfo,
                         value: JSON.stringify(rep.data)
@@ -173,9 +186,11 @@ const App = () => {
     return (
         <div>
             <Widget
-                title="Bienvenido"
-                subtitle="Asistente virtual"
-                senderPlaceHolder="Escribe aquí ..."
+                title="Welcome"
+                subtitle="How can we help?"
+                senderPlaceHolder="Write a response"
+                // profileAvatar="https://app-stag.manysales.io/images/logo.png"
+                titleAvatar="https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg"
                 handleNewUserMessage={handleNewUserMessage}
                 // handleQuickButtonClicked={handleQuickButtonClicked}
                 imagePreview
