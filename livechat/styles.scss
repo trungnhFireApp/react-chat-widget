@@ -7,8 +7,12 @@
 }
 
 .rcw-conversation-container .rcw-header {
-    background: linear-gradient(to right, #5e7097, #1b4af8);
-    background: #454f5b;
+    // background: linear-gradient(to right, #5e7097, #1b4af8);
+    background: url(https://app.manysales.io/images/homepage-50.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    // background: #454f5b;
     padding: 15px 30px;
     text-align: left;
 }
