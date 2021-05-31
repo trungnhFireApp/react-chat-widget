@@ -1,7 +1,6 @@
 import { CustomCompMessage, Link, Message } from '@types';
 import React, { useEffect, useState } from 'react';
-
-import './style.scss';
+import ToastItem from './components/ToastItem';
 
 type Props = {
     toastList: (Link | CustomCompMessage | Message)[];
@@ -26,32 +25,24 @@ function ToastList({ position, autoDelete, dismissTime, toastList }: Props) {
         };
     }, [toastList, autoDelete, dismissTime, list]);
     const deleteToast = id => {
-        const listItemIndex = list.findIndex(e => e.customId === id);
-        const toastListItem = toastList.findIndex(e => e.customId === id);
-        list.splice(listItemIndex, 1);
-        toastList.splice(toastListItem, 1);
-        setList([...list]);
+        if (id) {
+            const listItemIndex = list.findIndex(e => e.customId === id);
+            const toastListItem = toastList.findIndex(e => e.customId === id);
+            list.splice(listItemIndex, 1);
+            toastList.splice(toastListItem, 1);
+            setList([...list]);
+        }
     };
     return (
         <>
-            <div className={`notification-container ${position}`}>
+            <div className={`ms-notification-container ms-${position}`}>
                 {list.map((toast, i) => (
-                    <div
+                    <ToastItem
                         key={i}
-                        className={`notification toast ${position}`}
-                        // style={{ backgroundColor: toast.backgroundColor }}
-                    >
-                        <button onClick={() => deleteToast(toast.customId)}>
-                            X
-                        </button>
-                        {/* <div className="notification-image">
-                            <img src={toast.icon} alt="" />
-                        </div> */}
-                        <div>
-                            {/* <p className="notification-title">{toast.}</p> */}
-                            <p className="notification-message">{toast}</p>
-                        </div>
-                    </div>
+                        position={position}
+                        deleteToast={deleteToast}
+                        message={toast as Message}
+                    />
                 ))}
             </div>
         </>

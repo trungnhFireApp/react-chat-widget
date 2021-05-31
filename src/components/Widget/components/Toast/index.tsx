@@ -19,13 +19,11 @@ type Props = {
 // }
 
 function Toast({ position, autoDelete, dismissTime }: Props) {
-    // const dispatch = useDispatch();
     const { messages } = useSelector((state: GlobalState) => ({
         messages: state.messages.messages,
         badgeCount: state.messages.badgeCount,
         showChat: state.behavior.showChat
     }));
-
     return (
         <ToastList
             toastList={messages.filter(message => message.unread)}

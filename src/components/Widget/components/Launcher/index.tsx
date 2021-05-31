@@ -5,7 +5,6 @@ import cn from 'classnames';
 import Badge from './components/Badge';
 import { GlobalState } from '../../../../store/types';
 import { setBadgeCount } from '../../../../store/actions';
-// import Toast from './components/Toast';
 
 import './style.scss';
 
@@ -42,12 +41,6 @@ function Launcher({
 
     return (
         <>
-            {/* <Toast
-                autoDelete={true}
-                position="bottom-right"
-                dismissTime={3000}
-                toastList={[]}
-            /> */}
             <button
                 type="button"
                 className={cn('rcw-launcher', { 'rcw-hide-sm': showChat })}

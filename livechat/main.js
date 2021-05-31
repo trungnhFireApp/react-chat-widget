@@ -16,7 +16,7 @@ import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
 import { getStorage, STORAGE_KEY, setStorage } from './storage';
 import { getConversationInfo, getShopInfo } from './utils/common';
-import './styles.scss'
+import './styles.scss';
 
 let socketClient = null;
 
@@ -33,8 +33,10 @@ const App = () => {
         // toggleInputDisabled()
         // handleInitSocket();
 
-        addResponseMessage('Welcome to this awesome chat!');
-        // addLinkSnippet({ link: 'https://google.com', title: 'Google' });
+        // addResponseMessage('Welcome to this awesome chat!');
+        // setTimeout(() => {
+        //     addLinkSnippet({ link: 'https://google.com', title: 'Google' });
+        // }, 1000);
         // addResponseMessage(
         //     '![](https://raw.githubusercontent.com/Wolox/press-kit/master/logos/logo_banner.png)'
         // );
@@ -47,8 +49,6 @@ const App = () => {
         };
     }, []);
 
-
-
     useEffect(() => {
         // hasConversationInfo && handleConnectToConversation();
     }, [hasConversationInfo]);
@@ -59,9 +59,9 @@ const App = () => {
     };
 
     const handleToggleWidget = () => {
-        toggleInputDisabled()
-        toggleWidgetLoader()
-    }
+        toggleInputDisabled();
+        toggleWidgetLoader();
+    };
 
     const handleConnectToConversation = () => {
         if (!socketClient) {
@@ -172,7 +172,7 @@ const App = () => {
                     audience_id: `${id}`
                 });
                 if (rep.code === 1000) {
-                    stic
+                    stic;
                     setStorage({
                         key: STORAGE_KEY.conversationInfo,
                         value: JSON.stringify(rep.data)
