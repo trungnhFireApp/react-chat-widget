@@ -35,7 +35,7 @@ const App = () => {
 
     const [hasConversationInfo, setHasConversationInfo] = useState(false);
     const [loadingConversation, setLoadingConversation] = useState(false);
-    const [unreadMessages, setUnreadMessages] = useState([]);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState([]);
 
     useEffect(() => {
         checkConverstationInfo();
@@ -72,17 +72,6 @@ const App = () => {
             handleGetUnReadMessages();
         }
     }, [hasConversationInfo]);
-
-    useEffect(() => {
-        if (unreadMessages.length > 0) {
-            for (let i = 0; i < unreadMessages.length; i++) {
-                const meg = unreadMessages[i];
-                if (meg.sender === MESSAGE_SENDER.RESPONSE) {
-                    addResponseMessage(meg.message, meg._id);
-                }
-            }
-        }
-    }, [unreadMessages]);
 
     const checkConverstationInfo = () => {
         const conversationInfo = getConversationInfo();
@@ -134,6 +123,7 @@ const App = () => {
         //do not show response message with audience sender
         if (data?.sender !== MESSAGE_SENDER.CLIENT) {
             addResponseMessage(data.message);
+            setUnreadMessagesCount(1);
         }
     };
 
@@ -176,7 +166,7 @@ const App = () => {
 
     const handleToggle = async toggleValue => {
         try {
-            if ((toggleValue && unreadMessages, length > 0)) {
+            if (toggleValue && unreadMessagesCount > 0) {
                 await handleMarkAllAsRead();
             }
             if (toggleValue & !loadingConversation) {
@@ -201,7 +191,13 @@ const App = () => {
         });
         if (data?.docs && Array.isArray(data?.docs)) {
             console.log('req :>> ', req);
-            setUnreadMessages(data.docs);
+            for (let i = 0; i < data.docs.length; i++) {
+                const meg = data.docs[i];
+                if (meg.sender === MESSAGE_SENDER.RESPONSE) {
+                    addResponseMessage(meg.message, meg._id);
+                }
+            }
+            setUnreadMessagesCount(data.docs.length);
         }
     };
 
