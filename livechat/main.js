@@ -2,6 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 
 import {
     Widget,
+    addUserMessage,
     addResponseMessage,
     setQuickButtons,
     toggleMsgLoader,
@@ -9,7 +10,6 @@ import {
     toggleInputDisabled,
     toggleWidgetLoader
 } from '../index';
-import { addUserMessage } from '..';
 import socketService from './service/socket';
 import {
     openConversation,
@@ -24,12 +24,18 @@ import './styles.scss';
 
 let socketClient = null;
 
+const MESSAGE_SENDER = {
+    CLIENT: 'audience',
+    RESPONSE: 'shop'
+};
+
 const App = () => {
     const rc = requestCancel();
     const cancelToken = rc.token;
 
     const [hasConversationInfo, setHasConversationInfo] = useState(false);
     const [loadingConversation, setLoadingConversation] = useState(false);
+    const [unreadMessages, setUnreadMessages] = useState([]);
 
     useEffect(() => {
         checkConverstationInfo();
@@ -54,11 +60,29 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        if (loadingConversation) {
+            handleToggleWidget();
+        }
+    }, [loadingConversation]);
+
+    useEffect(() => {
         if (hasConversationInfo) {
             handleConnectToConversation();
-            handleGetMessage();
+            handleGetMessages();
+            handleGetUnReadMessages();
         }
     }, [hasConversationInfo]);
+
+    useEffect(() => {
+        if (unreadMessages.length > 0) {
+            for (let i = 0; i < unreadMessages.length; i++) {
+                const meg = unreadMessages[i];
+                if (meg.sender === MESSAGE_SENDER.RESPONSE) {
+                    addResponseMessage(meg.message, meg._id);
+                }
+            }
+        }
+    }, [unreadMessages]);
 
     const checkConverstationInfo = () => {
         const conversationInfo = getConversationInfo();
@@ -108,15 +132,20 @@ const App = () => {
 
     const handleReceiveMessage = data => {
         //do not show response message with audience sender
-        if (data?.sender !== 'audience') {
+        if (data?.sender !== MESSAGE_SENDER.CLIENT) {
             addResponseMessage(data.message);
         }
     };
 
     const handleNewUserMessage = newMessage => {
         // toggleMsgLoader();
-        const { id } = getConversationInfo();
-        socketClient.emit(id, { message: newMessage, sender: 'audience' });
+        const conversationInfo = getConversationInfo();
+        if (conversationInfo) {
+            socketClient.emit(conversationInfo.id, {
+                message: newMessage,
+                sender: MESSAGE_SENDER.CLIENT
+            });
+        }
         // setTimeout(() => {
         //     toggleMsgLoader();
         //     if (newMessage === 'fruits') {
@@ -146,11 +175,49 @@ const App = () => {
     // };
 
     const handleToggle = async toggleValue => {
-        if (toggleValue & !loadingConversation) {
-            setLoadingConversation(true);
-            await handleGetConversation();
-            // handleConnectToConversation();
+        try {
+            if ((toggleValue && unreadMessages, length > 0)) {
+                await handleMarkAllAsRead();
+            }
+            if (toggleValue & !loadingConversation) {
+                setLoadingConversation(true);
+                await handleGetConversation();
+                // handleConnectToConversation();
+                setLoadingConversation(false);
+            }
+        } catch (error) {
             setLoadingConversation(false);
+            handleToggleWidget();
+        }
+    };
+
+    const handleGetUnReadMessages = async () => {
+        const { shop_id } = getShopInfo();
+        const data = await fetchGetMessages({
+            is_seen: false,
+            sender: 'shop',
+            sender_id: shop_id,
+            limit: -1
+        });
+        if (data?.docs && Array.isArray(data?.docs)) {
+            console.log('req :>> ', req);
+            setUnreadMessages(data.docs);
+        }
+    };
+
+    const handleGetMessages = async payload => {
+        const data = await fetchGetMessages();
+        if (data?.docs && Array.isArray(data?.docs)) {
+            console.log('req :>> ', data);
+            for (let i = 0; i < data?.docs.length; i++) {
+                const meg = data?.docs[i];
+                if (meg.sender === MESSAGE_SENDER.CLIENT) {
+                    addUserMessage(meg.message, meg._id);
+                }
+                if (meg.sender === MESSAGE_SENDER.RESPONSE) {
+                    addResponseMessage(meg.message, meg._id);
+                }
+            }
         }
     };
 
@@ -168,7 +235,10 @@ const App = () => {
     const handleGetConversation = async () => {
         if (!hasConversationInfo) {
             const { shop_id, msUUID } = getShopInfo();
-            const { id = '' } = await handleGetAudience({ shop_id, msUUID });
+            const { id = '' } = await handleGetAudience({
+                shop_id,
+                msUUID
+            });
             if (shop_id && id) {
                 const rep = await openConversation({
                     cancelToken,
@@ -176,7 +246,6 @@ const App = () => {
                     audience_id: `${id}`
                 });
                 if (rep.code === 1000) {
-                    stic;
                     setStorage({
                         key: STORAGE_KEY.conversationInfo,
                         value: JSON.stringify(rep.data)
@@ -187,15 +256,19 @@ const App = () => {
         }
     };
 
-    const handleGetMessage = async (payload = {}) => {
+    const fetchGetMessages = async (payload = {}) => {
         const conversationInfo = getConversationInfo();
         const { shop_id } = getShopInfo();
         const req = await getMessages({
-            ...payload,
             id: conversationInfo.id,
-            shop_id
+            shop_id: `${shop_id}`,
+            ...payload
         });
-        console.log('req :>> ', req);
+        if (req?.code === 1000 && req?.data) {
+            console.log('req :>> ', req?.data);
+            return req.data;
+        }
+        return null;
     };
 
     const handleMarkAllAsRead = async (payload = {}) => {

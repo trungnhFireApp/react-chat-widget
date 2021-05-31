@@ -1,6 +1,6 @@
 export const MESSAGE_SENDER = {
-    CLIENT: 'audience',
-    RESPONSE: 'shop'
+    CLIENT: 'client',
+    RESPONSE: 'response'
 };
 
 export const MESSAGES_TYPES = {

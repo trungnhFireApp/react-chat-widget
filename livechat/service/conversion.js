@@ -13,10 +13,10 @@ export const openConversation = async payload => {
 
 export const markAllAsRead = async payload => {
     const { id } = payload;
-    const url = `api/UE_CHAT_LIST_MESSAGES/${id}?page=1&limit=10`;
+    const url = `${URI_API}/livechat/conversations/${id}/messages/read-all`;
     const result = await request({
         url: url,
-        method: 'GET',
+        method: 'POST',
         ...payload
     });
     return result;
@@ -25,6 +25,7 @@ export const markAllAsRead = async payload => {
 export const getMessages = async payload => {
     const { id } = payload;
     const url = `${URI_API}/livechat/conversations/${id}/messages`;
+    delete payload.id;
     const result = await request({
         url: url,
         method: 'POST',
