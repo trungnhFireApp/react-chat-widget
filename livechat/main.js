@@ -10,8 +10,12 @@ import {
     toggleWidgetLoader
 } from '../index';
 import { addUserMessage } from '..';
-import socketService, { socketChanel } from './service/socket';
-import { openConversation } from './service/conversion';
+import socketService from './service/socket';
+import {
+    openConversation,
+    getMessages,
+    markAllAsRead
+} from './service/conversion';
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
 import { getStorage, STORAGE_KEY, setStorage } from './storage';
@@ -28,7 +32,7 @@ const App = () => {
     const [loadingConversation, setLoadingConversation] = useState(false);
 
     useEffect(() => {
-        // checkConverstationInfo();
+        checkConverstationInfo();
 
         // toggleInputDisabled()
         // handleInitSocket();
@@ -50,7 +54,10 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        // hasConversationInfo && handleConnectToConversation();
+        if (hasConversationInfo) {
+            handleConnectToConversation();
+            handleGetMessage();
+        }
     }, [hasConversationInfo]);
 
     const checkConverstationInfo = () => {
@@ -67,12 +74,6 @@ const App = () => {
         if (!socketClient) {
             const conversationInfo = getConversationInfo();
             const { shop_id } = getShopInfo();
-            // console.log(
-            //     'conversationInfo :>> ',
-            //     conversationInfo,
-            //     shop_id,
-            //     msUUID
-            // );
             if (conversationInfo && shop_id) {
                 handleInitSocket(
                     {
@@ -106,13 +107,16 @@ const App = () => {
     };
 
     const handleReceiveMessage = data => {
-        addResponseMessage(data.message);
+        //do not show response message with audience sender
+        if (data?.sender !== 'audience') {
+            addResponseMessage(data.message);
+        }
     };
 
     const handleNewUserMessage = newMessage => {
         // toggleMsgLoader();
         const { id } = getConversationInfo();
-        socketClient.emit(id, newMessage);
+        socketClient.emit(id, { message: newMessage, sender: 'audience' });
         // setTimeout(() => {
         //     toggleMsgLoader();
         //     if (newMessage === 'fruits') {
@@ -181,6 +185,27 @@ const App = () => {
                 }
             }
         }
+    };
+
+    const handleGetMessage = async (payload = {}) => {
+        const conversationInfo = getConversationInfo();
+        const { shop_id } = getShopInfo();
+        const req = await getMessages({
+            ...payload,
+            id: conversationInfo.id,
+            shop_id
+        });
+        console.log('req :>> ', req);
+    };
+
+    const handleMarkAllAsRead = async (payload = {}) => {
+        const conversationInfo = getConversationInfo();
+        const { shop_id } = getShopInfo();
+        const req = await markAllAsRead({
+            ...payload,
+            id: conversationInfo.id,
+            shop_id
+        });
     };
 
     return (
