@@ -7,7 +7,7 @@ import './style.scss';
 type Props = {
     position: string;
     autoDelete: boolean;
-    dismissTime: number;
+    dismissTime?: number;
 };
 
 // {

@@ -125,11 +125,7 @@ function WidgetLayout({
 
     return (
         <>
-            <Toast
-                position="bottom-right"
-                autoDelete={true}
-                dismissTime={3000}
-            />
+            <Toast position="bottom-right" autoDelete={false} />
             <div
                 className={cn('rcw-widget-container', {
                     'rcw-full-screen': fullScreenMode,

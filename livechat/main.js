@@ -8,13 +8,15 @@ import {
     toggleMsgLoader,
     addLinkSnippet,
     toggleInputDisabled,
-    toggleWidgetLoader
+    toggleWidgetLoader,
+    setBadgeCount
 } from '../index';
 import socketService from './service/socket';
 import {
     openConversation,
     getMessages,
-    markAllAsRead
+    markAllAsRead,
+    markMessageAsRead
 } from './service/conversion';
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
@@ -122,7 +124,7 @@ const App = () => {
     const handleReceiveMessage = data => {
         //do not show response message with audience sender
         if (data?.sender !== MESSAGE_SENDER.CLIENT) {
-            addResponseMessage(data.message);
+            addResponseMessage(data.message, data.id);
             setUnreadMessagesCount(1);
         }
     };
@@ -174,6 +176,7 @@ const App = () => {
                 await handleGetConversation();
                 // handleConnectToConversation();
                 setLoadingConversation(false);
+                handleToggleWidget();
             }
         } catch (error) {
             setLoadingConversation(false);
@@ -187,25 +190,25 @@ const App = () => {
             is_seen: false,
             sender: 'shop',
             sender_id: shop_id,
-            limit: -1
+            limit: 5
         });
         if (data?.docs && Array.isArray(data?.docs)) {
-            console.log('req :>> ', req);
-            for (let i = 0; i < data.docs.length; i++) {
-                const meg = data.docs[i];
-                if (meg.sender === MESSAGE_SENDER.RESPONSE) {
-                    addResponseMessage(meg.message, meg._id);
-                }
-            }
-            setUnreadMessagesCount(data.docs.length);
+            // for (let i = 0; i < data.docs.length; i++) {
+            //     const meg = data.docs[i];
+            //     if (meg.sender === MESSAGE_SENDER.RESPONSE) {
+            //         addResponseMessage(meg.message, meg._id);
+            //     }
+            // }
+            setUnreadMessagesCount(data.totalDocs);
+            setBadgeCount(data.totalDocs > 100 ? 99 : data.totalDocs);
         }
     };
 
     const handleGetMessages = async payload => {
         const data = await fetchGetMessages();
         if (data?.docs && Array.isArray(data?.docs)) {
-            console.log('req :>> ', data);
-            for (let i = 0; i < data?.docs.length; i++) {
+            // console.log('req :>> ', data);
+            for (let i = data?.docs.length - 1; i >= 0; i--) {
                 const meg = data?.docs[i];
                 if (meg.sender === MESSAGE_SENDER.CLIENT) {
                     addUserMessage(meg.message, meg._id);
@@ -261,7 +264,6 @@ const App = () => {
             ...payload
         });
         if (req?.code === 1000 && req?.data) {
-            console.log('req :>> ', req?.data);
             return req.data;
         }
         return null;
@@ -277,8 +279,35 @@ const App = () => {
         });
     };
 
+    const handleMarkMessageAsRead = async payload => {};
+
+    //tạo inbox giả phía shop
+    const [rsText, setRsText] = useState('');
+    const handleSendResponse = e => {
+        const conversationInfo = getConversationInfo();
+        socketClient.emit(conversationInfo.id, {
+            message: rsText,
+            sender: MESSAGE_SENDER.RESPONSE
+        });
+        setRsText('');
+    };
+
     return (
         <div>
+            <div
+                style={{
+                    position: 'fixed',
+                    bottom: 200,
+                    right: 500,
+                    background: '#fff'
+                }}
+            >
+                <input
+                    value={rsText}
+                    onChange={e => setRsText(e.target.value)}
+                ></input>
+                <button onClick={handleSendResponse}>Submit response</button>
+            </div>
             <Widget
                 title="Welcome"
                 subtitle="How can we help?"
@@ -290,6 +319,7 @@ const App = () => {
                 imagePreview
                 // handleSubmit={handleSubmit}
                 handleToggle={handleToggle}
+                handleMarkMessageAsRead={handleMarkMessageAsRead}
             />
         </div>
     );

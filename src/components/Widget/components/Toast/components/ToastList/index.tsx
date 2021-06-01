@@ -1,15 +1,18 @@
 import { CustomCompMessage, Link, Message } from '@types';
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ToastItem from './components/ToastItem';
+import { markMessageRead } from '../../../../../../store/actions';
 
 type Props = {
     toastList: (Link | CustomCompMessage | Message)[];
     position: string;
     autoDelete: boolean;
-    dismissTime: number;
+    dismissTime?: number;
 };
 
 function ToastList({ position, autoDelete, dismissTime, toastList }: Props) {
+    const dispatch = useDispatch();
     const [list, setList] = useState(toastList);
     useEffect(() => {
         setList([...toastList]);
@@ -26,11 +29,13 @@ function ToastList({ position, autoDelete, dismissTime, toastList }: Props) {
     }, [toastList, autoDelete, dismissTime, list]);
     const deleteToast = id => {
         if (id) {
-            const listItemIndex = list.findIndex(e => e.customId === id);
-            const toastListItem = toastList.findIndex(e => e.customId === id);
-            list.splice(listItemIndex, 1);
-            toastList.splice(toastListItem, 1);
-            setList([...list]);
+            dispatch(markMessageRead(id));
+            // const listItemIndex = list.findIndex(e => e.customId === id);
+            // const toastListItem = toastList.findIndex(e => e.customId === id);
+            // list.splice(listItemIndex, 1);
+            // toastList.splice(toastListItem, 1);
+            // console.log('list', list);
+            // setList([...list]);
         }
     };
     return (

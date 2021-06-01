@@ -21,7 +21,10 @@ export function toggleWidgetLoader(): actionsTypes.ToggleWidgetLoader {
     };
 }
 
-export function addUserMessage(text: string, id?: string): actionsTypes.AddUserMessage {
+export function addUserMessage(
+    text: string,
+    id?: string
+): actionsTypes.AddUserMessage {
     return {
         type: actionsTypes.ADD_NEW_USER_MESSAGE,
         text,
@@ -29,7 +32,10 @@ export function addUserMessage(text: string, id?: string): actionsTypes.AddUserM
     };
 }
 
-export function addResponseMessage(text: string, id?: string): actionsTypes.AddResponseMessage {
+export function addResponseMessage(
+    text: string,
+    id?: string
+): actionsTypes.AddResponseMessage {
     return {
         type: actionsTypes.ADD_NEW_RESPONSE_MESSAGE,
         text,
@@ -40,10 +46,13 @@ export function addResponseMessage(text: string, id?: string): actionsTypes.AddR
 export function toggleMsgLoader(): actionsTypes.ToggleMsgLoader {
     return {
         type: actionsTypes.TOGGLE_MESSAGE_LOADER
-    }
+    };
 }
 
-export function addLinkSnippet(link: LinkParams, id?: string): actionsTypes.AddLinkSnippet {
+export function addLinkSnippet(
+    link: LinkParams,
+    id?: string
+): actionsTypes.AddLinkSnippet {
     return {
         type: actionsTypes.ADD_NEW_LINK_SNIPPET,
         link,
@@ -79,35 +88,49 @@ export function hideAvatar(index: number): actionsTypes.HideAvatar {
     };
 }
 
-export function setQuickButtons(buttons: Array<{ label: string, value: string | number }>): actionsTypes.SetQuickButtons {
+export function setQuickButtons(
+    buttons: Array<{ label: string; value: string | number }>
+): actionsTypes.SetQuickButtons {
     return {
         type: actionsTypes.SET_QUICK_BUTTONS,
         buttons
-    }
+    };
 }
 
-export function deleteMessages(count: number, id?: string): actionsTypes.DeleteMessages {
+export function deleteMessages(
+    count: number,
+    id?: string
+): actionsTypes.DeleteMessages {
     return {
         type: actionsTypes.DELETE_MESSAGES,
         count,
         id
-    }
+    };
 }
 
 export function setBadgeCount(count: number): actionsTypes.SetBadgeCount {
     return {
         type: actionsTypes.SET_BADGE_COUNT,
         count
-    }
+    };
 }
 
 export function markAllMessagesRead(): actionsTypes.MarkAllMessagesRead {
     return {
         type: actionsTypes.MARK_ALL_READ
-    }
+    };
 }
 
-export function openFullscreenPreview(payload: ImageState): actionsTypes.FullscreenPreviewActions {
+export function markMessageRead(id?: string): actionsTypes.MarkMessageAsRead {
+    return {
+        type: actionsTypes.MARK_MESSAGE_AS_READ,
+        id
+    };
+}
+
+export function openFullscreenPreview(
+    payload: ImageState
+): actionsTypes.FullscreenPreviewActions {
     return {
         type: actionsTypes.OPEN_FULLSCREEN_PREVIEW,
         payload

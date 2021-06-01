@@ -17,6 +17,7 @@ import {
     HIDE_AVATAR,
     DELETE_MESSAGES,
     MARK_ALL_READ,
+    MARK_MESSAGE_AS_READ,
     SET_BADGE_COUNT
 } from '../actions/types';
 
@@ -88,6 +89,21 @@ const messagesReducer = {
             unread: false
         })),
         badgeCount: 0
+    }),
+    [MARK_MESSAGE_AS_READ]: (state: MessagesState, { id }) => ({
+        ...state,
+        messages: state.messages.map(message => {
+            if (message.customId === id) {
+                return {
+                    ...message,
+                    unread: false
+                };
+            }
+            return {
+                ...message
+            };
+        }),
+        badgeCount: state.badgeCount - 1
     })
 };
 
