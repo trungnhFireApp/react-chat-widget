@@ -159,12 +159,12 @@ const App = () => {
     //     setQuickButtons([]);
     // };
 
-    // const handleSubmit = (msgText: string) => {
-    //     if (msgText.length < 80) {
-    //         addUserMessage('Uh oh, please write a bit more.');
-    //         return false;
-    //     }
-    //     return true;
+    // const handleSubmit = msgText => {
+    //     // if (msgText.length < 80) {
+    //     //     addUserMessage('Uh oh, please write a bit more.');
+    //     //     return false;
+    //     // }
+    //     // return true;
     // };
 
     const handleToggle = async toggleValue => {
@@ -206,7 +206,9 @@ const App = () => {
     };
 
     const handleGetMessages = async payload => {
-        const data = await fetchGetMessages();
+        const data = await fetchGetMessages({
+            limit: 1000
+        });
         if (data?.docs && Array.isArray(data?.docs)) {
             // console.log('req :>> ', data);
             for (let i = data?.docs.length - 1; i >= 0; i--) {
@@ -312,7 +314,7 @@ const App = () => {
 
     return (
         <div>
-            <div
+            {/* <div
                 style={{
                     position: 'fixed',
                     bottom: 200,
@@ -325,7 +327,7 @@ const App = () => {
                     onChange={e => setRsText(e.target.value)}
                 ></input>
                 <button onClick={handleSendResponse}>Submit response</button>
-            </div>
+            </div> */}
             <Widget
                 title="Welcome"
                 subtitle="How can we help?"
