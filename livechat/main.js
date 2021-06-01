@@ -135,7 +135,8 @@ const App = () => {
         if (conversationInfo) {
             socketClient.emit(conversationInfo.id, {
                 message: newMessage,
-                sender: MESSAGE_SENDER.CLIENT
+                sender: MESSAGE_SENDER.CLIENT,
+                sender_id: conversationInfo.audience_id
             });
         }
         // setTimeout(() => {
@@ -299,9 +300,11 @@ const App = () => {
     const [rsText, setRsText] = useState('');
     const handleSendResponse = e => {
         const conversationInfo = getConversationInfo();
+        const { shop_id } = getShopInfo();
         socketClient.emit(conversationInfo.id, {
             message: rsText,
-            sender: MESSAGE_SENDER.RESPONSE
+            sender: MESSAGE_SENDER.RESPONSE,
+            sender_id: shop_id
         });
         setRsText('');
     };
