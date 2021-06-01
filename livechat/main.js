@@ -290,7 +290,8 @@ const App = () => {
         if (messageId) {
             const req = await markMessageAsRead({
                 conversation_id: conversationInfo.id,
-                reader_id: messageId,
+                // reader_id: messageId,
+                messageId,
                 shop_id
             });
         }

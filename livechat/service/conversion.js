@@ -24,9 +24,9 @@ export const markAllAsRead = async payload => {
 };
 
 export const markMessageAsRead = async payload => {
-    const { id } = payload;
-    const url = `${URI_API}/livechat/messages/${id}/read`;
-    delete payload.id;
+    const { messageId } = payload;
+    const url = `${URI_API}/livechat/messages/${messageId}/read`;
+    delete payload.messageId;
     const result = await request({
         url: url,
         method: 'POST',
