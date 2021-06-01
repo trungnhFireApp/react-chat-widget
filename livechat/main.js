@@ -284,7 +284,15 @@ const App = () => {
     };
 
     const handleMarkMessageAsRead = async messageId => {
-        console.log('messageId', messageId);
+        const conversationInfo = getConversationInfo();
+        const { shop_id } = getShopInfo();
+        if (messageId) {
+            const req = await markMessageAsRead({
+                conversation_id: conversationInfo.id,
+                reader_id: messageId,
+                shop_id
+            });
+        }
     };
 
     //tạo inbox giả phía shop
