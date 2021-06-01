@@ -36,6 +36,7 @@ type Props = {
     showTimeStamp: boolean;
     imagePreview?: boolean;
     zoomStep?: number;
+    handleMarkMessageAsRead?: AnyFunction;
 };
 
 function WidgetLayout({
@@ -60,7 +61,8 @@ function WidgetLayout({
     sendButtonAlt,
     showTimeStamp,
     imagePreview,
-    zoomStep
+    zoomStep,
+    handleMarkMessageAsRead
 }: Props) {
     const dispatch = useDispatch();
     const { dissableInput, showChat, visible } = useSelector(
@@ -125,7 +127,11 @@ function WidgetLayout({
 
     return (
         <>
-            <Toast position="bottom-right" autoDelete={false} />
+            <Toast
+                position="bottom-right"
+                autoDelete={false}
+                handleMarkMessageAsRead={handleMarkMessageAsRead}
+            />
             <div
                 className={cn('rcw-widget-container', {
                     'rcw-full-screen': fullScreenMode,

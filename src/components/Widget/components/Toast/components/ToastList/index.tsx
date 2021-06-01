@@ -3,15 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ToastItem from './components/ToastItem';
 import { markMessageRead } from '../../../../../../store/actions';
+import { AnyFunction } from 'src/utils/types';
 
 type Props = {
     toastList: (Link | CustomCompMessage | Message)[];
     position: string;
     autoDelete: boolean;
     dismissTime?: number;
+    handleMarkMessageAsRead?: AnyFunction;
 };
 
-function ToastList({ position, autoDelete, dismissTime, toastList }: Props) {
+function ToastList({
+    position,
+    autoDelete,
+    dismissTime,
+    toastList,
+    handleMarkMessageAsRead
+}: Props) {
     const dispatch = useDispatch();
     const [list, setList] = useState(toastList);
     useEffect(() => {
@@ -30,6 +38,7 @@ function ToastList({ position, autoDelete, dismissTime, toastList }: Props) {
     const deleteToast = id => {
         if (id) {
             dispatch(markMessageRead(id));
+            handleMarkMessageAsRead?.(id);
             // const listItemIndex = list.findIndex(e => e.customId === id);
             // const toastListItem = toastList.findIndex(e => e.customId === id);
             // list.splice(listItemIndex, 1);

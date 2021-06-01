@@ -247,7 +247,10 @@ const App = () => {
                 if (rep.code === 1000) {
                     setStorage({
                         key: STORAGE_KEY.conversationInfo,
-                        value: JSON.stringify(rep.data)
+                        value: JSON.stringify({
+                            ...rep.data,
+                            audience_id: id
+                        })
                     });
                     setHasConversationInfo(true);
                 }
@@ -275,11 +278,14 @@ const App = () => {
         const req = await markAllAsRead({
             ...payload,
             id: conversationInfo.id,
+            audience_id: conversationInfo.audience_id,
             shop_id
         });
     };
 
-    const handleMarkMessageAsRead = async payload => {};
+    const handleMarkMessageAsRead = async messageId => {
+        console.log('messageId', messageId);
+    };
 
     //tạo inbox giả phía shop
     const [rsText, setRsText] = useState('');

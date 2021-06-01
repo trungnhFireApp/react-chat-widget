@@ -1,6 +1,7 @@
 import { GlobalState } from '@types';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { AnyFunction } from 'src/utils/types';
 import ToastList from './components/ToastList';
 import './style.scss';
 
@@ -8,6 +9,7 @@ type Props = {
     position: string;
     autoDelete: boolean;
     dismissTime?: number;
+    handleMarkMessageAsRead?: AnyFunction;
 };
 
 // {
@@ -18,7 +20,12 @@ type Props = {
 //     icon: ''
 // }
 
-function Toast({ position, autoDelete, dismissTime }: Props) {
+function Toast({
+    position,
+    autoDelete,
+    dismissTime,
+    handleMarkMessageAsRead
+}: Props) {
     const { messages } = useSelector((state: GlobalState) => ({
         messages: state.messages.messages,
         badgeCount: state.messages.badgeCount,
@@ -30,6 +37,7 @@ function Toast({ position, autoDelete, dismissTime }: Props) {
             position={position}
             autoDelete={autoDelete}
             dismissTime={dismissTime}
+            handleMarkMessageAsRead={handleMarkMessageAsRead}
         ></ToastList>
     );
 }

@@ -110,6 +110,7 @@ function Widget({
             showTimeStamp={showTimeStamp}
             imagePreview={imagePreview}
             zoomStep={zoomStep}
+            handleMarkMessageAsRead={handleMarkMessageAsRead}
         />
     );
 }
