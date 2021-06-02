@@ -9,11 +9,15 @@ type BaseMessage = {
     unread: boolean;
     customId?: string;
     props?: any;
-}
+};
 
 export interface Message extends BaseMessage {
     text: string;
-};
+}
+
+export interface BubbleMessage extends BaseMessage {
+    text: string;
+}
 
 export type QuickButton = {
     label: string;
@@ -25,7 +29,7 @@ export interface Link extends BaseMessage {
     title: string;
     link: string;
     target: string;
-};
+}
 
 export interface LinkParams {
     link: string;
@@ -42,7 +46,7 @@ export interface BehaviorState {
     disabledInput: boolean;
     messageLoader: boolean;
     widgetLoader: boolean;
-};
+}
 
 export interface MessagesState {
     messages: (Message | Link | CustomCompMessage)[];
@@ -62,7 +66,7 @@ export interface ImageState {
 
 export interface FullscreenPreviewState extends ImageState {
     visible?: boolean;
-};
+}
 
 export interface GlobalState {
     messages: MessagesState;

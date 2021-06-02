@@ -34,12 +34,14 @@ export function addUserMessage(
 
 export function addResponseMessage(
     text: string,
-    id?: string
+    id?: string,
+    unread?: boolean
 ): actionsTypes.AddResponseMessage {
     return {
         type: actionsTypes.ADD_NEW_RESPONSE_MESSAGE,
         text,
-        id
+        id,
+        unread
     };
 }
 

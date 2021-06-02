@@ -14,3 +14,23 @@ export const getShopInfo = () => {
         msUUID: getStorage({ key: STORAGE_KEY.msUUID }) || ''
     };
 };
+
+export const mappingMessgesWigetDTOFromApi = p => ({
+    type: 'text',
+    text: p.message,
+    sender: p.sender,
+    timestamp: p.created_at,
+    showAvatar: false,
+    customId: p._id,
+    unread: true
+});
+
+export const mappingMessgesWigetDTOFromSocket = p => ({
+    type: 'text',
+    text: p.message,
+    sender: p.sender,
+    timestamp: p.created_at,
+    showAvatar: false,
+    customId: p.id,
+    unread: true
+});

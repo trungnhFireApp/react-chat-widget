@@ -11,6 +11,11 @@ export function addUserMessage(text: string, id: string): void;
 
 export function addResponseMessage(text: string): void;
 export function addResponseMessage(text: string, id: string): void;
+export function addResponseMessage(
+    text: string,
+    id: string,
+    unread: boolean
+): void;
 
 export function addLinkSnippet(link: {
     link: string;

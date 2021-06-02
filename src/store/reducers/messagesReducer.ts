@@ -35,13 +35,17 @@ const messagesReducer = {
         ]
     }),
 
-    [ADD_NEW_RESPONSE_MESSAGE]: (state: MessagesState, { text, id }) => ({
+    [ADD_NEW_RESPONSE_MESSAGE]: (
+        state: MessagesState,
+        { text, id, unread }
+    ) => ({
         ...state,
         messages: [
             ...state.messages,
-            createNewMessage(text, MESSAGE_SENDER.RESPONSE, id)
+            createNewMessage(text, MESSAGE_SENDER.RESPONSE, id, unread)
         ],
-        badgeCount: state.badgeCount + 1
+        badgeCount:
+            unread === undefined ? state.badgeCount + 1 : state.badgeCount
     }),
 
     [ADD_NEW_LINK_SNIPPET]: (state: MessagesState, { link, id }) => ({

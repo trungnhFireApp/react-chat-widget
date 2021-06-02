@@ -1,4 +1,4 @@
-import { GlobalState } from '@types';
+import { BubbleMessage, GlobalState } from '@types';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { AnyFunction } from 'src/utils/types';
@@ -10,30 +10,24 @@ type Props = {
     autoDelete: boolean;
     dismissTime?: number;
     handleMarkMessageAsRead?: AnyFunction;
+    unreadMessagesInBubble?: Array<any>;
 };
-
-// {
-//     id: 1,
-//     title: 'Success',
-//     description: 'This is a success toast component',
-//     backgroundColor: '#5cb85c',
-//     icon: ''
-// }
 
 function Toast({
     position,
     autoDelete,
     dismissTime,
-    handleMarkMessageAsRead
+    handleMarkMessageAsRead,
+    unreadMessagesInBubble
 }: Props) {
-    const { messages } = useSelector((state: GlobalState) => ({
-        messages: state.messages.messages,
-        badgeCount: state.messages.badgeCount,
-        showChat: state.behavior.showChat
-    }));
+    // const { showChat } = useSelector((state: GlobalState) => ({
+    //     // messages: state.messages.messages,
+    //     showChat: state.behavior.showChat
+    // }));
     return (
         <ToastList
-            toastList={messages.filter(message => message.unread)}
+            // toastList={messages.filter(message => message.unread)}
+            toastList={unreadMessagesInBubble as Array<BubbleMessage>}
             position={position}
             autoDelete={autoDelete}
             dismissTime={dismissTime}

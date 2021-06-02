@@ -9,7 +9,8 @@ import {
     addLinkSnippet,
     toggleInputDisabled,
     toggleWidgetLoader,
-    setBadgeCount
+    setBadgeCount,
+    isWidgetOpened
 } from '../index';
 import socketService from './service/socket';
 import {
@@ -21,7 +22,12 @@ import {
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
 import { getStorage, STORAGE_KEY, setStorage } from './storage';
-import { getConversationInfo, getShopInfo } from './utils/common';
+import {
+    getConversationInfo,
+    getShopInfo,
+    mappingMessgesWigetDTOFromApi,
+    mappingMessgesWigetDTOFromSocket
+} from './utils/common';
 import './styles.scss';
 
 let socketClient = null;
@@ -37,7 +43,8 @@ const App = () => {
 
     const [hasConversationInfo, setHasConversationInfo] = useState(false);
     const [loadingConversation, setLoadingConversation] = useState(false);
-    const [unreadMessagesCount, setUnreadMessagesCount] = useState([]);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+    const [unreadMessages, setUnreadMessages] = useState([]);
 
     useEffect(() => {
         checkConverstationInfo();
@@ -125,7 +132,14 @@ const App = () => {
         //do not show response message with audience sender
         if (data?.sender !== MESSAGE_SENDER.CLIENT) {
             addResponseMessage(data.message, data.id);
-            setUnreadMessagesCount(1);
+            if (!isWidgetOpened()) {
+                setUnreadMessagesCount(state => state + 1);
+                setUnreadMessages(state => {
+                    return [...state].concat(
+                        mappingMessgesWigetDTOFromSocket(data)
+                    );
+                });
+            }
         }
     };
 
@@ -169,15 +183,22 @@ const App = () => {
 
     const handleToggle = async toggleValue => {
         try {
-            if (toggleValue && unreadMessagesCount > 0) {
-                await handleMarkAllAsRead();
-            }
-            if (toggleValue & !loadingConversation) {
-                setLoadingConversation(true);
-                await handleGetConversation();
-                // handleConnectToConversation();
-                setLoadingConversation(false);
-                handleToggleWidget();
+            if (toggleValue) {
+                //mark all messages as read
+                if (unreadMessagesCount > 0) {
+                    await handleMarkAllAsRead();
+                    setUnreadMessagesCount(0);
+                    setUnreadMessages([]);
+                    setBadgeCount(0);
+                }
+                //get conversation
+                if (!loadingConversation) {
+                    setLoadingConversation(true);
+                    await handleGetConversation();
+                    // handleConnectToConversation();
+                    setLoadingConversation(false);
+                    handleToggleWidget();
+                }
             }
         } catch (error) {
             setLoadingConversation(false);
@@ -194,30 +215,27 @@ const App = () => {
             limit: 5
         });
         if (data?.docs && Array.isArray(data?.docs)) {
-            // for (let i = 0; i < data.docs.length; i++) {
-            //     const meg = data.docs[i];
-            //     if (meg.sender === MESSAGE_SENDER.RESPONSE) {
-            //         addResponseMessage(meg.message, meg._id);
-            //     }
-            // }
             setUnreadMessagesCount(data.totalDocs);
+            //parse to message type in widget
+            setUnreadMessages(
+                data.docs.map(p => mappingMessgesWigetDTOFromApi(p))
+            );
             setBadgeCount(data.totalDocs > 100 ? 99 : data.totalDocs);
         }
     };
 
     const handleGetMessages = async payload => {
         const data = await fetchGetMessages({
-            limit: 1000
+            limit: 10
         });
         if (data?.docs && Array.isArray(data?.docs)) {
-            // console.log('req :>> ', data);
             for (let i = data?.docs.length - 1; i >= 0; i--) {
                 const meg = data?.docs[i];
                 if (meg.sender === MESSAGE_SENDER.CLIENT) {
                     addUserMessage(meg.message, meg._id);
                 }
                 if (meg.sender === MESSAGE_SENDER.RESPONSE) {
-                    addResponseMessage(meg.message, meg._id);
+                    addResponseMessage(meg.message, meg._id, false); // default set unread for all messages from api
                 }
             }
         }
@@ -290,6 +308,9 @@ const App = () => {
         const conversationInfo = getConversationInfo();
         const { shop_id } = getShopInfo();
         if (messageId) {
+            setUnreadMessages(state =>
+                state.filter(p => p.customId !== messageId)
+            );
             const req = await markMessageAsRead({
                 conversation_id: conversationInfo.id,
                 // reader_id: messageId,
@@ -340,59 +361,10 @@ const App = () => {
                 // handleSubmit={handleSubmit}
                 handleToggle={handleToggle}
                 handleMarkMessageAsRead={handleMarkMessageAsRead}
+                unreadMessagesInBubble={unreadMessages}
             />
         </div>
     );
 };
 
 export default App;
-
-// export default class App extends Component {
-//   componentDidMount() {
-//     addResponseMessage('Welcome to this awesome chat!');
-//     addLinkSnippet({ link: 'https://google.com', title: 'Google' });
-//     addResponseMessage('![](https://raw.githubusercontent.com/Wolox/press-kit/master/logos/logo_banner.png)');
-//     addResponseMessage('![vertical](https://d2sofvawe08yqg.cloudfront.net/reintroducing-react/hero2x?1556470143)');
-//   }
-
-//   handleNewUserMessage = (newMessage: any) => {
-//     toggleMsgLoader();
-//     setTimeout(() => {
-//       toggleMsgLoader();
-//       if (newMessage === 'fruits') {
-//         setQuickButtons([ { label: 'Apple', value: 'apple' }, { label: 'Orange', value: 'orange' }, { label: 'Pear', value: 'pear' }, { label: 'Banana', value: 'banana' } ]);
-//       } else {
-//         addResponseMessage(newMessage);
-//       }
-//     }, 2000);
-//   }
-
-//   handleQuickButtonClicked = (e: any) => {
-//     addResponseMessage('Selected ' + e);
-//     setQuickButtons([]);
-//   }
-
-//   handleSubmit = (msgText: string) => {
-//     if(msgText.length < 80) {
-//       addUserMessage("Uh oh, please write a bit more.");
-//       return false;
-//     }
-//     return true;
-//   }
-
-//   render() {
-//     return (
-//       <div>
-//         <Widget
-//           title="Bienvenido"
-//           subtitle="Asistente virtual"
-//           senderPlaceHolder="Escribe aquí ..."
-//           handleNewUserMessage={this.handleNewUserMessage}
-//           handleQuickButtonClicked={this.handleQuickButtonClicked}
-//           imagePreview
-//           handleSubmit={this.handleSubmit}
-//         />
-//       </div>
-//     );
-//   }
-// }

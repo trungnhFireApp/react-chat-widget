@@ -1,4 +1,4 @@
-import { CustomCompMessage, Link, Message } from '@types';
+import { CustomCompMessage, Link, Message, BubbleMessage } from '@types';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ToastItem from './components/ToastItem';
@@ -6,7 +6,7 @@ import { markMessageRead } from '../../../../../../store/actions';
 import { AnyFunction } from 'src/utils/types';
 
 type Props = {
-    toastList: (Link | CustomCompMessage | Message)[];
+    toastList: BubbleMessage[];
     position: string;
     autoDelete: boolean;
     dismissTime?: number;
@@ -55,7 +55,7 @@ function ToastList({
                         key={i}
                         position={position}
                         deleteToast={deleteToast}
-                        message={toast as Message}
+                        message={toast as BubbleMessage}
                     />
                 ))}
             </div>

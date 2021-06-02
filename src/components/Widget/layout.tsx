@@ -37,6 +37,7 @@ type Props = {
     imagePreview?: boolean;
     zoomStep?: number;
     handleMarkMessageAsRead?: AnyFunction;
+    unreadMessagesInBubble?: Array<any>;
 };
 
 function WidgetLayout({
@@ -62,7 +63,8 @@ function WidgetLayout({
     showTimeStamp,
     imagePreview,
     zoomStep,
-    handleMarkMessageAsRead
+    handleMarkMessageAsRead,
+    unreadMessagesInBubble
 }: Props) {
     const dispatch = useDispatch();
     const { dissableInput, showChat, visible } = useSelector(
@@ -128,6 +130,7 @@ function WidgetLayout({
     return (
         <>
             <Toast
+                unreadMessagesInBubble={unreadMessagesInBubble}
                 position="bottom-right"
                 autoDelete={false}
                 handleMarkMessageAsRead={handleMarkMessageAsRead}

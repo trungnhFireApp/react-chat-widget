@@ -42,6 +42,7 @@ export interface AddResponseMessage {
     type: typeof ADD_NEW_RESPONSE_MESSAGE;
     text: string;
     id?: string;
+    unread?: boolean;
 }
 
 export interface ToggleMsgLoader {

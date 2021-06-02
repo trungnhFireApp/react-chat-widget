@@ -1,8 +1,8 @@
-import { Message } from '@types';
+import { Message, BubbleMessage } from '@types';
 import React from 'react';
 
 type Props = {
-    message: Message;
+    message: BubbleMessage;
     position: string;
     deleteToast: (id?: string) => void;
 };
