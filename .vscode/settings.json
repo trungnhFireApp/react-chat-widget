@@ -1,0 +1,20 @@
+{
+    "editor.formatOnSave": true,
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    },
+    "javascript.updateImportsOnFileMove.enabled": "never",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": false,
+    "prettier.singleQuote": true,
+    "prettier.semi": true,
+    "prettier.bracketSpacing": true,
+    "prettier.arrowParens": "avoid",
+    "prettier.trailingComma": "none",
+    "prettier.tabWidth": 4,
+    "liveServer.settings.port": 5501,
+    "explorer.compactFolders": false
+}
