@@ -186,10 +186,10 @@ const App = () => {
             if (toggleValue) {
                 //mark all messages as read
                 if (unreadMessagesCount > 0) {
-                    await handleMarkAllAsRead();
                     setUnreadMessagesCount(0);
                     setUnreadMessages([]);
                     setBadgeCount(0);
+                    await handleMarkAllAsRead();
                 }
                 //get conversation
                 if (!loadingConversation) {
@@ -214,7 +214,7 @@ const App = () => {
             sender_id: shop_id,
             limit: 5
         });
-        if (data?.docs && Array.isArray(data?.docs)) {
+        if (data?.docs && Array.isArray(data?.docs) && !isWidgetOpened()) {
             setUnreadMessagesCount(data.totalDocs);
             //parse to message type in widget
             setUnreadMessages(
@@ -226,7 +226,7 @@ const App = () => {
 
     const handleGetMessages = async payload => {
         const data = await fetchGetMessages({
-            limit: 1000
+            limit: 500
         });
         if (data?.docs && Array.isArray(data?.docs)) {
             for (let i = data?.docs.length - 1; i >= 0; i--) {
