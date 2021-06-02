@@ -27,22 +27,31 @@ const initialState = {
 };
 
 const messagesReducer = {
-    [ADD_NEW_USER_MESSAGE]: (state: MessagesState, { text, id }) => ({
+    [ADD_NEW_USER_MESSAGE]: (
+        state: MessagesState,
+        { text, id, timestamp }
+    ) => ({
         ...state,
         messages: [
             ...state.messages,
-            createNewMessage(text, MESSAGE_SENDER.CLIENT, id)
+            createNewMessage(text, MESSAGE_SENDER.CLIENT, id, timestamp)
         ]
     }),
 
     [ADD_NEW_RESPONSE_MESSAGE]: (
         state: MessagesState,
-        { text, id, unread }
+        { text, id, unread, timestamp }
     ) => ({
         ...state,
         messages: [
             ...state.messages,
-            createNewMessage(text, MESSAGE_SENDER.RESPONSE, id, unread)
+            createNewMessage(
+                text,
+                MESSAGE_SENDER.RESPONSE,
+                id,
+                unread,
+                timestamp
+            )
         ],
         badgeCount:
             unread === undefined ? state.badgeCount + 1 : state.badgeCount

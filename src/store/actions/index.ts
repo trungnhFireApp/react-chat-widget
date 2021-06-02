@@ -23,25 +23,29 @@ export function toggleWidgetLoader(): actionsTypes.ToggleWidgetLoader {
 
 export function addUserMessage(
     text: string,
-    id?: string
+    id?: string,
+    timestamp?: Date
 ): actionsTypes.AddUserMessage {
     return {
         type: actionsTypes.ADD_NEW_USER_MESSAGE,
         text,
-        id
+        id,
+        timestamp
     };
 }
 
 export function addResponseMessage(
     text: string,
     id?: string,
-    unread?: boolean
+    unread?: boolean,
+    timestamp?: Date
 ): actionsTypes.AddResponseMessage {
     return {
         type: actionsTypes.ADD_NEW_RESPONSE_MESSAGE,
         text,
         id,
-        unread
+        unread,
+        timestamp
     };
 }
 

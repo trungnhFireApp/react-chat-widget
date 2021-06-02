@@ -8,6 +8,7 @@ declare const Widget: ElementType;
 
 export function addUserMessage(text: string): void;
 export function addUserMessage(text: string, id: string): void;
+export function addUserMessage(text: string, id: string, timestamp: Date): void;
 
 export function addResponseMessage(text: string): void;
 export function addResponseMessage(text: string, id: string): void;
@@ -15,6 +16,13 @@ export function addResponseMessage(
     text: string,
     id: string,
     unread: boolean
+): void;
+
+export function addResponseMessage(
+    text: string,
+    id: string,
+    unread: boolean,
+    timestamp: Date
 ): void;
 
 export function addLinkSnippet(link: {

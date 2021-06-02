@@ -20,9 +20,8 @@ function Toast({
     handleMarkMessageAsRead,
     unreadMessagesInBubble
 }: Props) {
-    // const { showChat } = useSelector((state: GlobalState) => ({
-    //     // messages: state.messages.messages,
-    //     showChat: state.behavior.showChat
+    // const { messages } = useSelector((state: GlobalState) => ({
+    //     messages: state.messages.messages
     // }));
     return (
         <ToastList

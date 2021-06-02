@@ -232,10 +232,19 @@ const App = () => {
             for (let i = data?.docs.length - 1; i >= 0; i--) {
                 const meg = data?.docs[i];
                 if (meg.sender === MESSAGE_SENDER.CLIENT) {
-                    addUserMessage(meg.message, meg._id);
+                    addUserMessage(
+                        meg.message,
+                        meg._id,
+                        new Date(meg.created_at)
+                    );
                 }
                 if (meg.sender === MESSAGE_SENDER.RESPONSE) {
-                    addResponseMessage(meg.message, meg._id, false); // default set unread for all messages from api
+                    addResponseMessage(
+                        meg.message,
+                        meg._id,
+                        false,
+                        new Date(meg.created_at)
+                    ); // default set unread for all messages from api
                 }
             }
         }

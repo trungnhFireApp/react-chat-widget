@@ -11,26 +11,35 @@ import { Message } from 'src/store/types';
 import './styles.scss';
 
 type Props = {
-  message: Message;
-  showTimeStamp: boolean;
-}
+    message: Message;
+    showTimeStamp: boolean;
+};
 
 function Message({ message, showTimeStamp }: Props) {
-  const sanitizedHTML = markdownIt()
-    .use(markdownItClass, {
-      img: ['rcw-message-img']
-    })
-    .use(markdownItSup)
-    .use(markdownItSanitizer)
-    .use(markdownItLinkAttributes, { attrs: { target: '_blank', rel: 'noopener' } })
-    .render(message.text);
+    const sanitizedHTML = markdownIt()
+        .use(markdownItClass, {
+            img: ['rcw-message-img']
+        })
+        .use(markdownItSup)
+        .use(markdownItSanitizer)
+        .use(markdownItLinkAttributes, {
+            attrs: { target: '_blank', rel: 'noopener' }
+        })
+        .render(message.text);
 
-  return (
-    <div className={`rcw-${message.sender}`}>
-      <div className="rcw-message-text" dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />
-      {showTimeStamp && <span className="rcw-timestamp">{format(message.timestamp, 'hh:mm')}</span>}
-    </div>
-  );
+    return (
+        <div className={`rcw-${message.sender}`}>
+            <div
+                className="rcw-message-text"
+                dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
+            />
+            {showTimeStamp && (
+                <span className="rcw-timestamp">
+                    {format(message.timestamp, 'hh:mm')}
+                </span>
+            )}
+        </div>
+    );
 }
 
 export default Message;

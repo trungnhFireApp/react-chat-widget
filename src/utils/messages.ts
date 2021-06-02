@@ -21,14 +21,15 @@ export function createNewMessage(
     text: string,
     sender: string,
     id?: string,
-    unread?: boolean
+    unread?: boolean,
+    timestamp?: Date
 ): MessageI {
     return {
         type: MESSAGES_TYPES.TEXT,
         component: Message,
         text,
         sender,
-        timestamp: new Date(),
+        timestamp: timestamp || new Date(),
         showAvatar: sender === MESSAGE_SENDER.RESPONSE,
         customId: id,
         unread:
