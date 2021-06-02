@@ -226,7 +226,7 @@ const App = () => {
 
     const handleGetMessages = async payload => {
         const data = await fetchGetMessages({
-            limit: 10
+            limit: 1000
         });
         if (data?.docs && Array.isArray(data?.docs)) {
             for (let i = data?.docs.length - 1; i >= 0; i--) {
