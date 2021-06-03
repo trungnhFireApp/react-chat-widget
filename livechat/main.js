@@ -113,7 +113,7 @@ const App = () => {
 
     const handleInitSocket = (query = {}, auth = {}) => {
         const socket = socketService(process.env.SOCKET_URL, {
-            transport: ['websocket'],
+            transports: ['websocket'],
             query: { ...query },
             auth: { ...auth }
         });

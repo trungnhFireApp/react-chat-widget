@@ -20,7 +20,7 @@ module.exports = () => {
 
     return {
         entry: {
-            'widget-pro': path.resolve(__dirname, 'livechat/index.js')
+            'widget-staging': path.resolve(__dirname, 'livechat/index.js')
         },
         output: {
             path: path.join(__dirname, '/dist'),
