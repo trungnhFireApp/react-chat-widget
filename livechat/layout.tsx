@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Widget,
     addUserMessage,
@@ -12,7 +12,7 @@ import {
     setBadgeCount,
     isWidgetOpened
 } from '../index';
-import socketService from './service/socket';
+import socketService, { Socket } from './service/socket';
 import {
     openConversation,
     getMessages,
@@ -21,37 +21,59 @@ import {
 } from './service/conversion';
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
-import { getStorage, STORAGE_KEY, setStorage } from './storage';
+import { STORAGE_KEY, setStorage } from './storage';
 import {
     getConversationInfo,
     getShopInfo,
     mappingMessgesWigetDTOFromApi,
     mappingMessgesWigetDTOFromSocket
 } from './utils/common';
-import './styles.scss';
 
-let socketClient = null;
+import './styles.scss';
+import { GlobalState, Message, Conversation } from './types';
+import {
+    setConversationInfo,
+    setLoadConversation,
+    setLoadMessage,
+    setUnreadCount,
+    setUnreadMessages
+} from './store/actions';
+
+let socketClient: Socket;
 
 const MESSAGE_SENDER = {
     CLIENT: 'audience',
     RESPONSE: 'shop'
 };
 
-const App = () => {
+const defaultPagingConfig = {
+    limit: 5,
+    page: 1
+};
+
+const Layout = () => {
+    const dispatch = useDispatch();
     const rc = requestCancel();
     const cancelToken = rc.token;
 
-    const [hasConversationInfo, setHasConversationInfo] = useState(false);
-    const [loadingConversation, setLoadingConversation] = useState(false);
-    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-    const [unreadMessages, setUnreadMessages] = useState([]);
+    const {
+        conversation,
+        loadConversation,
+        loadMessage,
+        unreadCount,
+        unreadMessages
+    } = useSelector((state: GlobalState) => ({
+        loadConversation: state.behavior.loadConversation,
+        loadMessage: state.behavior.loadMessage,
+        conversation: state.conversation.conversation,
+        unreadCount: state.messages.unreadCount,
+        unreadMessages: state.messages.unreadMessages
+    }));
 
     useEffect(() => {
         checkConverstationInfo();
-
         // toggleInputDisabled()
         // handleInitSocket();
-
         // addResponseMessage('Welcome to this awesome chat!');
         // setTimeout(() => {
         //     addLinkSnippet({ link: 'https://google.com', title: 'Google' });
@@ -69,22 +91,22 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        if (loadingConversation) {
+        if (loadConversation) {
             handleToggleWidget();
         }
-    }, [loadingConversation]);
+    }, [loadConversation]);
 
     useEffect(() => {
-        if (hasConversationInfo) {
+        if (conversation) {
             handleConnectToConversation();
-            handleGetMessages();
+            handleGetMessages(defaultPagingConfig);
             handleGetUnReadMessages();
         }
-    }, [hasConversationInfo]);
+    }, [conversation]);
 
     const checkConverstationInfo = () => {
         const conversationInfo = getConversationInfo();
-        setHasConversationInfo(conversationInfo ? true : false);
+        dispatch(setConversationInfo(conversationInfo));
     };
 
     const handleToggleWidget = () => {
@@ -112,7 +134,7 @@ const App = () => {
     };
 
     const handleInitSocket = (query = {}, auth = {}) => {
-        const socket = socketService(process.env.SOCKET_URL, {
+        const socket = socketService(process.env.SOCKET_URL as string, {
             transports: ['websocket'],
             query: { ...query },
             auth: { ...auth }
@@ -133,12 +155,14 @@ const App = () => {
         if (data?.sender !== MESSAGE_SENDER.CLIENT) {
             addResponseMessage(data.message, data.id);
             if (!isWidgetOpened()) {
-                setUnreadMessagesCount(state => state + 1);
-                setUnreadMessages(state => {
-                    return [...state].concat(
-                        mappingMessgesWigetDTOFromSocket(data)
-                    );
-                });
+                dispatch(setUnreadCount(unreadCount + 1));
+                dispatch(
+                    setUnreadMessages(
+                        [...unreadMessages].concat(
+                            mappingMessgesWigetDTOFromSocket(data as Message)
+                        )
+                    )
+                );
             }
         }
     };
@@ -181,27 +205,40 @@ const App = () => {
     //     // return true;
     // };
 
+    // useEffect(() => {
+    //     console.log('paginationMessage :>> ', paginationMessage);
+    // }, [paginationMessage]);
+
+    const handleScrollTop = async () => {
+        // console.log('handleScrollTop', paginationMessage);
+        if (!loadMessage) {
+            dispatch(setLoadMessage(true));
+            defaultPagingConfig.page += 1;
+            await handleGetMessages(defaultPagingConfig);
+            dispatch(setLoadMessage(false));
+        }
+    };
+
     const handleToggle = async toggleValue => {
         try {
             if (toggleValue) {
                 //mark all messages as read
-                if (unreadMessagesCount > 0) {
-                    setUnreadMessagesCount(0);
-                    setUnreadMessages([]);
+                if (unreadCount > 0) {
+                    dispatch(setUnreadCount(0));
+                    dispatch(setUnreadMessages([]));
                     setBadgeCount(0);
                     await handleMarkAllAsRead();
                 }
                 //get conversation
-                if (!loadingConversation) {
-                    setLoadingConversation(true);
+                if (!loadConversation) {
+                    dispatch(setLoadConversation(true));
                     await handleGetConversation();
-                    // handleConnectToConversation();
-                    setLoadingConversation(false);
+                    dispatch(setLoadConversation(false));
                     handleToggleWidget();
                 }
             }
         } catch (error) {
-            setLoadingConversation(false);
+            dispatch(setLoadConversation(false));
             handleToggleWidget();
         }
     };
@@ -215,19 +252,19 @@ const App = () => {
             limit: 5
         });
         if (data?.docs && Array.isArray(data?.docs) && !isWidgetOpened()) {
-            setUnreadMessagesCount(data.totalDocs);
+            dispatch(setUnreadCount(data.totalDocs));
             //parse to message type in widget
-            setUnreadMessages(
-                data.docs.map(p => mappingMessgesWigetDTOFromApi(p))
+            dispatch(
+                setUnreadMessages(
+                    data.docs.map(p => mappingMessgesWigetDTOFromApi(p))
+                )
             );
             setBadgeCount(data.totalDocs > 100 ? 99 : data.totalDocs);
         }
     };
 
-    const handleGetMessages = async payload => {
-        const data = await fetchGetMessages({
-            limit: 500
-        });
+    const handleGetMessages = async (payload = {}) => {
+        const data = await fetchGetMessages(payload);
         if (data?.docs && Array.isArray(data?.docs)) {
             for (let i = data?.docs.length - 1; i >= 0; i--) {
                 const meg = data?.docs[i];
@@ -262,7 +299,7 @@ const App = () => {
     };
 
     const handleGetConversation = async () => {
-        if (!hasConversationInfo) {
+        if (!conversation) {
             const { shop_id, msUUID } = getShopInfo();
             const { id = '' } = await handleGetAudience({
                 shop_id,
@@ -275,14 +312,20 @@ const App = () => {
                     audience_id: `${id}`
                 });
                 if (rep.code === 1000) {
-                    setStorage({
-                        key: STORAGE_KEY.conversationInfo,
-                        value: JSON.stringify({
+                    setStorage(
+                        STORAGE_KEY.conversationInfo,
+                        JSON.stringify({
                             ...rep.data,
                             audience_id: id
                         })
-                    });
-                    setHasConversationInfo(true);
+                    );
+                    const conversationInfo = {
+                        id: shop_id,
+                        audience_id: id,
+                        hmac: rep.hmac,
+                        timestamp: rep.hmac
+                    } as Conversation;
+                    dispatch(setConversationInfo(conversationInfo));
                 }
             }
         }
@@ -317,8 +360,10 @@ const App = () => {
         const conversationInfo = getConversationInfo();
         const { shop_id } = getShopInfo();
         if (messageId) {
-            setUnreadMessages(state =>
-                state.filter(p => p.customId !== messageId)
+            dispatch(
+                setUnreadMessages([
+                    ...unreadMessages.filter(p => p.customId !== messageId)
+                ])
             );
             const req = await markMessageAsRead({
                 conversation_id: conversationInfo.id,
@@ -330,17 +375,17 @@ const App = () => {
     };
 
     //tạo inbox giả phía shop
-    const [rsText, setRsText] = useState('');
-    const handleSendResponse = e => {
-        const conversationInfo = getConversationInfo();
-        const { shop_id } = getShopInfo();
-        socketClient.emit(conversationInfo.id, {
-            message: rsText,
-            sender: MESSAGE_SENDER.RESPONSE,
-            sender_id: shop_id
-        });
-        setRsText('');
-    };
+    // const [rsText, setRsText] = useState('');
+    // const handleSendResponse = e => {
+    //     const conversationInfo = getConversationInfo();
+    //     const { shop_id } = getShopInfo();
+    //     socketClient.emit(conversationInfo.id, {
+    //         message: rsText,
+    //         sender: MESSAGE_SENDER.RESPONSE,
+    //         sender_id: shop_id
+    //     });
+    //     setRsText('');
+    // };
 
     return (
         <div>
@@ -371,9 +416,10 @@ const App = () => {
                 handleToggle={handleToggle}
                 handleMarkMessageAsRead={handleMarkMessageAsRead}
                 unreadMessagesInBubble={unreadMessages}
+                handleScrollTop={handleScrollTop}
             />
         </div>
     );
 };
 
-export default App;
+export default Layout;

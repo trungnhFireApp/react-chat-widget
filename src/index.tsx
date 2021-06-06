@@ -33,6 +33,7 @@ type Props = {
     handleSubmit?: AnyFunction;
     handleMarkMessageAsRead?: AnyFunction;
     unreadMessagesInBubble?: Array<any>;
+    handleScrollTop?: AnyFunction;
 } & typeof defaultProps;
 
 function ConnectedWidget({
@@ -60,7 +61,8 @@ function ConnectedWidget({
     zoomStep,
     handleSubmit,
     handleMarkMessageAsRead,
-    unreadMessagesInBubble
+    unreadMessagesInBubble,
+    handleScrollTop
 }: Props) {
     return (
         <Provider store={store}>
@@ -90,6 +92,7 @@ function ConnectedWidget({
                 handleSubmit={handleSubmit}
                 handleMarkMessageAsRead={handleMarkMessageAsRead}
                 unreadMessagesInBubble={unreadMessagesInBubble}
+                handleScrollTop={handleScrollTop}
             />
         </Provider>
     );

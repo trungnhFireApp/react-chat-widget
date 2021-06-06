@@ -38,6 +38,7 @@ type Props = {
     zoomStep?: number;
     handleMarkMessageAsRead?: AnyFunction;
     unreadMessagesInBubble?: Array<any>;
+    handleScrollTop?: AnyFunction;
 };
 
 function WidgetLayout({
@@ -64,7 +65,8 @@ function WidgetLayout({
     imagePreview,
     zoomStep,
     handleMarkMessageAsRead,
-    unreadMessagesInBubble
+    unreadMessagesInBubble,
+    handleScrollTop
 }: Props) {
     const dispatch = useDispatch();
     const { dissableInput, showChat, visible } = useSelector(
@@ -158,6 +160,7 @@ function WidgetLayout({
                         onTextInputChange={onTextInputChange}
                         sendButtonAlt={sendButtonAlt}
                         showTimeStamp={showTimeStamp}
+                        handleScrollTop={handleScrollTop}
                     />
                 )}
 

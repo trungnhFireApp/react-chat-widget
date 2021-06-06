@@ -14,7 +14,7 @@ import { STORAGE_KEY } from './storageKey';
  *      driver: 'local_storage'
  * });
  */
-export function getStorage({ key, driver = undefined, ...params }) {
+export function getStorage(key: string, driver?: string, ...params: string[]) {
     if (driver === undefined) {
         driver = process.env.STORAGE_DRIVER
             ? process.env.STORAGE_DRIVER
@@ -25,15 +25,15 @@ export function getStorage({ key, driver = undefined, ...params }) {
             return localStorage.getItem(key);
         case 'session_storage':
             return sessionStorage.getItem(key);
-        case 'cookie':
-            var value = '; ' + document.cookie;
-            var parts = value.split('; ' + key + '=');
-            if (parts.length === 2)
-                return parts
-                    .pop()
-                    .split(';')
-                    .shift();
-            return undefined;
+        // case 'cookie':
+        //     var value = '; ' + document.cookie;
+        //     var parts = value.split('; ' + key + '=');
+        //     if (parts && parts?.length === 2)
+        //         return parts
+        //             .pop()
+        //             .split(';')
+        //             .shift();
+        //     return undefined;
         case 'global_variable':
             if (
                 window.ManySalesGlobalParams === undefined ||
@@ -61,7 +61,11 @@ export function getStorage({ key, driver = undefined, ...params }) {
  *      driver: 'local_storage'
  * });
  */
-export function removeStorage({ key, driver = undefined, ...params }) {
+export function removeStorage(
+    key: string,
+    driver?: string,
+    ...params: string[]
+) {
     if (driver === undefined) {
         driver = process.env.STORAGE_DRIVER
             ? process.env.STORAGE_DRIVER
@@ -74,12 +78,12 @@ export function removeStorage({ key, driver = undefined, ...params }) {
         case 'session_storage':
             sessionStorage.removeItem(key);
             break;
-        case 'cookie':
-            setStorage({ key, value: '', driver, ...params });
+            // case 'cookie':
+            //     setStorage(key, '' , driver, params );
             break;
         case 'global_variable':
             if (window.ManySalesGlobalParams !== undefined) {
-                delete window.ManySalesGlobalParams.key;
+                delete window.ManySalesGlobalParams['key'];
             }
             break;
         default:
@@ -103,7 +107,12 @@ export function removeStorage({ key, driver = undefined, ...params }) {
  *      value: 'PdTLXzLfOx'
  * });
  */
-export function setStorage({ key, value, driver = undefined, ...params }) {
+export function setStorage(
+    key: string,
+    value: string,
+    driver?: string,
+    ...params: string[]
+): void {
     if (driver === undefined) {
         driver = process.env.STORAGE_DRIVER
             ? process.env.STORAGE_DRIVER
@@ -116,18 +125,18 @@ export function setStorage({ key, value, driver = undefined, ...params }) {
         case 'session_storage':
             sessionStorage.setItem(key, value);
             break;
-        case 'cookie':
-            let cookieValue = `${key}=${value}`;
-            let expires = 1 * 24 * 60 * 60 * 1000;
-            if (params.expires && !isNaN(params.expires)) {
-                expires = new Date(Date.now() + params.expires).toUTCString();
-            }
-            cookieValue += '; expires=' + expires;
-            if (params.path) {
-                cookieValue += '; path=' + params.path;
-            }
-            document.cookie = cookieValue;
-            break;
+        // case 'cookie':
+        //     let cookieValue = `${key}=${value}`;
+        //     let expires = 1 * 24 * 60 * 60 * 1000;
+        //     if (params.expires && !isNaN(params.expires)) {
+        //         expires = new Date(Date.now() + params.expires).toUTCString();
+        //     }
+        //     cookieValue += '; expires=' + expires;
+        //     if (params.path) {
+        //         cookieValue += '; path=' + params.path;
+        //     }
+        //     document.cookie = cookieValue;
+        //     break;
         case 'global_variable':
             if (window.ManySalesGlobalParams === undefined) {
                 window.ManySalesGlobalParams = {};

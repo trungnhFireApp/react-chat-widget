@@ -1,8 +1,9 @@
-import io from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 import { socketChanel } from './socketChanel';
-let client = null;
 
-const socketService = (socketUrl, socketOptions = {}) => {
+let client: Socket;
+
+const socketService = (socketUrl: string, socketOptions?: any) => {
     function init() {
         client = io(socketUrl, {
             autoConnect: false,
@@ -37,10 +38,10 @@ const socketService = (socketUrl, socketOptions = {}) => {
 
     return {
         close: () => client && client.disconnect(),
-        getClient: () => client
+        getClient: (): Socket => client
     };
 };
 
-export { socketChanel };
+export { socketChanel, Socket };
 
 export default socketService;

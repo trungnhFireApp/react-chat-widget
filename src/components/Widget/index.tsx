@@ -33,6 +33,7 @@ type Props = {
     handleSubmit?: AnyFunction;
     handleMarkMessageAsRead?: AnyFunction;
     unreadMessagesInBubble?: Array<any>;
+    handleScrollTop?: AnyFunction;
 };
 
 function Widget({
@@ -60,7 +61,8 @@ function Widget({
     zoomStep,
     handleSubmit,
     handleMarkMessageAsRead,
-    unreadMessagesInBubble
+    unreadMessagesInBubble,
+    handleScrollTop
 }: Props) {
     const dispatch = useDispatch();
 
@@ -114,6 +116,7 @@ function Widget({
             zoomStep={zoomStep}
             handleMarkMessageAsRead={handleMarkMessageAsRead}
             unreadMessagesInBubble={unreadMessagesInBubble}
+            handleScrollTop={handleScrollTop}
         />
     );
 }

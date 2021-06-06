@@ -17,13 +17,26 @@ const initialState = {
 };
 
 const behaviorReducer = {
-    [TOGGLE_CHAT]: (state: BehaviorState) => ({ ...state, showChat: !state.showChat }),
+    [TOGGLE_CHAT]: (state: BehaviorState) => ({
+        ...state,
+        showChat: !state.showChat
+    }),
 
-    [TOGGLE_INPUT_DISABLED]: (state: BehaviorState) => ({ ...state, disabledInput: !state.disabledInput }),
+    [TOGGLE_INPUT_DISABLED]: (state: BehaviorState) => ({
+        ...state,
+        disabledInput: !state.disabledInput
+    }),
 
-    [TOGGLE_MESSAGE_LOADER]: (state: BehaviorState) => ({ ...state, messageLoader: !state.messageLoader }),
+    [TOGGLE_MESSAGE_LOADER]: (state: BehaviorState) => ({
+        ...state,
+        messageLoader: !state.messageLoader
+    }),
 
-    [TOGGLE_WIDGET_LOADER]: (state: BehaviorState) => ({ ...state, widgetLoader: !state.widgetLoader })
+    [TOGGLE_WIDGET_LOADER]: (state: BehaviorState) => ({
+        ...state,
+        widgetLoader: !state.widgetLoader
+    })
 };
 
-export default (state: BehaviorState = initialState, action: BehaviorActions) => createReducer(behaviorReducer, state, action);
+export default (state: BehaviorState = initialState, action: BehaviorActions) =>
+    createReducer(behaviorReducer, state, action);

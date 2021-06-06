@@ -20,14 +20,17 @@ import { setBadgeCount, markAllMessagesRead } from '@actions';
 
 import Loader from './components/Loader';
 import Spinner from './components/Spinner';
+import { AnyFunction } from '../../../../../../utils/types';
+
 import './styles.scss';
 
 type Props = {
     showTimeStamp: boolean;
     profileAvatar?: string;
+    handleScrollTop?: AnyFunction;
 };
 
-function Messages({ profileAvatar, showTimeStamp }: Props) {
+function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
     const dispatch = useDispatch();
     const {
         messages,
@@ -53,6 +56,19 @@ function Messages({ profileAvatar, showTimeStamp }: Props) {
                 setBadgeCount(messages.filter(message => message.unread).length)
             );
     }, [messages, badgeCount, showChat]);
+
+    useEffect(() => {
+        const messagesContainer = document.querySelector(
+            '.rcw-messages-container'
+        );
+        messagesContainer?.addEventListener('scroll', onScrollTop);
+        return () =>
+            messagesContainer?.removeEventListener('scroll', onScrollTop);
+    }, []);
+
+    const onScrollTop = e => {
+        e.target.scrollTop === 0 && handleScrollTop?.();
+    };
 
     const getComponentToRender = (
         message: Message | Link | CustomCompMessage

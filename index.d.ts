@@ -49,6 +49,7 @@ export function renderCustomComponent(
 ): void;
 
 export function toggleMsgLoader(): void;
+export function toggleWidgetLoader(): void;
 export function toggleWidget(): void;
 export function toggleInputDisabled(): void;
 export function dropMessages(): void;
