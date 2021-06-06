@@ -1,10 +1,11 @@
-import { Conversation, WidgetMessage } from '../../types';
+import { Conversation, WidgetMessage, Message } from '../../types';
 
 export const SET_CONVERSATION_INFO = 'CONVERSATION/SET_CONVERSATION_INFO';
 export const SET_LOAD_CONVERSATION = 'BEHAVIOR/SET_LOAD_CONVERSATION';
 export const SET_LOAD_MESSAGE = 'BEHAVIOR/SET_LOAD_MESSAGE';
 export const SET_UNREAD_COUNT = 'MESSAGES/SET_UNREAD_COUNT';
 export const SET_UNREAD_MESSAGES = 'MESSAGES/SET_UNREAD_MESSAGES';
+export const SET_MESSAGES = 'MESSAGES/SET_MESSAGES';
 
 /* Conversation actions */
 export interface SetConversationInfo {
@@ -34,6 +35,11 @@ export interface SetUnreadMessages {
     unreadMessages: WidgetMessage[];
 }
 
+export interface SetMessages {
+    type: typeof SET_MESSAGES;
+    messages: Message[];
+}
+
 export type ConversationActions = SetConversationInfo;
 export type BehaviorActions = SetLoadConversation | SetLoadMessage;
-export type MessageActions = SetUnreadCount | SetUnreadMessages;
+export type MessageActions = SetUnreadCount | SetUnreadMessages | SetMessages;

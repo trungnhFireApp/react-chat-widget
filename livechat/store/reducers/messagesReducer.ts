@@ -2,6 +2,7 @@ import { MessagesState } from '../../types';
 import {
     SET_UNREAD_COUNT,
     SET_UNREAD_MESSAGES,
+    SET_MESSAGES,
     MessageActions
 } from '../actions/types';
 import { createReducer } from '../../utils/createReducer';
@@ -20,6 +21,10 @@ const messagesReducer = {
     [SET_UNREAD_MESSAGES]: (state: MessagesState, { unreadMessages }) => ({
         ...state,
         unreadMessages: unreadMessages
+    }),
+    [SET_MESSAGES]: (state: MessagesState, { messages }) => ({
+        ...state,
+        messages: messages
     })
 };
 

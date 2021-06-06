@@ -9,6 +9,9 @@ export const SET_BADGE_COUNT = 'BEHAVIOR/SET_BADGE_COUNT';
 export const TOGGLE_WIDGET_LOADER = 'BEHAVIOR/TOGGLE_WIDGET_LOADER';
 export const ADD_NEW_USER_MESSAGE = 'MESSAGES/ADD_NEW_USER_MESSAGE';
 export const ADD_NEW_RESPONSE_MESSAGE = 'MESSAGES/ADD_NEW_RESPONSE_MESSAGE';
+export const UNSHIFT_NEW_USER_MESSAGE = 'MESSAGES/UNSHIFT_NEW_USER_MESSAGE';
+export const UNSHIFT_NEW_RESPONSE_MESSAGE =
+    'MESSAGES/UNSHIFT_NEW_RESPONSE_MESSAGE';
 export const ADD_NEW_LINK_SNIPPET = 'MESSAGES/ADD_NEW_LINK_SNIPPET';
 export const ADD_COMPONENT_MESSAGE = 'MESSAGES/ADD_COMPONENT_MESSAGE';
 export const DROP_MESSAGES = 'MESSAGES/DROP_MESSAGES';
@@ -41,6 +44,21 @@ export interface AddUserMessage {
 
 export interface AddResponseMessage {
     type: typeof ADD_NEW_RESPONSE_MESSAGE;
+    text: string;
+    id?: string;
+    unread?: boolean;
+    timestamp?: Date;
+}
+
+export interface UnshiftUserMessage {
+    type: typeof UNSHIFT_NEW_USER_MESSAGE;
+    text: string;
+    id?: string;
+    timestamp?: Date;
+}
+
+export interface UnshiftResponseMessage {
+    type: typeof UNSHIFT_NEW_RESPONSE_MESSAGE;
     text: string;
     id?: string;
     unread?: boolean;
@@ -108,6 +126,8 @@ export type BehaviorActions =
 export type MessagesActions =
     | AddUserMessage
     | AddResponseMessage
+    | UnshiftUserMessage
+    | UnshiftResponseMessage
     | AddLinkSnippet
     | RenderCustomComponent
     | DropMessages

@@ -33,3 +33,15 @@ export const mappingMessgesWigetDTOFromSocket = (
     customId: p.id,
     unread: true
 });
+
+// export const mappingMessgesDTOFromApi = (
+//     p: WidgetMessage
+// ): Message => ({
+//     type: 'text',
+//     text: p.message,
+//     sender: p.sender,
+//     timestamp: p.created_at,
+//     showAvatar: false,
+//     customId: p.id,
+//     unread: true
+// });

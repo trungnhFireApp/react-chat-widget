@@ -17,6 +17,23 @@ export function addResponseMessage(
     store.dispatch(actions.addResponseMessage(text, id, unread, timestamp));
 }
 
+export function unshiftUserMessage(
+    text: string,
+    id?: string,
+    timestamp?: Date
+) {
+    store.dispatch(actions.unshiftUserMessage(text, id, timestamp));
+}
+
+export function unshiftResponseMessage(
+    text: string,
+    id?: string,
+    unread?: boolean,
+    timestamp?: Date
+) {
+    store.dispatch(actions.unshiftResponseMessage(text, id, unread, timestamp));
+}
+
 export function addLinkSnippet(link: LinkParams, id?: string) {
     store.dispatch(actions.addLinkSnippet(link, id));
 }

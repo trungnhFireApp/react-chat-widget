@@ -11,6 +11,8 @@ import {
     MessagesActions,
     ADD_NEW_USER_MESSAGE,
     ADD_NEW_RESPONSE_MESSAGE,
+    UNSHIFT_NEW_USER_MESSAGE,
+    UNSHIFT_NEW_RESPONSE_MESSAGE,
     ADD_NEW_LINK_SNIPPET,
     ADD_COMPONENT_MESSAGE,
     DROP_MESSAGES,
@@ -52,6 +54,36 @@ const messagesReducer = {
                 unread,
                 timestamp
             )
+        ],
+        badgeCount:
+            unread === undefined ? state.badgeCount + 1 : state.badgeCount
+    }),
+
+    [UNSHIFT_NEW_USER_MESSAGE]: (
+        state: MessagesState,
+        { text, id, timestamp }
+    ) => ({
+        ...state,
+        messages: [
+            createNewMessage(text, MESSAGE_SENDER.CLIENT, id, timestamp),
+            ...state.messages
+        ]
+    }),
+
+    [UNSHIFT_NEW_RESPONSE_MESSAGE]: (
+        state: MessagesState,
+        { text, id, unread, timestamp }
+    ) => ({
+        ...state,
+        messages: [
+            createNewMessage(
+                text,
+                MESSAGE_SENDER.RESPONSE,
+                id,
+                unread,
+                timestamp
+            ),
+            ...state.messages
         ],
         badgeCount:
             unread === undefined ? state.badgeCount + 1 : state.badgeCount

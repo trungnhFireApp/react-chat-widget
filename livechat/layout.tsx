@@ -4,6 +4,8 @@ import {
     Widget,
     addUserMessage,
     addResponseMessage,
+    unshiftUserMessage,
+    unshiftResponseMessage,
     setQuickButtons,
     toggleMsgLoader,
     addLinkSnippet,
@@ -36,7 +38,8 @@ import {
     setLoadConversation,
     setLoadMessage,
     setUnreadCount,
-    setUnreadMessages
+    setUnreadMessages,
+    setMessages
 } from './store/actions';
 
 let socketClient: Socket;
@@ -61,13 +64,15 @@ const Layout = () => {
         loadConversation,
         loadMessage,
         unreadCount,
-        unreadMessages
+        unreadMessages,
+        messages
     } = useSelector((state: GlobalState) => ({
         loadConversation: state.behavior.loadConversation,
         loadMessage: state.behavior.loadMessage,
         conversation: state.conversation.conversation,
         unreadCount: state.messages.unreadCount,
-        unreadMessages: state.messages.unreadMessages
+        unreadMessages: state.messages.unreadMessages,
+        messages: state.messages.messages
     }));
 
     useEffect(() => {
@@ -103,6 +108,29 @@ const Layout = () => {
             handleGetUnReadMessages();
         }
     }, [conversation]);
+
+    useEffect(() => {
+        if (messages.length > 0) {
+            for (let i = 0; i < messages.length; i++) {
+                const meg = messages[i];
+                if (meg.sender === MESSAGE_SENDER.CLIENT) {
+                    unshiftUserMessage(
+                        meg.message,
+                        meg.id,
+                        new Date(meg.created_at)
+                    );
+                }
+                if (meg.sender === MESSAGE_SENDER.RESPONSE) {
+                    unshiftResponseMessage(
+                        meg.message,
+                        meg.id,
+                        false,
+                        new Date(meg.created_at)
+                    ); // default set unread for all messages from api
+                }
+            }
+        }
+    }, [messages]);
 
     const checkConverstationInfo = () => {
         const conversationInfo = getConversationInfo();
@@ -266,24 +294,41 @@ const Layout = () => {
     const handleGetMessages = async (payload = {}) => {
         const data = await fetchGetMessages(payload);
         if (data?.docs && Array.isArray(data?.docs)) {
-            for (let i = data?.docs.length - 1; i >= 0; i--) {
-                const meg = data?.docs[i];
-                if (meg.sender === MESSAGE_SENDER.CLIENT) {
-                    addUserMessage(
-                        meg.message,
-                        meg._id,
-                        new Date(meg.created_at)
-                    );
-                }
-                if (meg.sender === MESSAGE_SENDER.RESPONSE) {
-                    addResponseMessage(
-                        meg.message,
-                        meg._id,
-                        false,
-                        new Date(meg.created_at)
-                    ); // default set unread for all messages from api
-                }
-            }
+            dispatch(
+                setMessages(
+                    [...data?.docs].map(
+                        p =>
+                            ({
+                                id: p._id,
+                                created_at: p.created_at,
+                                is_seen: p.is_seen,
+                                message: p.message,
+                                sender: p.sender,
+                                sender_id: p.sender_id,
+                                status: p.status,
+                                conversation_id: p.conversation_id
+                            } as Message)
+                    )
+                )
+            );
+            // for (let i = data?.docs.length - 1; i >= 0; i--) {
+            //     const meg = data?.docs[i];
+            //     if (meg.sender === MESSAGE_SENDER.CLIENT) {
+            //         addUserMessage(
+            //             meg.message,
+            //             meg._id,
+            //             new Date(meg.created_at)
+            //         );
+            //     }
+            //     if (meg.sender === MESSAGE_SENDER.RESPONSE) {
+            //         addResponseMessage(
+            //             meg.message,
+            //             meg._id,
+            //             false,
+            //             new Date(meg.created_at)
+            //         ); // default set unread for all messages from api
+            //     }
+            // }
         }
     };
 

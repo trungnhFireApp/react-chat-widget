@@ -49,6 +49,34 @@ export function addResponseMessage(
     };
 }
 
+export function unshiftUserMessage(
+    text: string,
+    id?: string,
+    timestamp?: Date
+): actionsTypes.UnshiftUserMessage {
+    return {
+        type: actionsTypes.UNSHIFT_NEW_USER_MESSAGE,
+        text,
+        id,
+        timestamp
+    };
+}
+
+export function unshiftResponseMessage(
+    text: string,
+    id?: string,
+    unread?: boolean,
+    timestamp?: Date
+): actionsTypes.UnshiftResponseMessage {
+    return {
+        type: actionsTypes.UNSHIFT_NEW_RESPONSE_MESSAGE,
+        text,
+        id,
+        unread,
+        timestamp
+    };
+}
+
 export function toggleMsgLoader(): actionsTypes.ToggleMsgLoader {
     return {
         type: actionsTypes.TOGGLE_MESSAGE_LOADER
