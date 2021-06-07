@@ -1,7 +1,7 @@
-import { BubbleMessage, GlobalState } from '@types';
+import { Message } from './../../types';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { AnyFunction } from 'src/utils/types';
+// import { useSelector } from 'react-redux';
+import { AnyFunction } from './../../utils/types';
 import ToastList from './components/ToastList';
 import './style.scss';
 
@@ -10,7 +10,8 @@ type Props = {
     autoDelete: boolean;
     dismissTime?: number;
     handleMarkMessageAsRead?: AnyFunction;
-    unreadMessagesInBubble?: Array<any>;
+    unreadMessagesInBubble?: Array<Message>;
+    markMessageRead?: AnyFunction;
 };
 
 function Toast({
@@ -18,19 +19,20 @@ function Toast({
     autoDelete,
     dismissTime,
     handleMarkMessageAsRead,
-    unreadMessagesInBubble
+    unreadMessagesInBubble,
+    markMessageRead
 }: Props) {
     // const { messages } = useSelector((state: GlobalState) => ({
     //     messages: state.messages.messages
     // }));
     return (
         <ToastList
-            // toastList={messages.filter(message => message.unread)}
-            toastList={unreadMessagesInBubble as Array<BubbleMessage>}
+            toastList={unreadMessagesInBubble as Array<Message>}
             position={position}
             autoDelete={autoDelete}
             dismissTime={dismissTime}
             handleMarkMessageAsRead={handleMarkMessageAsRead}
+            markMessageRead={markMessageRead}
         ></ToastList>
     );
 }

@@ -9,7 +9,7 @@ import { openFullscreenPreview } from '@actions';
 import Conversation from './components/Conversation';
 import Launcher from './components/Launcher';
 import FullScreenPreview from './components/FullScreenPreview';
-import Toast from './components/Toast';
+// import Toast from './components/Toast';
 
 import './style.scss';
 
@@ -36,8 +36,6 @@ type Props = {
     showTimeStamp: boolean;
     imagePreview?: boolean;
     zoomStep?: number;
-    handleMarkMessageAsRead?: AnyFunction;
-    unreadMessagesInBubble?: Array<any>;
     handleScrollTop?: AnyFunction;
 };
 
@@ -64,8 +62,6 @@ function WidgetLayout({
     showTimeStamp,
     imagePreview,
     zoomStep,
-    handleMarkMessageAsRead,
-    unreadMessagesInBubble,
     handleScrollTop
 }: Props) {
     const dispatch = useDispatch();
@@ -131,12 +127,12 @@ function WidgetLayout({
 
     return (
         <>
-            <Toast
+            {/* <Toast
                 unreadMessagesInBubble={unreadMessagesInBubble}
                 position="bottom-right"
                 autoDelete={false}
                 handleMarkMessageAsRead={handleMarkMessageAsRead}
-            />
+            /> */}
             <div
                 className={cn('rcw-widget-container', {
                     'rcw-full-screen': fullScreenMode,

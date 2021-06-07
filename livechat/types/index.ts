@@ -30,7 +30,7 @@ export interface SocketMessagePayload {
 
 export interface MessagesState {
     messages: Message[];
-    unreadMessages: WidgetMessage[];
+    unreadMessages: Message[];
     unreadCount: number;
 }
 

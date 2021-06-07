@@ -1,4 +1,4 @@
-import { Conversation, WidgetMessage, Message } from '../../types';
+import { Conversation, Message } from '../../types';
 
 export const SET_CONVERSATION_INFO = 'CONVERSATION/SET_CONVERSATION_INFO';
 export const SET_LOAD_CONVERSATION = 'BEHAVIOR/SET_LOAD_CONVERSATION';
@@ -32,7 +32,7 @@ export interface SetUnreadCount {
 
 export interface SetUnreadMessages {
     type: typeof SET_UNREAD_MESSAGES;
-    unreadMessages: WidgetMessage[];
+    unreadMessages: Message[];
 }
 
 export interface SetMessages {

@@ -12,7 +12,8 @@ import {
     toggleInputDisabled,
     toggleWidgetLoader,
     setBadgeCount,
-    isWidgetOpened
+    isWidgetOpened,
+    markAllAsRead as WidgetMarkMessageRead
 } from '../index';
 import socketService, { Socket } from './service/socket';
 import {
@@ -24,12 +25,7 @@ import {
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
 import { STORAGE_KEY, setStorage } from './storage';
-import {
-    getConversationInfo,
-    getShopInfo,
-    mappingMessgesWigetDTOFromApi,
-    mappingMessgesWigetDTOFromSocket
-} from './utils/common';
+import { getConversationInfo, getShopInfo } from './utils/common';
 
 import './styles.scss';
 import { GlobalState, Message, Conversation } from './types';
@@ -41,6 +37,8 @@ import {
     setUnreadMessages,
     setMessages
 } from './store/actions';
+
+import Toast from './components/Toast';
 
 let socketClient: Socket;
 
@@ -186,9 +184,7 @@ const Layout = () => {
                 dispatch(setUnreadCount(unreadCount + 1));
                 dispatch(
                     setUnreadMessages(
-                        [...unreadMessages].concat(
-                            mappingMessgesWigetDTOFromSocket(data as Message)
-                        )
+                        [...unreadMessages].concat(data as Message)
                     )
                 );
             }
@@ -224,18 +220,6 @@ const Layout = () => {
     //     addResponseMessage('Selected ' + e);
     //     setQuickButtons([]);
     // };
-
-    // const handleSubmit = msgText => {
-    //     // if (msgText.length < 80) {
-    //     //     addUserMessage('Uh oh, please write a bit more.');
-    //     //     return false;
-    //     // }
-    //     // return true;
-    // };
-
-    // useEffect(() => {
-    //     console.log('paginationMessage :>> ', paginationMessage);
-    // }, [paginationMessage]);
 
     const handleScrollTop = async () => {
         // console.log('handleScrollTop', paginationMessage);
@@ -282,11 +266,7 @@ const Layout = () => {
         if (data?.docs && Array.isArray(data?.docs) && !isWidgetOpened()) {
             dispatch(setUnreadCount(data.totalDocs));
             //parse to message type in widget
-            dispatch(
-                setUnreadMessages(
-                    data.docs.map(p => mappingMessgesWigetDTOFromApi(p))
-                )
-            );
+            dispatch(setUnreadMessages(data.docs.map(p => p as Message)));
             setBadgeCount(data.totalDocs > 100 ? 99 : data.totalDocs);
         }
     };
@@ -311,24 +291,6 @@ const Layout = () => {
                     )
                 )
             );
-            // for (let i = data?.docs.length - 1; i >= 0; i--) {
-            //     const meg = data?.docs[i];
-            //     if (meg.sender === MESSAGE_SENDER.CLIENT) {
-            //         addUserMessage(
-            //             meg.message,
-            //             meg._id,
-            //             new Date(meg.created_at)
-            //         );
-            //     }
-            //     if (meg.sender === MESSAGE_SENDER.RESPONSE) {
-            //         addResponseMessage(
-            //             meg.message,
-            //             meg._id,
-            //             false,
-            //             new Date(meg.created_at)
-            //         ); // default set unread for all messages from api
-            //     }
-            // }
         }
     };
 
@@ -407,7 +369,7 @@ const Layout = () => {
         if (messageId) {
             dispatch(
                 setUnreadMessages([
-                    ...unreadMessages.filter(p => p.customId !== messageId)
+                    ...unreadMessages.filter(p => p.id !== messageId)
                 ])
             );
             const req = await markMessageAsRead({
@@ -419,35 +381,15 @@ const Layout = () => {
         }
     };
 
-    //tạo inbox giả phía shop
-    // const [rsText, setRsText] = useState('');
-    // const handleSendResponse = e => {
-    //     const conversationInfo = getConversationInfo();
-    //     const { shop_id } = getShopInfo();
-    //     socketClient.emit(conversationInfo.id, {
-    //         message: rsText,
-    //         sender: MESSAGE_SENDER.RESPONSE,
-    //         sender_id: shop_id
-    //     });
-    //     setRsText('');
-    // };
-
     return (
         <div>
-            {/* <div
-                style={{
-                    position: 'fixed',
-                    bottom: 200,
-                    right: 500,
-                    background: '#fff'
-                }}
-            >
-                <input
-                    value={rsText}
-                    onChange={e => setRsText(e.target.value)}
-                ></input>
-                <button onClick={handleSendResponse}>Submit response</button>
-            </div> */}
+            <Toast
+                unreadMessagesInBubble={unreadMessages}
+                position="bottom-right"
+                autoDelete={false}
+                handleMarkMessageAsRead={handleMarkMessageAsRead}
+                markMessageRead={WidgetMarkMessageRead}
+            />
             <Widget
                 title="Welcome"
                 subtitle="How can we help?"
@@ -459,8 +401,8 @@ const Layout = () => {
                 imagePreview
                 // handleSubmit={handleSubmit}
                 handleToggle={handleToggle}
-                handleMarkMessageAsRead={handleMarkMessageAsRead}
-                unreadMessagesInBubble={unreadMessages}
+                // handleMarkMessageAsRead={handleMarkMessageAsRead}
+                // unreadMessagesInBubble={unreadMessages}
                 handleScrollTop={handleScrollTop}
             />
         </div>

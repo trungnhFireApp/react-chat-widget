@@ -87,6 +87,10 @@ export function markAllAsRead() {
     store.dispatch(actions.markAllMessagesRead());
 }
 
+export function markMessageRead(id?: string) {
+    store.dispatch(actions.markMessageRead(id));
+}
+
 export function setBadgeCount(count: number) {
     store.dispatch(actions.setBadgeCount(count));
 }

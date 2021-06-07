@@ -2,7 +2,7 @@ import { Dispatch, Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import * as actionTypes from '../actions/types';
-import { Conversation, GlobalState, WidgetMessage, Message } from '../../types';
+import { Conversation, GlobalState, Message } from '../../types';
 
 /* Conversation actions */
 export const setConversationInfo = (
@@ -52,7 +52,7 @@ export const setUnreadCount = (
 };
 
 export const setUnreadMessages = (
-    payload: WidgetMessage[]
+    payload: Message[]
 ): ThunkAction<void, GlobalState, null, Action<string>> => (
     dispatch: Dispatch<actionTypes.MessageActions>
 ) => {

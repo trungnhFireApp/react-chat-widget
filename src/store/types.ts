@@ -15,10 +15,6 @@ export interface Message extends BaseMessage {
     text: string;
 }
 
-export interface BubbleMessage extends BaseMessage {
-    text: string;
-}
-
 export type QuickButton = {
     label: string;
     value: string | number;

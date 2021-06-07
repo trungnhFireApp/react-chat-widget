@@ -31,8 +31,6 @@ type Props = {
     imagePreview?: boolean;
     zoomStep?: number;
     handleSubmit?: AnyFunction;
-    handleMarkMessageAsRead?: AnyFunction;
-    unreadMessagesInBubble?: Array<any>;
     handleScrollTop?: AnyFunction;
 } & typeof defaultProps;
 
@@ -60,8 +58,6 @@ function ConnectedWidget({
     imagePreview,
     zoomStep,
     handleSubmit,
-    handleMarkMessageAsRead,
-    unreadMessagesInBubble,
     handleScrollTop
 }: Props) {
     return (
@@ -90,8 +86,6 @@ function ConnectedWidget({
                 imagePreview={imagePreview}
                 zoomStep={zoomStep}
                 handleSubmit={handleSubmit}
-                handleMarkMessageAsRead={handleMarkMessageAsRead}
-                unreadMessagesInBubble={unreadMessagesInBubble}
                 handleScrollTop={handleScrollTop}
             />
         </Provider>
