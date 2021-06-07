@@ -47,9 +47,12 @@ function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
     }));
 
     const messageRef = useRef<HTMLDivElement | null>(null);
+    // scroll top = 0 sẽ call api,  biến này dùng để chặn lần scroll đầu tiên khi widget mở ra
+    const scrollStoredValueRef = useRef(false);
+
     useEffect(() => {
         // @ts-ignore
-        scrollToBottom(messageRef.current);
+        // scrollToBottom(messageRef.current);
         if (showChat && badgeCount) dispatch(markAllMessagesRead());
         else
             dispatch(
@@ -64,10 +67,37 @@ function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
         messagesContainer?.addEventListener('scroll', onScrollTop);
         return () =>
             messagesContainer?.removeEventListener('scroll', onScrollTop);
-    }, []);
+    }, [messages]);
+
+    useEffect(() => {
+        if (showChat) {
+            // @ts-ignore
+            scrollToBottom(messageRef.current);
+        }
+        if (!scrollStoredValueRef.current && showChat) {
+            //TODO: tìm solution khác thay vì dùng setTimeout
+            setTimeout(() => {
+                scrollStoredValueRef.current = true;
+            }, 500);
+        }
+    }, [showChat]);
+
+    const handleScrolToLastMessage = () => {
+        const lastMesId =
+            messages[0].customId ||
+            `0-${format(messages[0].timestamp, 'hh:mm')}`;
+        const firstMes = document.getElementById(lastMesId);
+        if (firstMes) {
+            firstMes.scrollIntoView();
+        }
+    };
 
     const onScrollTop = e => {
-        e.target.scrollTop === 0 && handleScrollTop?.();
+        if (e.target.scrollTop === 0 && scrollStoredValueRef.current) {
+            handleScrollTop?.();
+            //cần scroll đến message cuối cùng trước đó để cải thiện UX
+            handleScrolToLastMessage();
+        }
     };
 
     const getComponentToRender = (
@@ -99,24 +129,22 @@ function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
                 <Spinner />
             ) : (
                 <>
-                    {messages?.map((message, index) => (
-                        <div
-                            className="rcw-message"
-                            key={`${index}-${format(
-                                message.timestamp,
-                                'hh:mm'
-                            )}`}
-                        >
-                            {profileAvatar && message.showAvatar && (
-                                <img
-                                    src={profileAvatar}
-                                    className="rcw-avatar"
-                                    alt="profile"
-                                />
-                            )}
-                            {getComponentToRender(message)}
-                        </div>
-                    ))}
+                    {messages?.map((message, index) => {
+                        const id = `${message.customId ||
+                            `${index}-${format(message.timestamp, 'hh:mm')}`}`;
+                        return (
+                            <div className="rcw-message" id={id} key={id}>
+                                {profileAvatar && message.showAvatar && (
+                                    <img
+                                        src={profileAvatar}
+                                        className="rcw-avatar"
+                                        alt="profile"
+                                    />
+                                )}
+                                {getComponentToRender(message)}
+                            </div>
+                        );
+                    })}
                     <Loader typing={typing} />
                 </>
             )}
