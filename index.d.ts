@@ -74,6 +74,7 @@ export function deleteMessages(count: number): void;
 export function deleteMessages(count: number, id: string): void;
 
 export function markAllAsRead(): void;
+export function markMessageRead(id: string): void;
 export function setBadgeCount(count: number): void;
 
 export as namespace ReactChatWidget;

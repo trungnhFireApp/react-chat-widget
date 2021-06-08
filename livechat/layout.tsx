@@ -13,7 +13,7 @@ import {
     toggleWidgetLoader,
     setBadgeCount,
     isWidgetOpened,
-    markAllAsRead as WidgetMarkMessageRead
+    markMessageRead as WidgetMarkMessageRead
 } from '../index';
 import socketService, { Socket } from './service/socket';
 import {
@@ -39,13 +39,9 @@ import {
 } from './store/actions';
 
 import Toast from './components/Toast';
+import { MESSAGE_SENDER } from './constant';
 
 let socketClient: Socket;
-
-const MESSAGE_SENDER = {
-    CLIENT: 'audience',
-    RESPONSE: 'shop'
-};
 
 const defaultPagingConfig = {
     limit: 5,
@@ -114,14 +110,14 @@ const Layout = () => {
                 if (meg.sender === MESSAGE_SENDER.CLIENT) {
                     unshiftUserMessage(
                         meg.message,
-                        meg.id,
+                        meg._id,
                         new Date(meg.created_at)
                     );
                 }
                 if (meg.sender === MESSAGE_SENDER.RESPONSE) {
                     unshiftResponseMessage(
                         meg.message,
-                        meg.id,
+                        meg._id,
                         false,
                         new Date(meg.created_at)
                     ); // default set unread for all messages from api
@@ -187,6 +183,9 @@ const Layout = () => {
                         [...unreadMessages].concat(data as Message)
                     )
                 );
+            } else {
+                // đánh dấu message đã đọc nếu widget đang mở
+                socketClient.emit('messageId_action', { _id: data.id });
             }
         }
     };
@@ -222,7 +221,6 @@ const Layout = () => {
     // };
 
     const handleScrollTop = async () => {
-        // console.log('handleScrollTop', paginationMessage);
         if (!loadMessage) {
             dispatch(setLoadMessage(true));
             defaultPagingConfig.page += 1;
@@ -265,7 +263,6 @@ const Layout = () => {
         });
         if (data?.docs && Array.isArray(data?.docs) && !isWidgetOpened()) {
             dispatch(setUnreadCount(data.totalDocs));
-            //parse to message type in widget
             dispatch(setUnreadMessages(data.docs.map(p => p as Message)));
             setBadgeCount(data.totalDocs > 100 ? 99 : data.totalDocs);
         }
@@ -279,7 +276,7 @@ const Layout = () => {
                     [...data?.docs].map(
                         p =>
                             ({
-                                id: p._id,
+                                _id: p._id,
                                 created_at: p.created_at,
                                 is_seen: p.is_seen,
                                 message: p.message,
@@ -369,7 +366,7 @@ const Layout = () => {
         if (messageId) {
             dispatch(
                 setUnreadMessages([
-                    ...unreadMessages.filter(p => p.id !== messageId)
+                    ...unreadMessages.filter(p => p._id !== messageId)
                 ])
             );
             const req = await markMessageAsRead({

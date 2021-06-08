@@ -13,7 +13,7 @@ function ToastItem({ message, position, deleteToast }: Props) {
             className={`ms-notification ms-toast ms-${position}`}
             // style={{ backgroundColor: toast.backgroundColor }}
         >
-            <button onClick={() => deleteToast(message.id)}>X</button>
+            <button onClick={() => deleteToast(message._id)}>X</button>
             {/* <div className="notification-image">
             <img src={toast.icon} alt="" />
         </div> */}

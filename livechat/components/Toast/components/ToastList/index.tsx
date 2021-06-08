@@ -27,7 +27,7 @@ function ToastList({
     useEffect(() => {
         const interval = setInterval(() => {
             if (autoDelete && toastList.length && list.length) {
-                deleteToast(toastList[0].id);
+                deleteToast(toastList[0]._id);
             }
         }, dismissTime);
         return () => {

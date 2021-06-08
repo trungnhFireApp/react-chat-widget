@@ -11,7 +11,7 @@ type Shop = {
 };
 
 export interface Message {
-    id: string;
+    _id: string;
     created_at: Date;
     is_seen: boolean;
     message: string;
