@@ -3,7 +3,7 @@ import { SET_CONVERSATION_INFO, ConversationActions } from '../actions/types';
 import { createReducer } from '../../utils/createReducer';
 
 const initialState = {
-    conversation: null
+    conversation: {} as Conversation
 };
 
 const conversationReducer = {
@@ -13,5 +13,7 @@ const conversationReducer = {
     })
 };
 
-export default (state = initialState, action: ConversationActions) =>
-    createReducer(conversationReducer, state, action);
+export default (
+    state: ConversationState = initialState,
+    action: ConversationActions
+) => createReducer(conversationReducer, state, action);

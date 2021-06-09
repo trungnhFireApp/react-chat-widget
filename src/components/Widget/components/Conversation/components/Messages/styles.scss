@@ -2,23 +2,42 @@
 @import 'common';
 
 .rcw-messages-container {
-  background-color: $white;
-  height: 50vh;
-  max-height: 410px;
-  overflow-y: scroll;
-  padding-top: 10px;
-  -webkit-overflow-scrolling: touch;
+    background-color: $white;
+    height: 50vh;
+    max-height: 410px;
+    overflow-y: scroll;
+    padding-top: 10px;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+        border-radius: 30px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #fff !important;
+        border-color: #f1f1f1 !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #c1c1c1 !important;
+        border-color: #c1c1c1 !important;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8 !important;
+        border-color: #a8a8a8 !important;
+    }
 }
 
 .rcw-full-screen {
-
-  .rcw-messages-container {
-    @include messages-container-fs;
-  }
+    .rcw-messages-container {
+        @include messages-container-fs;
+    }
 }
 
-@media screen and (max-width: 800px)  {
-  .rcw-messages-container {
-    @include messages-container-fs;
-  }
+@media screen and (max-width: 800px) {
+    .rcw-messages-container {
+        @include messages-container-fs;
+    }
 }

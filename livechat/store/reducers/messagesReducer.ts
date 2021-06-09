@@ -28,5 +28,5 @@ const messagesReducer = {
     })
 };
 
-export default (state = initialState, action: MessageActions) =>
+export default (state: MessagesState = initialState, action: MessageActions) =>
     createReducer(messagesReducer, state, action);

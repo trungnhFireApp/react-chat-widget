@@ -2,6 +2,7 @@ import { ElementType } from 'react';
 
 import * as actionsTypes from './types';
 import { LinkParams, ImageState } from '../types';
+import { CustomWidget } from '../customTypes';
 
 export function toggleChat(): actionsTypes.ToggleChat {
     return {
@@ -174,5 +175,14 @@ export function openFullscreenPreview(
 export function closeFullscreenPreview(): actionsTypes.FullscreenPreviewActions {
     return {
         type: actionsTypes.CLOSE_FULLSCREEN_PREVIEW
+    };
+}
+
+export function setCustomWidget(
+    customWidget: CustomWidget
+): actionsTypes.SetCustomWidget {
+    return {
+        type: actionsTypes.SET_CUSTOM_WIDGET,
+        customWidget: customWidget
     };
 }

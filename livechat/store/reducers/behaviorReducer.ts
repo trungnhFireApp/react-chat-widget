@@ -22,5 +22,5 @@ const behaviorReducer = {
     })
 };
 
-export default (state = initialState, action: BehaviorActions) =>
+export default (state: BehaviorState = initialState, action: BehaviorActions) =>
     createReducer(behaviorReducer, state, action);

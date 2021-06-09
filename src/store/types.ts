@@ -1,4 +1,5 @@
 import { ElementType } from 'react';
+import { CustomWidget } from './customTypes';
 
 type BaseMessage = {
     type: string;
@@ -42,6 +43,7 @@ export interface BehaviorState {
     disabledInput: boolean;
     messageLoader: boolean;
     widgetLoader: boolean;
+    customWidget: CustomWidget;
 }
 
 export interface MessagesState {

@@ -1,12 +1,14 @@
 import { ElementType } from 'react';
 
 import { LinkParams, FullscreenPreviewState } from '../types';
+import { CustomWidget } from '../customTypes';
 
 export const TOGGLE_CHAT = 'BEHAVIOR/TOGGLE_CHAT';
 export const TOGGLE_INPUT_DISABLED = 'BEHAVIOR/TOGGLE_INPUT_DISABLED';
 export const TOGGLE_MESSAGE_LOADER = 'BEHAVIOR/TOGGLE_MSG_LOADER';
 export const SET_BADGE_COUNT = 'BEHAVIOR/SET_BADGE_COUNT';
 export const TOGGLE_WIDGET_LOADER = 'BEHAVIOR/TOGGLE_WIDGET_LOADER';
+export const SET_CUSTOM_WIDGET = 'BEHAVIOR/SET_CUSTOM_WIDGET';
 export const ADD_NEW_USER_MESSAGE = 'MESSAGES/ADD_NEW_USER_MESSAGE';
 export const ADD_NEW_RESPONSE_MESSAGE = 'MESSAGES/ADD_NEW_RESPONSE_MESSAGE';
 export const UNSHIFT_NEW_USER_MESSAGE = 'MESSAGES/UNSHIFT_NEW_USER_MESSAGE';
@@ -117,11 +119,17 @@ export interface MarkMessageAsRead {
     id?: string;
 }
 
+export interface SetCustomWidget {
+    type: typeof SET_CUSTOM_WIDGET;
+    customWidget: CustomWidget;
+}
+
 export type BehaviorActions =
     | ToggleChat
     | ToggleInputDisabled
     | ToggleMsgLoader
-    | ToggleWidgetLoader;
+    | ToggleWidgetLoader
+    | SetCustomWidget;
 
 export type MessagesActions =
     | AddUserMessage

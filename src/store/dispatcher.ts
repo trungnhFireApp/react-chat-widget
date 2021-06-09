@@ -2,6 +2,7 @@ import { ElementType } from 'react';
 
 import store from '.';
 import * as actions from './actions';
+import { CustomWidget } from './customTypes';
 import { LinkParams, ImageState } from './types';
 
 export function addUserMessage(text: string, id?: string, timestamp?: Date) {
@@ -101,4 +102,8 @@ export function openFullscreenPreview(payload: ImageState) {
 
 export function closeFullscreenPreview() {
     store.dispatch(actions.closeFullscreenPreview());
+}
+
+export function setCustomWidget(customWidget: CustomWidget) {
+    store.dispatch(actions.setCustomWidget(customWidget));
 }

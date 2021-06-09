@@ -3,6 +3,7 @@
 // Definitions by: Martín Callegari <https://github.com/mcallegari10>
 
 import { ElementType } from 'react';
+import { CustomWidget } from './src/store/customTypes';
 
 declare const Widget: ElementType;
 
@@ -76,5 +77,7 @@ export function deleteMessages(count: number, id: string): void;
 export function markAllAsRead(): void;
 export function markMessageRead(id: string): void;
 export function setBadgeCount(count: number): void;
+export function setCustomWidget(customWidget: CustomWidget): void;
+export type CustomWidgetType = CustomWidget;
 
 export as namespace ReactChatWidget;

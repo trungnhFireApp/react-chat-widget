@@ -13,6 +13,7 @@ import {
     toggleWidgetLoader,
     setBadgeCount,
     isWidgetOpened,
+    setCustomWidget,
     markMessageRead as WidgetMarkMessageRead
 } from '../index';
 import socketService, { Socket } from './service/socket';
@@ -40,6 +41,7 @@ import {
 
 import Toast from './components/Toast';
 import { MESSAGE_SENDER } from './constant';
+import defaultCustomWidget from './storage/defaultCustomWidget';
 
 let socketClient: Socket;
 
@@ -71,6 +73,10 @@ const Layout = () => {
 
     useEffect(() => {
         checkConverstationInfo();
+        // const customWidget: CustomWidgetType = {
+        //     ...defaultCustomWidget
+        // };
+        setCustomWidget(defaultCustomWidget);
         // toggleInputDisabled()
         // handleInitSocket();
         // addResponseMessage('Welcome to this awesome chat!');
@@ -393,6 +399,7 @@ const Layout = () => {
                 senderPlaceHolder="Write a response"
                 // profileAvatar="https://app-stag.manysales.io/images/logo.png"
                 titleAvatar="https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg"
+                showCloseButton={true}
                 handleNewUserMessage={handleNewUserMessage}
                 // handleQuickButtonClicked={handleQuickButtonClicked}
                 imagePreview

@@ -16,7 +16,8 @@ import {
     deleteMessages,
     markAllAsRead,
     markMessageRead,
-    setBadgeCount
+    setBadgeCount,
+    setCustomWidget
 } from './src/store/dispatcher';
 
 export {
@@ -37,5 +38,6 @@ export {
     deleteMessages,
     markAllAsRead,
     markMessageRead,
-    setBadgeCount
+    setBadgeCount,
+    setCustomWidget
 };
