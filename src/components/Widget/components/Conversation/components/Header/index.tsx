@@ -1,10 +1,24 @@
 import { GlobalState } from '@types';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import TeammateComponent from './components/TeammateComponent';
 
 // const close = require('../../../../../../../assets/clear-button.svg') as string;
 
 import './style.scss';
+
+//define default data để nếu api lỗi hay die thì cũng có data default hiển thị
+const defaultData = {
+    teammate: [
+        {
+            name: 'ManySales - Pop-up, Email, SMS',
+            avatar:
+                'https://cdn.shopify.com/s/files/1/0269/3490/2873/files/Webp.net-resizeimage_32x32.png?v=1585904252',
+            status: 'online'
+        }
+    ],
+    welcome_message: 'Welcome'
+};
 
 type Props = {
     title: string;
@@ -21,25 +35,26 @@ function Header({
     showCloseButton,
     titleAvatar
 }: Props) {
-    const { customWidget } = useSelector((state: GlobalState) => ({
+    const {
+        customWidget: {
+            style: {
+                active: {
+                    teammate = defaultData.teammate,
+                    default_content: {
+                        welcome_message = defaultData.welcome_message
+                    }
+                }
+            }
+        }
+    } = useSelector((state: GlobalState) => ({
         customWidget: state.behavior.customWidget
     }));
     return (
         <div className="rcw-header">
-            <div className="rcw-teammate">
-                <div className="rcw-teammate-avatar">
-                    {titleAvatar && (
-                        <img
-                            src={titleAvatar}
-                            className="avatar"
-                            alt="profile"
-                        />
-                    )}
-                    <span className="rcw-teammate-status"></span>
-                </div>
-                <h4 className="rcw-title">{title}</h4>
-                <span className="rcw-sub-title">{subtitle}</span>
-            </div>
+            <TeammateComponent
+                teammate={teammate}
+                welcome_message={welcome_message}
+            />
             <div className="rcw-header-action">
                 {showCloseButton && (
                     <button className="rcw-close-button" onClick={toggleChat}>

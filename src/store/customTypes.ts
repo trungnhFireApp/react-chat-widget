@@ -1,5 +1,5 @@
 //styling type
-type Teammate = {
+export type Teammate = {
     name: string;
     avatar: string;
     status: string; // online, offline

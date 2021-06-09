@@ -159,7 +159,6 @@ function WidgetLayout({
                         handleScrollTop={handleScrollTop}
                     />
                 )}
-
                 {customLauncher
                     ? customLauncher(onToggleConversation)
                     : !fullScreenMode && (

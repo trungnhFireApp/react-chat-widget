@@ -59,11 +59,13 @@ function Conversation({
                 showCloseButton={showCloseButton}
                 titleAvatar={titleAvatar}
             />
-            <Messages
-                profileAvatar={profileAvatar}
-                showTimeStamp={showTimeStamp}
-                handleScrollTop={handleScrollTop}
-            />
+            <div className="rcw-conversation-body">
+                <Messages
+                    profileAvatar={profileAvatar}
+                    showTimeStamp={showTimeStamp}
+                    handleScrollTop={handleScrollTop}
+                />
+            </div>
             <QuickButtons onQuickButtonClicked={onQuickButtonClicked} />
             <Sender
                 sendMessage={sendMessage}

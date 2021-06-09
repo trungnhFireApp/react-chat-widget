@@ -41,10 +41,16 @@ const defaultCustomWidget = {
         },
         active: {
             teammate: [
+                // {
+                //     name: 'ManySales - Pop-up, Email, SMS',
+                //     avatar:
+                //         'https://cdn.shopify.com/s/files/1/0269/3490/2873/files/Webp.net-resizeimage_32x32.png?v=1585904252',
+                //     status: 'online' // online, offline
+                // },
                 {
-                    name: 'ManySales - Pop-up, Email, SMS',
+                    name: 'ManySales',
                     avatar:
-                        'https://cdn.shopify.com/s/files/1/0269/3490/2873/files/Webp.net-resizeimage_32x32.png?v=1585904252',
+                        'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg',
                     status: 'online' // online, offline
                 }
             ],
@@ -61,7 +67,7 @@ const defaultCustomWidget = {
             bubble_color_type: 'light', // light, dark
             bubble_color: '#fff',
             default_content: {
-                welcome_message: '',
+                welcome_message: 'Welcome',
                 notice_message: {
                     default: '',
                     office_hour: {}
