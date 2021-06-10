@@ -4,6 +4,7 @@ import behavior from './reducers/behaviorReducer';
 import messages from './reducers/messagesReducer';
 import quickButtons from './reducers/quickButtonsReducer';
 import preview from './reducers/fullscreenPreviewReducer';
+import audience from './reducers/audienceInfoReducer';
 
 declare global {
     interface Window {
@@ -15,6 +16,12 @@ const composeEnhancers =
     (process.env.NODE_ENV !== 'production' &&
         window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
     compose;
-const reducer = combineReducers({ behavior, messages, quickButtons, preview });
+const reducer = combineReducers({
+    behavior,
+    messages,
+    quickButtons,
+    preview,
+    audience
+});
 
 export default createStore(reducer, composeEnhancers());

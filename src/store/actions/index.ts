@@ -1,7 +1,12 @@
 import { ElementType } from 'react';
 
 import * as actionsTypes from './types';
-import { LinkParams, ImageState } from '../types';
+import {
+    LinkParams,
+    ImageState,
+    AudienceInfo,
+    AudienceInfoError
+} from '../types';
 import { CustomWidget } from '../customTypes';
 
 export function toggleChat(): actionsTypes.ToggleChat {
@@ -184,5 +189,23 @@ export function setCustomWidget(
     return {
         type: actionsTypes.SET_CUSTOM_WIDGET,
         customWidget: customWidget
+    };
+}
+
+export function setAudienceInfo(
+    audienceInfo: AudienceInfo
+): actionsTypes.SetAudienceInfo {
+    return {
+        type: actionsTypes.SET_AUDIENCE_INFO,
+        audienceInfo: audienceInfo
+    };
+}
+
+export function validateAudienceInfo(
+    audienceInfoError: AudienceInfoError
+): actionsTypes.ValidateAudienceInfo {
+    return {
+        type: actionsTypes.VALIDATE_AUDIENCE_INFO,
+        audienceInfoError: audienceInfoError
     };
 }

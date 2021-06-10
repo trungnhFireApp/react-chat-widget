@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cn from 'classnames';
 
@@ -37,6 +37,7 @@ type Props = {
     imagePreview?: boolean;
     zoomStep?: number;
     handleScrollTop?: AnyFunction;
+    hasConversation: boolean;
 };
 
 function WidgetLayout({
@@ -62,16 +63,23 @@ function WidgetLayout({
     showTimeStamp,
     imagePreview,
     zoomStep,
-    handleScrollTop
+    handleScrollTop,
+    hasConversation
 }: Props) {
     const dispatch = useDispatch();
-    const { dissableInput, showChat, visible } = useSelector(
-        (state: GlobalState) => ({
-            showChat: state.behavior.showChat,
-            dissableInput: state.behavior.disabledInput,
-            visible: state.preview.visible
-        })
-    );
+    const {
+        customWidgetBehavior,
+        dissableInput,
+        showChat,
+        visible
+    } = useSelector((state: GlobalState) => ({
+        showChat: state.behavior.showChat,
+        dissableInput: state.behavior.disabledInput,
+        customWidgetBehavior: state.behavior.customWidget.behaviour,
+        visible: state.preview.visible
+    }));
+
+    const [showWidget, setShowWidget] = useState<boolean>(false);
 
     const messageRef = useRef<HTMLDivElement | null>(null);
 
@@ -125,61 +133,64 @@ function WidgetLayout({
         );
     }, [fullScreenMode, visible]);
 
+    useEffect(() => {
+        setShowWidget(customWidgetBehavior.visitor.show_launcher.enable);
+    }, [customWidgetBehavior]);
+
     return (
         <>
-            {/* <Toast
-                unreadMessagesInBubble={unreadMessagesInBubble}
-                position="bottom-right"
-                autoDelete={false}
-                handleMarkMessageAsRead={handleMarkMessageAsRead}
-            /> */}
-            <div
-                className={cn('rcw-widget-container', {
-                    'rcw-full-screen': fullScreenMode,
-                    'rcw-previewer': imagePreview
-                })}
-            >
-                {showChat && (
-                    <Conversation
-                        title={title}
-                        subtitle={subtitle}
-                        sendMessage={onSendMessage}
-                        senderPlaceHolder={senderPlaceHolder}
-                        profileAvatar={profileAvatar}
-                        toggleChat={onToggleConversation}
-                        showCloseButton={showCloseButton}
-                        disabledInput={dissableInput}
-                        autofocus={autofocus}
-                        titleAvatar={titleAvatar}
-                        className={showChat ? 'active' : 'hidden'}
-                        onQuickButtonClicked={onQuickButtonClicked}
-                        onTextInputChange={onTextInputChange}
-                        sendButtonAlt={sendButtonAlt}
-                        showTimeStamp={showTimeStamp}
-                        handleScrollTop={handleScrollTop}
-                    />
-                )}
-                {customLauncher
-                    ? customLauncher(onToggleConversation)
-                    : !fullScreenMode && (
-                          <>
-                              <Launcher
-                                  toggle={onToggleConversation}
-                                  chatId={chatId}
-                                  openLabel={launcherOpenLabel}
-                                  closeLabel={launcherCloseLabel}
-                                  closeImg={launcherCloseImg}
-                                  openImg={launcherOpenImg}
-                              />
-                          </>
-                      )}
-                {imagePreview && (
-                    <FullScreenPreview
-                        fullScreenMode={fullScreenMode}
-                        zoomStep={zoomStep}
-                    />
-                )}
-            </div>
+            {showWidget && (
+                <>
+                    <div
+                        className={cn('rcw-widget-container', {
+                            'rcw-full-screen': fullScreenMode,
+                            'rcw-previewer': imagePreview
+                        })}
+                    >
+                        {showChat && (
+                            <Conversation
+                                title={title}
+                                subtitle={subtitle}
+                                sendMessage={onSendMessage}
+                                senderPlaceHolder={senderPlaceHolder}
+                                profileAvatar={profileAvatar}
+                                toggleChat={onToggleConversation}
+                                showCloseButton={showCloseButton}
+                                disabledInput={dissableInput}
+                                autofocus={autofocus}
+                                titleAvatar={titleAvatar}
+                                className={showChat ? 'active' : 'hidden'}
+                                onQuickButtonClicked={onQuickButtonClicked}
+                                onTextInputChange={onTextInputChange}
+                                sendButtonAlt={sendButtonAlt}
+                                showTimeStamp={showTimeStamp}
+                                handleScrollTop={handleScrollTop}
+                                hasConversation={hasConversation}
+                            />
+                        )}
+                        {customLauncher
+                            ? customLauncher(onToggleConversation)
+                            : !fullScreenMode && (
+                                  <>
+                                      <Launcher
+                                          toggle={onToggleConversation}
+                                          chatId={chatId}
+                                          openLabel={launcherOpenLabel}
+                                          closeLabel={launcherCloseLabel}
+                                          closeImg={launcherCloseImg}
+                                          openImg={launcherOpenImg}
+                                      />
+                                  </>
+                              )}
+                        {imagePreview && (
+                            <FullScreenPreview
+                                fullScreenMode={fullScreenMode}
+                                zoomStep={zoomStep}
+                            />
+                        )}
+                    </div>
+                </>
+            )}
         </>
     );
 }

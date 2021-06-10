@@ -32,6 +32,7 @@ type Props = {
     zoomStep?: number;
     handleSubmit?: AnyFunction;
     handleScrollTop?: AnyFunction;
+    hasConversation: boolean;
 };
 
 function Widget({
@@ -58,7 +59,8 @@ function Widget({
     imagePreview,
     zoomStep,
     handleSubmit,
-    handleScrollTop
+    handleScrollTop,
+    hasConversation
 }: Props) {
     const dispatch = useDispatch();
 
@@ -111,6 +113,7 @@ function Widget({
             imagePreview={imagePreview}
             zoomStep={zoomStep}
             handleScrollTop={handleScrollTop}
+            hasConversation={hasConversation}
         />
     );
 }

@@ -24,6 +24,9 @@
 .rcw-conversation-body {
     border-radius: 16px 16px 0 0;
     overflow: hidden;
+    height: 50vh;
+    max-height: 356px;
+    background: $white;
 }
 
 .rcw-full-screen {

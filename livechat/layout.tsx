@@ -71,12 +71,14 @@ const Layout = () => {
         messages: state.messages.messages
     }));
 
+    const [customWidgetSetting, setCustomWidgetSetting] = useState<any>();
+
     useEffect(() => {
         checkConverstationInfo();
         // const customWidget: CustomWidgetType = {
         //     ...defaultCustomWidget
         // };
-        setCustomWidget(defaultCustomWidget);
+        setCustomWidgetSetting(defaultCustomWidget);
         // toggleInputDisabled()
         // handleInitSocket();
         // addResponseMessage('Welcome to this awesome chat!');
@@ -131,6 +133,12 @@ const Layout = () => {
             }
         }
     }, [messages]);
+
+    useEffect(() => {
+        if (customWidgetSetting) {
+            setCustomWidget(customWidgetSetting);
+        }
+    }, [customWidgetSetting]);
 
     const checkConverstationInfo = () => {
         const conversationInfo = getConversationInfo();
@@ -246,12 +254,12 @@ const Layout = () => {
                     await handleMarkAllAsRead();
                 }
                 //get conversation
-                if (!loadConversation) {
-                    dispatch(setLoadConversation(true));
-                    await handleGetConversation();
-                    dispatch(setLoadConversation(false));
-                    handleToggleWidget();
-                }
+                // if (!loadConversation) {
+                //     dispatch(setLoadConversation(true));
+                //     await handleGetConversation();
+                //     dispatch(setLoadConversation(false));
+                //     handleToggleWidget();
+                // }
             }
         } catch (error) {
             dispatch(setLoadConversation(false));
@@ -401,6 +409,7 @@ const Layout = () => {
                 titleAvatar="https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg"
                 showCloseButton={true}
                 handleNewUserMessage={handleNewUserMessage}
+                hasConversation={conversation ? true : false}
                 // handleQuickButtonClicked={handleQuickButtonClicked}
                 imagePreview
                 // handleSubmit={handleSubmit}

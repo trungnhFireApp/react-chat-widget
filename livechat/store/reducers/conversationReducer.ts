@@ -1,9 +1,10 @@
 import { ConversationState, Conversation } from '../../types';
 import { SET_CONVERSATION_INFO, ConversationActions } from '../actions/types';
 import { createReducer } from '../../utils/createReducer';
+import { Nullable } from './../../utils/types';
 
-const initialState = {
-    conversation: {} as Conversation
+const initialState: ConversationState = {
+    conversation: undefined
 };
 
 const conversationReducer = {

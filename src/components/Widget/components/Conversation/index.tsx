@@ -1,14 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import cn from 'classnames';
 
 import Header from './components/Header';
 import Messages from './components/Messages';
 import Sender from './components/Sender';
 import QuickButtons from './components/QuickButtons';
+import Welcome from './components/Welcome';
+import AudienceForm from './components/AudienceForm';
 
 import { AnyFunction } from '../../../../utils/types';
 
 import './style.scss';
+import { GlobalState } from '@types';
 
 type Props = {
     title: string;
@@ -27,6 +31,7 @@ type Props = {
     sendButtonAlt: string;
     showTimeStamp: boolean;
     handleScrollTop?: AnyFunction;
+    hasConversation: boolean;
 };
 
 function Conversation({
@@ -45,8 +50,18 @@ function Conversation({
     onTextInputChange,
     sendButtonAlt,
     showTimeStamp,
-    handleScrollTop
+    handleScrollTop,
+    hasConversation
 }: Props) {
+    const {
+        customWidget: {
+            behaviour: {
+                visitor: { require_information }
+            }
+        }
+    } = useSelector((state: GlobalState) => ({
+        customWidget: state.behavior.customWidget
+    }));
     return (
         <div
             className={cn('rcw-conversation-container', className)}
@@ -60,11 +75,21 @@ function Conversation({
                 titleAvatar={titleAvatar}
             />
             <div className="rcw-conversation-body">
-                <Messages
-                    profileAvatar={profileAvatar}
-                    showTimeStamp={showTimeStamp}
-                    handleScrollTop={handleScrollTop}
-                />
+                {hasConversation ? (
+                    <Messages
+                        profileAvatar={profileAvatar}
+                        showTimeStamp={showTimeStamp}
+                        handleScrollTop={handleScrollTop}
+                    />
+                ) : (
+                    <>
+                        {require_information.enable ? (
+                            <AudienceForm />
+                        ) : (
+                            <Welcome />
+                        )}
+                    </>
+                )}
             </div>
             <QuickButtons onQuickButtonClicked={onQuickButtonClicked} />
             <Sender

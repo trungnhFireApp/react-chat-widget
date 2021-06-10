@@ -7,7 +7,7 @@ const defaultCustomWidget = {
                 match_data: {}
             },
             require_information: {
-                enable: true,
+                enable: false,
                 fields: {
                     name: true,
                     email: true,

@@ -1,6 +1,6 @@
 import { createReducer } from '../../utils/createReducer';
 import { BehaviorState } from '../types';
-import { CustomWidget } from '../customTypes';
+import defaultCustomWidget from './../../utils/defaultCustomWidget';
 
 import {
     BehaviorActions,
@@ -16,7 +16,7 @@ const initialState = {
     disabledInput: false,
     messageLoader: false,
     widgetLoader: false,
-    customWidget: {} as CustomWidget
+    customWidget: defaultCustomWidget
 };
 
 const behaviorReducer = {

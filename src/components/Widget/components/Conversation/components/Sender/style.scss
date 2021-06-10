@@ -21,12 +21,24 @@
     padding-left: 15px;
     resize: none;
     height: 44px;
+    color: $grey-7;
     &:focus {
         outline: none;
     }
 
     &.expand {
         height: 40px;
+    }
+    &::-webkit-input-placeholder {
+        color: $grey-7;
+    }
+
+    &:-ms-input-placeholder {
+        color: $grey-7;
+    }
+
+    &::placeholder {
+        color: $grey-7;
     }
 }
 

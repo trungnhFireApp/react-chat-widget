@@ -1,0 +1,31 @@
+@import 'common';
+@import 'variables/colors';
+
+.rcw-audience-form {
+    padding: 30px 28px;
+    .rcw-audience-form_group {
+        margin-bottom: 10px;
+    }
+    .rcw-audience-form_input {
+        font-size: 14px;
+        border: none;
+        border-bottom: 0.5px solid $grey-6;
+        width: 100%;
+        padding: 8px 0;
+        color: $grey-7;
+        &:focus {
+            outline: none;
+        }
+        &::-webkit-input-placeholder {
+            color: $grey-7;
+        }
+
+        &:-ms-input-placeholder {
+            color: $grey-7;
+        }
+
+        &::placeholder {
+            color: $grey-7;
+        }
+    }
+}
