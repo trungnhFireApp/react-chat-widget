@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { GlobalState } from 'src/store/types';
-import { validateAudienceInfo } from '../../../../../../store/actions';
 
 const send = require('../../../../../../../assets/send_button.svg') as string;
 
@@ -26,24 +25,8 @@ function Sender({
     buttonAlt
 }: Props) {
     const dispatch = useDispatch();
-    const {
-        showChat,
-        audienceInfo,
-        audienceInfoError,
-        customWidget: {
-            behaviour: {
-                visitor: {
-                    require_information: {
-                        fields: { email, name, phone }
-                    }
-                }
-            }
-        }
-    } = useSelector((state: GlobalState) => ({
-        showChat: state.behavior.showChat,
-        audienceInfo: state.audience.audienceInfo,
-        audienceInfoError: state.audience.audienceInfoError,
-        customWidget: state.behavior.customWidget
+    const { showChat } = useSelector((state: GlobalState) => ({
+        showChat: state.behavior.showChat
     }));
     const [text, setText] = useState('');
     const inputRef = useRef<any>(null);
@@ -57,42 +40,8 @@ function Sender({
         onTextInputChange?.(e);
     };
 
-    const validate = () => {
-        dispatch(
-            validateAudienceInfo({
-                ...audienceInfoError,
-                ...(name
-                    ? {
-                          isValid: audienceInfo.name?.trim() ? true : false,
-                          errMes: []
-                      }
-                    : {}),
-                ...(email
-                    ? {
-                          isValid: audienceInfo.email?.trim() ? true : false,
-                          errMes: []
-                      }
-                    : {}),
-                ...(phone
-                    ? {
-                          isValid: audienceInfo.phone?.trim() ? true : false,
-                          errMes: []
-                      }
-                    : {})
-            })
-        );
-    };
-
-    const handleSubmit = event => {
-        event.preventDefault();
-        validate();
-        console.log('audienceInfo :>> ', audienceInfo);
-
-        // sendMessage(e)
-    };
-
     return (
-        <form className="rcw-sender" onSubmit={handleSubmit}>
+        <form className="rcw-sender" onSubmit={sendMessage}>
             <input
                 type="text"
                 className="rcw-new-message"

@@ -18,21 +18,6 @@ export interface AudienceInfo {
     phone?: string;
 }
 
-export interface AudienceInfoError {
-    name: {
-        isValid: boolean;
-        errMes: string[];
-    };
-    email: {
-        isValid: boolean;
-        errMes: string[];
-    };
-    phone: {
-        isValid: boolean;
-        errMes: string[];
-    };
-}
-
 export interface Message extends BaseMessage {
     text: string;
 }
@@ -89,7 +74,6 @@ export interface FullscreenPreviewState extends ImageState {
 
 export interface AudienceState {
     audienceInfo: AudienceInfo;
-    audienceInfoError: AudienceInfoError;
 }
 
 export interface GlobalState {

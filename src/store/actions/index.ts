@@ -1,12 +1,7 @@
 import { ElementType } from 'react';
 
 import * as actionsTypes from './types';
-import {
-    LinkParams,
-    ImageState,
-    AudienceInfo,
-    AudienceInfoError
-} from '../types';
+import { LinkParams, ImageState, AudienceInfo } from '../types';
 import { CustomWidget } from '../customTypes';
 
 export function toggleChat(): actionsTypes.ToggleChat {
@@ -198,14 +193,5 @@ export function setAudienceInfo(
     return {
         type: actionsTypes.SET_AUDIENCE_INFO,
         audienceInfo: audienceInfo
-    };
-}
-
-export function validateAudienceInfo(
-    audienceInfoError: AudienceInfoError
-): actionsTypes.ValidateAudienceInfo {
-    return {
-        type: actionsTypes.VALIDATE_AUDIENCE_INFO,
-        audienceInfoError: audienceInfoError
     };
 }
