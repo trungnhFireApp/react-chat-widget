@@ -38,6 +38,8 @@ type Props = {
     zoomStep?: number;
     handleScrollTop?: AnyFunction;
     hasConversation: boolean;
+    audienceId: number;
+    handleGetAudience: AnyFunction;
 };
 
 function WidgetLayout({
@@ -64,7 +66,9 @@ function WidgetLayout({
     imagePreview,
     zoomStep,
     handleScrollTop,
-    hasConversation
+    hasConversation,
+    audienceId,
+    handleGetAudience
 }: Props) {
     const dispatch = useDispatch();
     const {
@@ -166,6 +170,8 @@ function WidgetLayout({
                                 showTimeStamp={showTimeStamp}
                                 handleScrollTop={handleScrollTop}
                                 hasConversation={hasConversation}
+                                audienceId={audienceId}
+                                handleGetAudience={handleGetAudience}
                             />
                         )}
                         {customLauncher

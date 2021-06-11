@@ -14,7 +14,8 @@ import {
     setBadgeCount,
     isWidgetOpened,
     setCustomWidget,
-    markMessageRead as WidgetMarkMessageRead
+    markMessageRead as WidgetMarkMessageRead,
+    setErrors
 } from '../index';
 import socketService, { Socket } from './service/socket';
 import {
@@ -25,8 +26,13 @@ import {
 } from './service/conversion';
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
-import { STORAGE_KEY, setStorage } from './storage';
-import { getConversationInfo, getShopInfo } from './utils/common';
+import {
+    getConversationInfo,
+    getShopInfo,
+    setConversationInfoToStorage,
+    getAudienceId,
+    setAudienceIdToStorage
+} from './utils/common';
 
 import './styles.scss';
 import { GlobalState, Message, Conversation } from './types';
@@ -42,6 +48,7 @@ import {
 import Toast from './components/Toast';
 import { MESSAGE_SENDER } from './constant';
 import defaultCustomWidget from './storage/defaultCustomWidget';
+import { Nullable } from './utils/types';
 
 let socketClient: Socket;
 
@@ -72,13 +79,12 @@ const Layout = () => {
     }));
 
     const [customWidgetSetting, setCustomWidgetSetting] = useState<any>();
+    const [audienceId, setAudienceId] = useState<Nullable<number>>();
+    const [showWidget, setShowWidget] = useState<boolean>(false);
 
     useEffect(() => {
         checkConverstationInfo();
-        // const customWidget: CustomWidgetType = {
-        //     ...defaultCustomWidget
-        // };
-        setCustomWidgetSetting(defaultCustomWidget);
+        onload();
         // toggleInputDisabled()
         // handleInitSocket();
         // addResponseMessage('Welcome to this awesome chat!');
@@ -142,7 +148,9 @@ const Layout = () => {
 
     const checkConverstationInfo = () => {
         const conversationInfo = getConversationInfo();
-        dispatch(setConversationInfo(conversationInfo));
+        if (conversationInfo) {
+            dispatch(setConversationInfo(conversationInfo));
+        }
     };
 
     const handleToggleWidget = () => {
@@ -178,8 +186,11 @@ const Layout = () => {
         socketClient = socket.getClient();
         socketClient.connect();
         //receive messages
-        const { id } = getConversationInfo();
-        socketClient.on(id, handleReceiveMessage);
+        const conversationInfo = getConversationInfo();
+        if (conversationInfo) {
+            const { id } = conversationInfo;
+            socketClient.on(id, handleReceiveMessage);
+        }
     };
 
     const handleDestroySocket = () => {
@@ -253,6 +264,15 @@ const Layout = () => {
                     setBadgeCount(0);
                     await handleMarkAllAsRead();
                 }
+                //nếu không yêu cầu audience info thì tìm audience bằng msUUID
+                if (
+                    !customWidgetSetting?.behaviour?.visitor
+                        ?.require_information?.enable &&
+                    !audienceId
+                ) {
+                    await handleGetAudience();
+                    console.log(customWidgetSetting);
+                }
                 //get conversation
                 // if (!loadConversation) {
                 //     dispatch(setLoadConversation(true));
@@ -305,41 +325,60 @@ const Layout = () => {
         }
     };
 
-    const handleGetAudience = async payload => {
-        const { shop_id, msUUID } = payload;
+    const onload = async () => {
+        //lấy widget setting
+        setShowWidget(false);
+        const widgetSetting = await fetchGetWidgetSetting();
+        setCustomWidgetSetting(widgetSetting);
+        setShowWidget(true);
+    };
+
+    const handleGetAudience = async (payload?: any) => {
+        const { shop_id, msUUID } = getShopInfo();
         if (msUUID && shop_id) {
-            const req = await findAudience({ uuid: msUUID, shop_id });
+            const req = await findAudience({
+                uuid: msUUID,
+                shop_id,
+                ...payload
+            });
             if (req.code === 1000) {
-                return req.data;
+                // setAudienceIdToStorage(req.data);
+                setAudienceId(req.data);
+            } else {
+                let errors = [];
+
+                if (req.data?.details) {
+                    for (let key in req.data?.details) {
+                        errors = errors.concat(req.data?.details[key]);
+                    }
+                }
+
+                if (errors.length) {
+                    setErrors(errors);
+                }
             }
         }
-        return {};
     };
 
     const handleGetConversation = async () => {
         if (!conversation) {
-            const { shop_id, msUUID } = getShopInfo();
-            const { id = '' } = await handleGetAudience({
-                shop_id,
-                msUUID
-            });
-            if (shop_id && id) {
+            const { shop_id } = getShopInfo();
+            const { audienceId } = getAudienceId();
+            if (shop_id && audienceId) {
                 const rep = await openConversation({
                     cancelToken,
                     shop_id: `${shop_id}`,
-                    audience_id: `${id}`
+                    audience_id: `${audienceId}`
                 });
                 if (rep.code === 1000) {
-                    setStorage(
-                        STORAGE_KEY.conversationInfo,
+                    setConversationInfoToStorage(
                         JSON.stringify({
-                            ...rep.data,
-                            audience_id: id
+                            ...rep.data
                         })
                     );
                     const conversationInfo = {
                         id: shop_id,
-                        audience_id: id,
+                        audience_id: audienceId,
                         hmac: rep.hmac,
                         timestamp: rep.hmac
                     } as Conversation;
@@ -351,73 +390,93 @@ const Layout = () => {
 
     const fetchGetMessages = async (payload = {}) => {
         const conversationInfo = getConversationInfo();
-        const { shop_id } = getShopInfo();
-        const req = await getMessages({
-            id: conversationInfo.id,
-            shop_id: `${shop_id}`,
-            ...payload
-        });
-        if (req?.code === 1000 && req?.data) {
-            return req.data;
+        if (conversationInfo) {
+            const { shop_id } = getShopInfo();
+            const req = await getMessages({
+                id: conversationInfo.id,
+                shop_id: `${shop_id}`,
+                ...payload
+            });
+            if (req?.code === 1000 && req?.data) {
+                return req.data;
+            }
+            return null;
         }
-        return null;
     };
 
     const handleMarkAllAsRead = async (payload = {}) => {
         const conversationInfo = getConversationInfo();
-        const { shop_id } = getShopInfo();
-        const req = await markAllAsRead({
-            ...payload,
-            id: conversationInfo.id,
-            audience_id: conversationInfo.audience_id,
-            shop_id
-        });
-    };
-
-    const handleMarkMessageAsRead = async messageId => {
-        const conversationInfo = getConversationInfo();
-        const { shop_id } = getShopInfo();
-        if (messageId) {
-            dispatch(
-                setUnreadMessages([
-                    ...unreadMessages.filter(p => p._id !== messageId)
-                ])
-            );
-            const req = await markMessageAsRead({
-                conversation_id: conversationInfo.id,
-                // reader_id: messageId,
-                messageId,
+        if (conversationInfo) {
+            const { shop_id } = getShopInfo();
+            const req = await markAllAsRead({
+                ...payload,
+                id: conversationInfo.id,
+                audience_id: conversationInfo.audience_id,
                 shop_id
             });
         }
     };
 
+    const handleMarkMessageAsRead = async messageId => {
+        const conversationInfo = getConversationInfo();
+        if (conversationInfo) {
+            const { shop_id } = getShopInfo();
+            if (messageId) {
+                dispatch(
+                    setUnreadMessages([
+                        ...unreadMessages.filter(p => p._id !== messageId)
+                    ])
+                );
+                const req = await markMessageAsRead({
+                    conversation_id: conversationInfo.id,
+                    // reader_id: messageId,
+                    messageId,
+                    shop_id
+                });
+            }
+        }
+    };
+
+    const fetchGetWidgetSetting = async (): Promise<any> => {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(defaultCustomWidget);
+            }, 2000);
+        });
+    };
+
     return (
         <div>
-            <Toast
-                unreadMessagesInBubble={unreadMessages}
-                position="bottom-right"
-                autoDelete={false}
-                handleMarkMessageAsRead={handleMarkMessageAsRead}
-                markMessageRead={WidgetMarkMessageRead}
-            />
-            <Widget
-                title="Welcome"
-                subtitle="How can we help?"
-                senderPlaceHolder="Write a response"
-                // profileAvatar="https://app-stag.manysales.io/images/logo.png"
-                titleAvatar="https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg"
-                showCloseButton={true}
-                handleNewUserMessage={handleNewUserMessage}
-                hasConversation={conversation ? true : false}
-                // handleQuickButtonClicked={handleQuickButtonClicked}
-                imagePreview
-                // handleSubmit={handleSubmit}
-                handleToggle={handleToggle}
-                // handleMarkMessageAsRead={handleMarkMessageAsRead}
-                // unreadMessagesInBubble={unreadMessages}
-                handleScrollTop={handleScrollTop}
-            />
+            {showWidget && (
+                <>
+                    <Toast
+                        unreadMessagesInBubble={unreadMessages}
+                        position="bottom-right"
+                        autoDelete={false}
+                        handleMarkMessageAsRead={handleMarkMessageAsRead}
+                        markMessageRead={WidgetMarkMessageRead}
+                    />
+                    <Widget
+                        title="Welcome"
+                        subtitle="How can we help?"
+                        senderPlaceHolder="Write a response"
+                        // profileAvatar="https://app-stag.manysales.io/images/logo.png"
+                        titleAvatar="https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg"
+                        showCloseButton={true}
+                        handleNewUserMessage={handleNewUserMessage}
+                        hasConversation={conversation ? true : false}
+                        audienceId={audienceId}
+                        // handleQuickButtonClicked={handleQuickButtonClicked}
+                        imagePreview
+                        // handleSubmit={handleSubmit}
+                        handleToggle={handleToggle}
+                        // handleMarkMessageAsRead={handleMarkMessageAsRead}
+                        // unreadMessagesInBubble={unreadMessages}
+                        handleScrollTop={handleScrollTop}
+                        handleGetAudience={handleGetAudience}
+                    />
+                </>
+            )}
         </div>
     );
 };

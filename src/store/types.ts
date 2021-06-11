@@ -12,12 +12,6 @@ type BaseMessage = {
     props?: any;
 };
 
-export interface AudienceInfo {
-    name?: string;
-    email?: string;
-    phone?: string;
-}
-
 export interface Message extends BaseMessage {
     text: string;
 }
@@ -72,8 +66,8 @@ export interface FullscreenPreviewState extends ImageState {
     visible?: boolean;
 }
 
-export interface AudienceState {
-    audienceInfo: AudienceInfo;
+export interface ErrorState {
+    errors: string[];
 }
 
 export interface GlobalState {
@@ -81,5 +75,5 @@ export interface GlobalState {
     behavior: BehaviorState;
     quickButtons: QuickButtonsState;
     preview: FullscreenPreviewState;
-    audience: AudienceState;
+    error: ErrorState;
 }

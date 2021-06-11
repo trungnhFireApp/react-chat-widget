@@ -1,0 +1,10 @@
+@import 'common';
+@import 'variables/colors';
+
+.rcw-err {
+    text-align: center;
+    .rcw-err-item {
+        font-size: 14px;
+        color: $red-1;
+    }
+}

@@ -19,7 +19,6 @@ import {
 import { setBadgeCount, markAllMessagesRead } from '@actions';
 
 import Loader from './components/Loader';
-import Spinner from './components/Spinner';
 import { AnyFunction } from '../../../../../../utils/types';
 
 import './styles.scss';
@@ -125,29 +124,23 @@ function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
 
     return (
         <div id="messages" className="rcw-messages-container" ref={messageRef}>
-            {widgetLoading ? (
-                <Spinner />
-            ) : (
-                <>
-                    {messages?.map((message, index) => {
-                        const id = `${message.customId ||
-                            `${index}-${format(message.timestamp, 'hh:mm')}`}`;
-                        return (
-                            <div className="rcw-message" id={id} key={id}>
-                                {profileAvatar && message.showAvatar && (
-                                    <img
-                                        src={profileAvatar}
-                                        className="rcw-avatar"
-                                        alt="profile"
-                                    />
-                                )}
-                                {getComponentToRender(message)}
-                            </div>
-                        );
-                    })}
-                    <Loader typing={typing} />
-                </>
-            )}
+            {messages?.map((message, index) => {
+                const id = `${message.customId ||
+                    `${index}-${format(message.timestamp, 'hh:mm')}`}`;
+                return (
+                    <div className="rcw-message" id={id} key={id}>
+                        {profileAvatar && message.showAvatar && (
+                            <img
+                                src={profileAvatar}
+                                className="rcw-avatar"
+                                alt="profile"
+                            />
+                        )}
+                        {getComponentToRender(message)}
+                    </div>
+                );
+            })}
+            <Loader typing={typing} />
         </div>
     );
 }

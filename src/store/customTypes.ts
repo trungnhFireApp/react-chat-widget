@@ -61,9 +61,8 @@ type Behavior = {
                 phone: boolean;
             };
             when: {
-                always: boolean;
-                never: boolean;
-                out_site_office_hour: boolean;
+                value: string;
+                out_site_office_hour: any;
             };
         };
     };

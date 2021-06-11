@@ -14,9 +14,8 @@ const defaultCustomWidget = {
                     phone: true
                 },
                 when: {
-                    always: true,
-                    never: false,
-                    out_site_office_hour: true
+                    value: 'always', // always, never, out_site_office_hour
+                    out_site_office_hour: {}
                 }
             }
         },

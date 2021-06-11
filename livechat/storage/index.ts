@@ -14,7 +14,7 @@ import { STORAGE_KEY } from './storageKey';
  *      driver: 'local_storage'
  * });
  */
-export function getStorage(key: string, driver?: string, ...params: string[]) {
+export function getStorage(key: string, driver?: string) {
     if (driver === undefined) {
         driver = process.env.STORAGE_DRIVER
             ? process.env.STORAGE_DRIVER
@@ -34,14 +34,14 @@ export function getStorage(key: string, driver?: string, ...params: string[]) {
         //             .split(';')
         //             .shift();
         //     return undefined;
-        case 'global_variable':
-            if (
-                window.ManySalesGlobalParams === undefined ||
-                window.ManySalesGlobalParams[key] === undefined
-            ) {
-                return undefined;
-            }
-            return window.ManySalesGlobalParams[key];
+        // case 'global_variable':
+        //     if (
+        //         window.ManySalesGlobalParams === undefined ||
+        //         window.ManySalesGlobalParams[key] === undefined
+        //     ) {
+        //         return undefined;
+        //     }
+        //     return window.ManySalesGlobalParams[key];
         default:
             break;
     }
@@ -81,11 +81,11 @@ export function removeStorage(
             // case 'cookie':
             //     setStorage(key, '' , driver, params );
             break;
-        case 'global_variable':
-            if (window.ManySalesGlobalParams !== undefined) {
-                delete window.ManySalesGlobalParams['key'];
-            }
-            break;
+        // case 'global_variable':
+        //     if (window.ManySalesGlobalParams !== undefined) {
+        //         delete window.ManySalesGlobalParams['key'];
+        //     }
+        //     break;
         default:
             break;
     }
@@ -137,12 +137,12 @@ export function setStorage(
         //     }
         //     document.cookie = cookieValue;
         //     break;
-        case 'global_variable':
-            if (window.ManySalesGlobalParams === undefined) {
-                window.ManySalesGlobalParams = {};
-            }
-            window.ManySalesGlobalParams[key] = value;
-            break;
+        // case 'global_variable':
+        //     if (window.ManySalesGlobalParams === undefined) {
+        //         window.ManySalesGlobalParams = {};
+        //     }
+        //     window.ManySalesGlobalParams[key] = value;
+        //     break;
         default:
             break;
     }

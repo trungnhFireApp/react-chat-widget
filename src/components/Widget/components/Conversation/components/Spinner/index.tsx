@@ -1,10 +1,15 @@
+import { load } from 'dotenv';
 import React from 'react';
 
 import './styles.scss';
 
-function Spinner() {
+type Props = {
+    loading: boolean;
+};
+
+function Spinner({ loading }: Props) {
     return (
-        <div className="lds-container">
+        <div className={`lds-container ${loading ? 'active' : ''}`}>
             <div className="lds-ring">
                 <div></div>
                 <div></div>

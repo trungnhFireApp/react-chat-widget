@@ -79,5 +79,6 @@ export function markMessageRead(id: string): void;
 export function setBadgeCount(count: number): void;
 export function setCustomWidget(customWidget: CustomWidget): void;
 export type CustomWidgetType = CustomWidget;
+export function setErrors(errors: string[]): void;
 
 export as namespace ReactChatWidget;

@@ -107,3 +107,7 @@ export function closeFullscreenPreview() {
 export function setCustomWidget(customWidget: CustomWidget) {
     store.dispatch(actions.setCustomWidget(customWidget));
 }
+
+export function setErrors(errors: string[]) {
+    store.dispatch(actions.setErrors(errors));
+}

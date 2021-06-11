@@ -6,13 +6,14 @@ import Header from './components/Header';
 import Messages from './components/Messages';
 import Sender from './components/Sender';
 import QuickButtons from './components/QuickButtons';
-import Welcome from './components/Welcome';
-import AudienceForm from './components/AudienceForm';
+import WelcomeScreen from './components/WelcomeScreen';
 
 import { AnyFunction } from '../../../../utils/types';
 
 import './style.scss';
 import { GlobalState } from '@types';
+import ErrorMessages from './components/ErrorMessages';
+import Spinner from './components/Spinner';
 
 type Props = {
     title: string;
@@ -32,6 +33,8 @@ type Props = {
     showTimeStamp: boolean;
     handleScrollTop?: AnyFunction;
     hasConversation: boolean;
+    audienceId: number;
+    handleGetAudience: AnyFunction;
 };
 
 function Conversation({
@@ -51,12 +54,16 @@ function Conversation({
     sendButtonAlt,
     showTimeStamp,
     handleScrollTop,
-    hasConversation
+    hasConversation,
+    audienceId,
+    handleGetAudience
 }: Props) {
     const {
         customWidget: {
             behaviour: {
-                visitor: { require_information }
+                visitor: {
+                    require_information: { enable }
+                }
             }
         }
     } = useSelector((state: GlobalState) => ({
@@ -74,32 +81,36 @@ function Conversation({
                 showCloseButton={showCloseButton}
                 titleAvatar={titleAvatar}
             />
-            <div className="rcw-conversation-body">
-                {hasConversation ? (
-                    <Messages
-                        profileAvatar={profileAvatar}
-                        showTimeStamp={showTimeStamp}
-                        handleScrollTop={handleScrollTop}
+            <div className="rcw-conversation-wrapper">
+                <Spinner loading={true} />
+                <div className="rcw-conversation-body">
+                    {hasConversation ? (
+                        <Messages
+                            profileAvatar={profileAvatar}
+                            showTimeStamp={showTimeStamp}
+                            handleScrollTop={handleScrollTop}
+                        />
+                    ) : (
+                        <>
+                            <WelcomeScreen
+                                handleGetAudience={handleGetAudience}
+                            />
+                        </>
+                    )}
+                </div>
+                <ErrorMessages />
+                <QuickButtons onQuickButtonClicked={onQuickButtonClicked} />
+                {audienceId && (
+                    <Sender
+                        sendMessage={sendMessage}
+                        placeholder={senderPlaceHolder}
+                        disabledInput={disabledInput}
+                        autofocus={autofocus}
+                        onTextInputChange={onTextInputChange}
+                        buttonAlt={sendButtonAlt}
                     />
-                ) : (
-                    <>
-                        {require_information.enable ? (
-                            <AudienceForm />
-                        ) : (
-                            <Welcome />
-                        )}
-                    </>
                 )}
             </div>
-            <QuickButtons onQuickButtonClicked={onQuickButtonClicked} />
-            <Sender
-                sendMessage={sendMessage}
-                placeholder={senderPlaceHolder}
-                disabledInput={disabledInput}
-                autofocus={autofocus}
-                onTextInputChange={onTextInputChange}
-                buttonAlt={sendButtonAlt}
-            />
         </div>
     );
 }

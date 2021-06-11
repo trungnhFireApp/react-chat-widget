@@ -33,6 +33,8 @@ type Props = {
     handleSubmit?: AnyFunction;
     handleScrollTop?: AnyFunction;
     hasConversation: boolean;
+    audienceId: number;
+    handleGetAudience: AnyFunction;
 } & typeof defaultProps;
 
 function ConnectedWidget({
@@ -60,7 +62,9 @@ function ConnectedWidget({
     zoomStep,
     handleSubmit,
     handleScrollTop,
-    hasConversation
+    hasConversation,
+    audienceId,
+    handleGetAudience
 }: Props) {
     return (
         <Provider store={store}>
@@ -90,6 +94,8 @@ function ConnectedWidget({
                 handleSubmit={handleSubmit}
                 handleScrollTop={handleScrollTop}
                 hasConversation={hasConversation}
+                audienceId={audienceId}
+                handleGetAudience={handleGetAudience}
             />
         </Provider>
     );

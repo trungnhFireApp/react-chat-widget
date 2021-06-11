@@ -1,6 +1,6 @@
 import { ElementType } from 'react';
 
-import { LinkParams, FullscreenPreviewState, AudienceInfo } from '../types';
+import { LinkParams, FullscreenPreviewState } from '../types';
 import { CustomWidget } from '../customTypes';
 
 export const TOGGLE_CHAT = 'BEHAVIOR/TOGGLE_CHAT';
@@ -24,8 +24,8 @@ export const MARK_MESSAGE_AS_READ = 'MESSAGES/MARK_MESSAGE_AS_READ';
 export const SET_QUICK_BUTTONS = 'SET_QUICK_BUTTONS';
 export const OPEN_FULLSCREEN_PREVIEW = 'FULLSCREEN/OPEN_PREVIEW';
 export const CLOSE_FULLSCREEN_PREVIEW = 'FULLSCREEN/CLOSE_PREVIEW';
+export const SET_ERRORS = 'ERROR/SET_ERRORS';
 
-export const SET_AUDIENCE_INFO = 'AUDIENCE/SET_AUDIENCE_INFO';
 export interface ToggleChat {
     type: typeof TOGGLE_CHAT;
 }
@@ -125,9 +125,9 @@ export interface SetCustomWidget {
     customWidget: CustomWidget;
 }
 
-export interface SetAudienceInfo {
-    type: typeof SET_AUDIENCE_INFO;
-    audienceInfo: AudienceInfo;
+export interface SetErrors {
+    type: typeof SET_ERRORS;
+    errors: string[];
 }
 
 export type BehaviorActions =
@@ -153,7 +153,7 @@ export type MessagesActions =
 
 export type QuickButtonsActions = SetQuickButtons;
 
-export type AudienceActions = SetAudienceInfo;
+export type ErrorActions = SetErrors;
 
 export interface openFullscreenPreview {
     type: typeof OPEN_FULLSCREEN_PREVIEW;

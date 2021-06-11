@@ -59,5 +59,13 @@
 }
 
 @mixin default-padding {
-    padding: 23px 28px;
+    padding: 24px 28px;
+}
+
+.rcw-mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.rcw-text-right {
+    text-align: right !important;
 }

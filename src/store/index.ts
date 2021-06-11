@@ -4,7 +4,7 @@ import behavior from './reducers/behaviorReducer';
 import messages from './reducers/messagesReducer';
 import quickButtons from './reducers/quickButtonsReducer';
 import preview from './reducers/fullscreenPreviewReducer';
-import audience from './reducers/audienceInfoReducer';
+import error from './reducers/errorReducer';
 
 declare global {
     interface Window {
@@ -21,7 +21,7 @@ const reducer = combineReducers({
     messages,
     quickButtons,
     preview,
-    audience
+    error
 });
 
 export default createStore(reducer, composeEnhancers());

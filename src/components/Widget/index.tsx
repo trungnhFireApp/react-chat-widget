@@ -33,6 +33,8 @@ type Props = {
     handleSubmit?: AnyFunction;
     handleScrollTop?: AnyFunction;
     hasConversation: boolean;
+    audienceId: number;
+    handleGetAudience: AnyFunction;
 };
 
 function Widget({
@@ -60,7 +62,9 @@ function Widget({
     zoomStep,
     handleSubmit,
     handleScrollTop,
-    hasConversation
+    hasConversation,
+    audienceId,
+    handleGetAudience
 }: Props) {
     const dispatch = useDispatch();
 
@@ -114,6 +118,8 @@ function Widget({
             zoomStep={zoomStep}
             handleScrollTop={handleScrollTop}
             hasConversation={hasConversation}
+            audienceId={audienceId}
+            handleGetAudience={handleGetAudience}
         />
     );
 }

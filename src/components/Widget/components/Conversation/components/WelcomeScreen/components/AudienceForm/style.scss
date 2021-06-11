@@ -2,7 +2,9 @@
 @import 'variables/colors';
 
 .rcw-audience-form {
-    padding: 30px 28px;
+    padding: 16px;
+    border: 1px solid $grey-6;
+    border-radius: 8px;
     .rcw-audience-form_group {
         margin-bottom: 10px;
     }
@@ -12,7 +14,7 @@
         border-bottom: 0.5px solid $grey-6;
         width: 100%;
         padding: 8px 0;
-        color: $grey-7;
+        color: $grey-4;
         &.--invalid {
             border-bottom-color: $red-1;
         }
@@ -29,6 +31,15 @@
 
         &::placeholder {
             color: $grey-7;
+        }
+    }
+    .rcw-audience-form_button {
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+        svg {
+            vertical-align: middle;
         }
     }
 }

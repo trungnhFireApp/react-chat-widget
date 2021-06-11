@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { GlobalState } from 'src/store/types';
+import { AnyFunction } from 'src/utils/types';
 
 const send = require('../../../../../../../assets/send_button.svg') as string;
 
@@ -67,7 +68,6 @@ function Sender({
                         fill="#919EAB"
                     />
                 </svg>
-                {/* <img src={send} className="rcw-send-icon" alt={buttonAlt} /> */}
             </button>
         </form>
     );

@@ -7,16 +7,15 @@ const defaultCustomWidget = {
                 match_data: {}
             },
             require_information: {
-                enable: true,
+                enable: false,
                 fields: {
                     name: true,
                     email: true,
                     phone: true
                 },
                 when: {
-                    always: true,
-                    never: false,
-                    out_site_office_hour: true
+                    value: 'always', // always, never, out_site_office_hour
+                    out_site_office_hour: {}
                 }
             }
         },
@@ -69,7 +68,8 @@ const defaultCustomWidget = {
             default_content: {
                 welcome_message: 'Welcome',
                 notice_message: {
-                    default: "Let's chat",
+                    default:
+                        'Hi there! Thanks for getting in touch with us. Please send us any questions you may have.',
                     office_hour: {}
                 },
                 input_placeholder: 'Type here...'

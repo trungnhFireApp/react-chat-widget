@@ -6,6 +6,8 @@
     border-radius: 16px;
     //   box-shadow: 0px 2px 10px 1px $grey-3;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
+    min-height: 524px;
+    background: $white;
     &.active {
         opacity: 1;
         transform: translateY(0px);
@@ -21,12 +23,19 @@
     }
 }
 
-.rcw-conversation-body {
-    border-radius: 16px 16px 0 0;
+.rcw-conversation-wrapper {
+    position: relative;
+    background: $white;
+    border-radius: 16px;
     overflow: hidden;
+}
+
+.rcw-conversation-body {
+    // border-radius: 16px 16px 0 0;
+    // overflow: hidden;
     height: 50vh;
     max-height: 356px;
-    background: $white;
+    // background: $white;
 }
 
 .rcw-full-screen {
