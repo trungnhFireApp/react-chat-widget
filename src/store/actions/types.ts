@@ -9,6 +9,7 @@ export const TOGGLE_MESSAGE_LOADER = 'BEHAVIOR/TOGGLE_MSG_LOADER';
 export const SET_BADGE_COUNT = 'BEHAVIOR/SET_BADGE_COUNT';
 export const TOGGLE_WIDGET_LOADER = 'BEHAVIOR/TOGGLE_WIDGET_LOADER';
 export const SET_CUSTOM_WIDGET = 'BEHAVIOR/SET_CUSTOM_WIDGET';
+export const TRIGGER_SCROLL_TO_BOTTOM = 'BEHAVIOR/TRIGGER_SCROLL_TO_BOTTOM';
 export const ADD_NEW_USER_MESSAGE = 'MESSAGES/ADD_NEW_USER_MESSAGE';
 export const ADD_NEW_RESPONSE_MESSAGE = 'MESSAGES/ADD_NEW_RESPONSE_MESSAGE';
 export const UNSHIFT_NEW_USER_MESSAGE = 'MESSAGES/UNSHIFT_NEW_USER_MESSAGE';
@@ -125,6 +126,10 @@ export interface SetCustomWidget {
     customWidget: CustomWidget;
 }
 
+export interface TriggerScrollToBottom {
+    type: typeof TRIGGER_SCROLL_TO_BOTTOM;
+}
+
 export interface SetErrors {
     type: typeof SET_ERRORS;
     errors: string[];
@@ -135,7 +140,8 @@ export type BehaviorActions =
     | ToggleInputDisabled
     | ToggleMsgLoader
     | ToggleWidgetLoader
-    | SetCustomWidget;
+    | SetCustomWidget
+    | TriggerScrollToBottom;
 
 export type MessagesActions =
     | AddUserMessage

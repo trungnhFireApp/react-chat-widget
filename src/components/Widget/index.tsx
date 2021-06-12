@@ -1,7 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { toggleChat, addUserMessage } from '../../store/actions';
+import {
+    toggleChat,
+    addUserMessage,
+    triggerScrollToBottom
+} from '../../store/actions';
 import { isWidgetOpened } from '../../store/dispatcher';
 import { AnyFunction } from '../../utils/types';
 
@@ -86,6 +90,7 @@ function Widget({
             dispatch(addUserMessage(userInput));
             handleNewUserMessage(userInput);
             event.target.message.value = '';
+            dispatch(triggerScrollToBottom());
         });
     };
 

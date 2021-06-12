@@ -36,18 +36,18 @@ function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
         typing,
         showChat,
         badgeCount,
-        widgetLoading
+        scrollToBottomRandomString
     } = useSelector((state: GlobalState) => ({
         messages: state.messages.messages,
         badgeCount: state.messages.badgeCount,
         typing: state.behavior.messageLoader,
         showChat: state.behavior.showChat,
-        widgetLoading: state.behavior.widgetLoader
+        scrollToBottomRandomString: state.behavior.scrollToBottomRandomString
     }));
 
     const messageRef = useRef<HTMLDivElement | null>(null);
     // scroll top = 0 sẽ call api,  biến này dùng để chặn lần scroll đầu tiên khi widget mở ra
-    const scrollStoredValueRef = useRef(false);
+    const isNotFirstScrollRef = useRef(false);
 
     useEffect(() => {
         // @ts-ignore
@@ -69,19 +69,25 @@ function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
     }, [messages]);
 
     useEffect(() => {
+        if (scrollToBottomRandomString) {
+            scrollToBottom(messageRef.current);
+        }
+    }, [scrollToBottomRandomString]);
+
+    useEffect(() => {
         if (showChat) {
             // @ts-ignore
             scrollToBottom(messageRef.current);
         }
-        if (!scrollStoredValueRef.current && showChat) {
+        if (!isNotFirstScrollRef.current && showChat) {
             //TODO: tìm solution khác thay vì dùng setTimeout
             setTimeout(() => {
-                scrollStoredValueRef.current = true;
+                isNotFirstScrollRef.current = true;
             }, 500);
         }
     }, [showChat]);
 
-    const handleScrolToLastMessage = () => {
+    const handleScrollToLastMessage = () => {
         const lastMesId =
             messages[0].customId ||
             `0-${format(messages[0].timestamp, 'hh:mm')}`;
@@ -91,11 +97,11 @@ function Messages({ profileAvatar, showTimeStamp, handleScrollTop }: Props) {
         }
     };
 
-    const onScrollTop = e => {
-        if (e.target.scrollTop === 0 && scrollStoredValueRef.current) {
-            handleScrollTop?.();
+    const onScrollTop = async e => {
+        if (e.target.scrollTop === 0 && isNotFirstScrollRef.current) {
+            await handleScrollTop?.();
             //cần scroll đến message cuối cùng trước đó để cải thiện UX
-            handleScrolToLastMessage();
+            handleScrollToLastMessage();
         }
     };
 

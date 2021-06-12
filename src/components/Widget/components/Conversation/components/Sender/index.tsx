@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { GlobalState } from 'src/store/types';
 import { AnyFunction } from 'src/utils/types';
-
 const send = require('../../../../../../../assets/send_button.svg') as string;
 
 import './style.scss';
@@ -25,7 +24,6 @@ function Sender({
     onTextInputChange,
     buttonAlt
 }: Props) {
-    const dispatch = useDispatch();
     const { showChat } = useSelector((state: GlobalState) => ({
         showChat: state.behavior.showChat
     }));

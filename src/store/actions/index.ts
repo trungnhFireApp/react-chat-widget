@@ -187,6 +187,12 @@ export function setCustomWidget(
     };
 }
 
+export function triggerScrollToBottom(): actionsTypes.TriggerScrollToBottom {
+    return {
+        type: actionsTypes.TRIGGER_SCROLL_TO_BOTTOM
+    };
+}
+
 export function setErrors(errors: string[]): actionsTypes.SetErrors {
     return {
         type: actionsTypes.SET_ERRORS,

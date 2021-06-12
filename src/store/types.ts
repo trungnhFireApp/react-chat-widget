@@ -44,6 +44,7 @@ export interface BehaviorState {
     messageLoader: boolean;
     widgetLoader: boolean;
     customWidget: CustomWidget;
+    scrollToBottomRandomString: string;
 }
 
 export interface MessagesState {
