@@ -27,8 +27,8 @@ import {
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
 import {
-    getConversationInfo,
-    getShopInfo,
+    getConversationInfoFromStorage,
+    getShopInfoFromStorage,
     setConversationInfoToStorage,
     getAudienceIdFromStorage,
     setAudienceIdToStorage
@@ -50,7 +50,7 @@ import { MESSAGE_SENDER } from './constant';
 import defaultCustomWidget from './storage/defaultCustomWidget';
 import { Nullable } from './utils/types';
 
-let socketClient: Socket;
+// let socketClient: Socket;
 
 const defaultPagingConfig = {
     limit: 5,
@@ -78,15 +78,15 @@ const Layout = () => {
         messages: state.messages.messages
     }));
 
+    const [socketClient, setSocketClient] = useState<Nullable<Socket>>();
+    const [unSendMessages, setUnSendMessages] = useState<string[]>([]);
+
     const [customWidgetSetting, setCustomWidgetSetting] = useState<any>();
     const [audienceId, setAudienceId] = useState<Nullable<number>>();
     const [showWidget, setShowWidget] = useState<boolean>(false);
 
     useEffect(() => {
-        checkConverstationInfo();
         onload();
-        // toggleInputDisabled()
-        // handleInitSocket();
         // addResponseMessage('Welcome to this awesome chat!');
         // setTimeout(() => {
         //     addLinkSnippet({ link: 'https://google.com', title: 'Google' });
@@ -99,15 +99,112 @@ const Layout = () => {
         // );
         return () => {
             rc.cancel();
-            handleDestroySocket();
         };
     }, []);
 
-    useEffect(() => {
-        if (loadConversation) {
-            handleToggleWidget();
+    const onload = async () => {
+        setShowWidget(false);
+
+        //lấy widget setting
+        const widgetSetting = await fetchGetWidgetSetting();
+        setCustomWidgetSetting(widgetSetting);
+
+        // kiểm tra converstion info để connect socket
+        checkConverstationInfo();
+
+        //lấy audienceId trong storage nếu có
+        const tmpAudience = getAudienceIdFromStorage();
+        if (tmpAudience?.audienceId) {
+            setAudienceId(tmpAudience?.audienceId);
         }
-    }, [loadConversation]);
+
+        setShowWidget(true);
+    };
+
+    // ===========SOCKET PROGRESS=======
+    // =================================
+
+    useEffect(() => {
+        if (socketClient && conversation) {
+            socketClient.connect();
+            //receive messages
+            const { id } = conversation;
+            socketClient.on(id, handleReceiveMessage);
+        }
+        return () => {
+            handleDestroySocket();
+        };
+    }, [socketClient]);
+
+    useEffect(() => {
+        if (socketClient?.connected && unSendMessages.length) {
+            for (let i = 0; i < unSendMessages.length; i++) {
+                emitMessage(unSendMessages[i]);
+            }
+        }
+    }, [socketClient?.connected, unSendMessages]);
+
+    const handleConnectToConversation = () => {
+        if (!socketClient) {
+            const { shop_id } = getShopInfoFromStorage();
+            if (conversation && shop_id) {
+                handleInitSocket(
+                    {
+                        conversation_id: conversation.id,
+                        shop_id: shop_id
+                    },
+                    {
+                        timestamp: conversation.timestamp,
+                        hmac: conversation.hmac
+                    }
+                );
+            }
+        }
+    };
+
+    const handleInitSocket = (query = {}, auth = {}) => {
+        const socket = socketService(process.env.SOCKET_URL as string, {
+            transports: ['websocket'],
+            query: { ...query },
+            auth: { ...auth }
+        });
+        setSocketClient(socket.getClient());
+    };
+
+    const handleDestroySocket = () => {
+        socketClient?.close();
+    };
+
+    const emitMessage = (newMes: string) => {
+        if (conversation) {
+            socketClient?.emit(conversation.id, {
+                message: newMes,
+                sender: MESSAGE_SENDER.CLIENT,
+                sender_id: audienceId
+            });
+        }
+    };
+
+    const handleReceiveMessage = data => {
+        //do not show response message with audience sender
+        if (data?.sender !== MESSAGE_SENDER.CLIENT) {
+            addResponseMessage(data.message, data.id);
+            if (!isWidgetOpened()) {
+                dispatch(setUnreadCount(unreadCount + 1));
+                dispatch(
+                    setUnreadMessages(
+                        [...unreadMessages].concat(data as Message)
+                    )
+                );
+            } else {
+                // đánh dấu message đã đọc nếu widget đang mở
+                // socketClient.emit('messageId_action', { _id: data.id });
+            }
+        }
+    };
+
+    // ===========API PROGRESS=======
+    // =================================
 
     useEffect(() => {
         if (conversation) {
@@ -147,148 +244,14 @@ const Layout = () => {
     }, [customWidgetSetting]);
 
     const checkConverstationInfo = () => {
-        const conversationInfo = getConversationInfo();
+        const conversationInfo = getConversationInfoFromStorage();
         if (conversationInfo) {
             dispatch(setConversationInfo(conversationInfo));
         }
     };
 
-    const handleToggleWidget = () => {
-        toggleInputDisabled();
-        toggleWidgetLoader();
-    };
-
-    const handleConnectToConversation = () => {
-        if (!socketClient) {
-            const conversationInfo = getConversationInfo();
-            const { shop_id } = getShopInfo();
-            if (conversationInfo && shop_id) {
-                handleInitSocket(
-                    {
-                        conversation_id: conversationInfo.id,
-                        shop_id: shop_id
-                    },
-                    {
-                        timestamp: conversationInfo.timestamp,
-                        hmac: conversationInfo.hmac
-                    }
-                );
-            }
-        }
-    };
-
-    const handleInitSocket = (query = {}, auth = {}) => {
-        const socket = socketService(process.env.SOCKET_URL as string, {
-            transports: ['websocket'],
-            query: { ...query },
-            auth: { ...auth }
-        });
-        socketClient = socket.getClient();
-        socketClient.connect();
-        //receive messages
-        const conversationInfo = getConversationInfo();
-        if (conversationInfo) {
-            const { id } = conversationInfo;
-            socketClient.on(id, handleReceiveMessage);
-        }
-    };
-
-    const handleDestroySocket = () => {
-        socketClient && socketClient.close();
-    };
-
-    const handleReceiveMessage = data => {
-        //do not show response message with audience sender
-        if (data?.sender !== MESSAGE_SENDER.CLIENT) {
-            addResponseMessage(data.message, data.id);
-            if (!isWidgetOpened()) {
-                dispatch(setUnreadCount(unreadCount + 1));
-                dispatch(
-                    setUnreadMessages(
-                        [...unreadMessages].concat(data as Message)
-                    )
-                );
-            } else {
-                // đánh dấu message đã đọc nếu widget đang mở
-                socketClient.emit('messageId_action', { _id: data.id });
-            }
-        }
-    };
-
-    const handleNewUserMessage = newMessage => {
-        // toggleMsgLoader();
-        const conversationInfo = getConversationInfo();
-        if (conversationInfo) {
-            socketClient.emit(conversationInfo.id, {
-                message: newMessage,
-                sender: MESSAGE_SENDER.CLIENT,
-                sender_id: conversationInfo.audience_id
-            });
-        }
-        // setTimeout(() => {
-        //     toggleMsgLoader();
-        //     if (newMessage === 'fruits') {
-        //         setQuickButtons([
-        //             { label: 'Apple', value: 'apple' },
-        //             { label: 'Orange', value: 'orange' },
-        //             { label: 'Pear', value: 'pear' },
-        //             { label: 'Banana', value: 'banana' }
-        //         ]);
-        //     } else {
-        //         addResponseMessage(newMessage);
-        //     }
-        // }, 2000);
-    };
-
-    // const handleQuickButtonClicked = (e: any) => {
-    //     addResponseMessage('Selected ' + e);
-    //     setQuickButtons([]);
-    // };
-
-    const handleScrollTop = async () => {
-        if (!loadMessage) {
-            dispatch(setLoadMessage(true));
-            defaultPagingConfig.page += 1;
-            await handleGetMessages(defaultPagingConfig);
-            dispatch(setLoadMessage(false));
-        }
-    };
-
-    const handleToggle = async toggleValue => {
-        try {
-            if (toggleValue) {
-                //mark all messages as read
-                if (unreadCount > 0) {
-                    dispatch(setUnreadCount(0));
-                    dispatch(setUnreadMessages([]));
-                    setBadgeCount(0);
-                    await handleMarkAllAsRead();
-                }
-                //nếu không yêu cầu audience info thì tìm audience bằng msUUID
-                if (
-                    !customWidgetSetting?.behaviour?.visitor
-                        ?.require_information?.enable &&
-                    !audienceId
-                ) {
-                    await handleGetAudience();
-                    console.log(customWidgetSetting);
-                }
-                //get conversation
-                // if (!loadConversation) {
-                //     dispatch(setLoadConversation(true));
-                //     await handleGetConversation();
-                //     dispatch(setLoadConversation(false));
-                //     handleToggleWidget();
-                // }
-            }
-        } catch (error) {
-            dispatch(setLoadConversation(false));
-            handleToggleWidget();
-        }
-    };
-
     const handleGetUnReadMessages = async () => {
-        const { shop_id } = getShopInfo();
+        const { shop_id } = getShopInfoFromStorage();
         const data = await fetchGetMessages({
             is_seen: false,
             sender: 'shop',
@@ -325,26 +288,10 @@ const Layout = () => {
         }
     };
 
-    const onload = async () => {
-        setShowWidget(false);
-
-        //lấy widget setting
-        const widgetSetting = await fetchGetWidgetSetting();
-        setCustomWidgetSetting(widgetSetting);
-
-        //lấy audienceId trong storage nếu có
-        const tmpAudience = getAudienceIdFromStorage();
-        if (tmpAudience?.audienceId) {
-            setAudienceId(tmpAudience?.audienceId);
-        }
-
-        setShowWidget(true);
-    };
-
     const handleGetAudience = async (payload?: any) => {
-        const { shop_id, msUUID } = getShopInfo();
+        const { shop_id, msUUID } = getShopInfoFromStorage();
         if (msUUID && shop_id) {
-            handleToggleWidget();
+            toggleWidgetLoader();
             const req = await findAudience({
                 uuid: msUUID,
                 shop_id,
@@ -367,14 +314,13 @@ const Layout = () => {
                     setErrors(errors);
                 }
             }
-            handleToggleWidget();
+            toggleWidgetLoader();
         }
     };
 
     const handleGetConversation = async () => {
         if (!conversation) {
-            const { shop_id } = getShopInfo();
-            const { audienceId } = getAudienceIdFromStorage();
+            const { shop_id } = getShopInfoFromStorage();
             if (shop_id && audienceId) {
                 const rep = await openConversation({
                     cancelToken,
@@ -388,10 +334,9 @@ const Layout = () => {
                         })
                     );
                     const conversationInfo = {
-                        id: shop_id,
-                        audience_id: audienceId,
-                        hmac: rep.hmac,
-                        timestamp: rep.hmac
+                        id: rep.data.id,
+                        hmac: rep.data.hmac,
+                        timestamp: rep.data.timestamp
                     } as Conversation;
                     dispatch(setConversationInfo(conversationInfo));
                 }
@@ -399,12 +344,69 @@ const Layout = () => {
         }
     };
 
+    // ===========WIDGET COMPONENT HANDLER=======
+    // =================================
+
+    const handleSendMessage = (newMessage: string) => {
+        if (socketClient?.connected && conversation) {
+            emitMessage(newMessage);
+        } else {
+            setUnSendMessages(state => {
+                return [...state, newMessage];
+            });
+        }
+    };
+
+    const handleSubmit = async (event, userInput, callback?: Function) => {
+        if (audienceId && !conversation) {
+            toggleInputDisabled();
+            await handleGetConversation();
+            toggleInputDisabled();
+        }
+        callback?.(event, userInput);
+    };
+
+    const handleToggle = async toggleValue => {
+        try {
+            if (toggleValue) {
+                //mark all messages as read
+                if (unreadCount > 0) {
+                    dispatch(setUnreadCount(0));
+                    dispatch(setUnreadMessages([]));
+                    setBadgeCount(0);
+                    await postMarkAllAsRead();
+                }
+                //nếu không yêu cầu audience info thì tìm audience bằng msUUID
+                if (
+                    !customWidgetSetting?.behaviour?.visitor
+                        ?.require_information?.enable &&
+                    !audienceId
+                ) {
+                    await handleGetAudience();
+                }
+            }
+        } catch (error) {
+            dispatch(setLoadConversation(false));
+        }
+    };
+
+    const handleScrollTop = async () => {
+        if (!loadMessage) {
+            dispatch(setLoadMessage(true));
+            defaultPagingConfig.page += 1;
+            await handleGetMessages(defaultPagingConfig);
+            dispatch(setLoadMessage(false));
+        }
+    };
+
+    // ===========FETCH API=======
+    // =================================
+
     const fetchGetMessages = async (payload = {}) => {
-        const conversationInfo = getConversationInfo();
-        if (conversationInfo) {
-            const { shop_id } = getShopInfo();
+        if (conversation) {
+            const { shop_id } = getShopInfoFromStorage();
             const req = await getMessages({
-                id: conversationInfo.id,
+                id: conversation.id,
                 shop_id: `${shop_id}`,
                 ...payload
             });
@@ -415,36 +417,15 @@ const Layout = () => {
         }
     };
 
-    const handleMarkAllAsRead = async (payload = {}) => {
-        const conversationInfo = getConversationInfo();
-        if (conversationInfo) {
-            const { shop_id } = getShopInfo();
+    const postMarkAllAsRead = async (payload = {}) => {
+        if (conversation) {
+            const { shop_id } = getShopInfoFromStorage();
             const req = await markAllAsRead({
                 ...payload,
-                id: conversationInfo.id,
-                audience_id: conversationInfo.audience_id,
+                id: conversation.id,
+                audience_id: audienceId,
                 shop_id
             });
-        }
-    };
-
-    const handleMarkMessageAsRead = async messageId => {
-        const conversationInfo = getConversationInfo();
-        if (conversationInfo) {
-            const { shop_id } = getShopInfo();
-            if (messageId) {
-                dispatch(
-                    setUnreadMessages([
-                        ...unreadMessages.filter(p => p._id !== messageId)
-                    ])
-                );
-                const req = await markMessageAsRead({
-                    conversation_id: conversationInfo.id,
-                    // reader_id: messageId,
-                    messageId,
-                    shop_id
-                });
-            }
         }
     };
 
@@ -454,6 +435,25 @@ const Layout = () => {
                 resolve(defaultCustomWidget);
             }, 2000);
         });
+    };
+
+    const handleMarkMessageAsRead = async messageId => {
+        if (conversation) {
+            const { shop_id } = getShopInfoFromStorage();
+            if (messageId) {
+                dispatch(
+                    setUnreadMessages([
+                        ...unreadMessages.filter(p => p._id !== messageId)
+                    ])
+                );
+                const req = await markMessageAsRead({
+                    conversation_id: conversation.id,
+                    // reader_id: messageId,
+                    messageId,
+                    shop_id
+                });
+            }
+        }
     };
 
     return (
@@ -474,15 +474,14 @@ const Layout = () => {
                         // profileAvatar="https://app-stag.manysales.io/images/logo.png"
                         titleAvatar="https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg"
                         showCloseButton={true}
-                        handleNewUserMessage={handleNewUserMessage}
+                        handleNewUserMessage={handleSendMessage}
                         hasConversation={conversation ? true : false}
                         audienceId={audienceId}
                         // handleQuickButtonClicked={handleQuickButtonClicked}
                         imagePreview
-                        // handleSubmit={handleSubmit}
+                        handleSubmit={handleSubmit}
                         handleToggle={handleToggle}
                         // handleMarkMessageAsRead={handleMarkMessageAsRead}
-                        // unreadMessagesInBubble={unreadMessages}
                         handleScrollTop={handleScrollTop}
                         handleGetAudience={handleGetAudience}
                     />

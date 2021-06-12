@@ -75,16 +75,18 @@ function Widget({
 
     const handleMessageSubmit = event => {
         event.preventDefault();
+        event.persist(); // https://reactjs.org/docs/legacy-event-pooling.html
         const userInput = event.target.message.value;
 
         if (!userInput.trim()) {
             return;
         }
 
-        handleSubmit?.(userInput);
-        dispatch(addUserMessage(userInput));
-        handleNewUserMessage(userInput);
-        event.target.message.value = '';
+        handleSubmit?.(event, userInput, (event, userInput) => {
+            dispatch(addUserMessage(userInput));
+            handleNewUserMessage(userInput);
+            event.target.message.value = '';
+        });
     };
 
     const onQuickButtonClicked = (event, value) => {

@@ -2,7 +2,7 @@ import { getStorage, setStorage, STORAGE_KEY } from '../storage';
 import { Conversation } from '../types';
 import { Nullable } from './types';
 
-export const getConversationInfo = (): Nullable<Conversation> => {
+export const getConversationInfoFromStorage = (): Nullable<Conversation> => {
     try {
         const result = getStorage(STORAGE_KEY.ms_conversationInfo);
         if (result) {
@@ -20,7 +20,7 @@ export const setConversationInfoToStorage = (value): void => {
     setStorage(STORAGE_KEY.ms_conversationInfo, value);
 };
 
-export const getShopInfo = () => {
+export const getShopInfoFromStorage = () => {
     try {
         return {
             ...window.MANY_SALES,

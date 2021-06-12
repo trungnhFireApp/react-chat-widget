@@ -1,6 +1,5 @@
 export type Conversation = {
     id: string;
-    audience_id: number;
     hmac: string;
     timestamp: number;
 };
