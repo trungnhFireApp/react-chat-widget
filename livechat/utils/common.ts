@@ -33,7 +33,7 @@ export const getShopInfo = () => {
     }
 };
 
-export const getAudienceId = () => {
+export const getAudienceIdFromStorage = () => {
     try {
         const id = getStorage(STORAGE_KEY.ms_audienceId);
         return {

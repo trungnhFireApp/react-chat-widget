@@ -65,9 +65,11 @@ function Conversation({
                     require_information: { enable }
                 }
             }
-        }
+        },
+        widgetLoader
     } = useSelector((state: GlobalState) => ({
-        customWidget: state.behavior.customWidget
+        customWidget: state.behavior.customWidget,
+        widgetLoader: state.behavior.widgetLoader
     }));
     return (
         <div
@@ -82,7 +84,7 @@ function Conversation({
                 titleAvatar={titleAvatar}
             />
             <div className="rcw-conversation-wrapper">
-                <Spinner loading={true} />
+                <Spinner loading={widgetLoader} />
                 <div className="rcw-conversation-body">
                     {hasConversation ? (
                         <Messages
@@ -94,6 +96,7 @@ function Conversation({
                         <>
                             <WelcomeScreen
                                 handleGetAudience={handleGetAudience}
+                                audienceId={audienceId}
                             />
                         </>
                     )}

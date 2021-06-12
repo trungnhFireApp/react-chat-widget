@@ -10,9 +10,10 @@ import './style.scss';
 
 type Props = {
     handleGetAudience: AnyFunction;
+    audienceId: number;
 };
 
-function WelcomeScreen({ handleGetAudience }: Props) {
+function WelcomeScreen({ handleGetAudience, audienceId }: Props) {
     const {
         customWidget: {
             behaviour: {
@@ -27,7 +28,9 @@ function WelcomeScreen({ handleGetAudience }: Props) {
     return (
         <div className="rcw-welcome-screen">
             <Welcome />
-            {enable && <AudienceForm handleGetAudience={handleGetAudience} />}
+            {enable && !audienceId && (
+                <AudienceForm handleGetAudience={handleGetAudience} />
+            )}
         </div>
     );
 }

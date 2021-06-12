@@ -76,7 +76,6 @@ function AudienceForm({ handleGetAudience }: Props) {
 
     const handleSubmit = () => {
         if (when.value === AUDIENCE_FORM_REQUIRE_WHEN.ALWAYS && validate()) {
-            console.log('object :>> ');
             handleGetAudience({
                 ...audienceInfo
             });

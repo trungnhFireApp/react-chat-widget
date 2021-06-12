@@ -30,7 +30,7 @@ import {
     getConversationInfo,
     getShopInfo,
     setConversationInfoToStorage,
-    getAudienceId,
+    getAudienceIdFromStorage,
     setAudienceIdToStorage
 } from './utils/common';
 
@@ -326,24 +326,34 @@ const Layout = () => {
     };
 
     const onload = async () => {
-        //lấy widget setting
         setShowWidget(false);
+
+        //lấy widget setting
         const widgetSetting = await fetchGetWidgetSetting();
         setCustomWidgetSetting(widgetSetting);
+
+        //lấy audienceId trong storage nếu có
+        const tmpAudience = getAudienceIdFromStorage();
+        if (tmpAudience?.audienceId) {
+            setAudienceId(tmpAudience?.audienceId);
+        }
+
         setShowWidget(true);
     };
 
     const handleGetAudience = async (payload?: any) => {
         const { shop_id, msUUID } = getShopInfo();
         if (msUUID && shop_id) {
+            handleToggleWidget();
             const req = await findAudience({
                 uuid: msUUID,
                 shop_id,
                 ...payload
             });
             if (req.code === 1000) {
-                // setAudienceIdToStorage(req.data);
-                setAudienceId(req.data);
+                setAudienceIdToStorage(req.data.id);
+                setAudienceId(req.data.id);
+                setErrors([]);
             } else {
                 let errors = [];
 
@@ -357,13 +367,14 @@ const Layout = () => {
                     setErrors(errors);
                 }
             }
+            handleToggleWidget();
         }
     };
 
     const handleGetConversation = async () => {
         if (!conversation) {
             const { shop_id } = getShopInfo();
-            const { audienceId } = getAudienceId();
+            const { audienceId } = getAudienceIdFromStorage();
             if (shop_id && audienceId) {
                 const rep = await openConversation({
                     cancelToken,
