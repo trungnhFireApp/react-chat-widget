@@ -14,7 +14,6 @@ import {
     setBadgeCount,
     isWidgetOpened,
     setCustomWidget,
-    markMessageRead as WidgetMarkMessageRead,
     setErrors
 } from '../index';
 import socketService, { Socket } from './service/socket';
@@ -46,9 +45,8 @@ import {
     setMessages
 } from './store/actions';
 
-import Toast from './components/Toast';
 import { MESSAGE_SENDER } from './constant';
-import defaultCustomWidget from './storage/defaultCustomWidget';
+// import defaultCustomWidget from './storage/defaultCustomWidget';
 import { Nullable } from './utils/types';
 
 // let socketClient: Socket;
@@ -108,7 +106,9 @@ const Layout = () => {
 
         //lấy widget setting
         const widgetSetting = await fetchGetWidgetSetting();
-        setCustomWidgetSetting(widgetSetting);
+        if (widgetSetting) {
+            setCustomWidgetSetting(widgetSetting);
+        }
 
         // kiểm tra converstion info để connect socket
         checkConverstationInfo();
@@ -430,15 +430,13 @@ const Layout = () => {
         }
     };
 
-    const fetchGetWidgetSetting = async (): Promise<any> => {
+    const fetchGetWidgetSetting = async () => {
         const { shop_id } = getShopInfoFromStorage();
         const req = await getWidgetSetting({ shop_id });
-
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve(defaultCustomWidget);
-            }, 2000);
-        });
+        if (req.code === 1000) {
+            return req.data.settings;
+        }
+        return null;
     };
 
     const handleMarkMessageAsRead = async messageId => {
@@ -464,13 +462,6 @@ const Layout = () => {
         <div>
             {showWidget && (
                 <>
-                    <Toast
-                        unreadMessagesInBubble={unreadMessages}
-                        position="bottom-right"
-                        autoDelete={false}
-                        handleMarkMessageAsRead={handleMarkMessageAsRead}
-                        markMessageRead={WidgetMarkMessageRead}
-                    />
                     <Widget
                         title="Welcome"
                         subtitle="How can we help?"
@@ -485,9 +476,10 @@ const Layout = () => {
                         imagePreview
                         handleSubmit={handleSubmit}
                         handleToggle={handleToggle}
-                        // handleMarkMessageAsRead={handleMarkMessageAsRead}
+                        handleMarkMessageAsRead={handleMarkMessageAsRead}
                         handleScrollTop={handleScrollTop}
                         handleGetAudience={handleGetAudience}
+                        unreadMessagesInBubble={unreadMessages}
                     />
                 </>
             )}

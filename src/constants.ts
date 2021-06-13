@@ -18,3 +18,21 @@ export const AUDIENCE_FORM_REQUIRE_WHEN = {
     NEVER: 'never',
     OUT_SIDE_OFFICE_HOUR: 'out_site_office_hour'
 };
+
+export const WIDGET_POSITION = {
+    RIGHT_BOTTOM: 'right_bottom',
+    LEFT_BOTTOM: 'left_bottom'
+};
+
+export const DEFAULT_WIDGET_POSITION_CSS = {
+    right: '0px',
+    left: 'auto',
+    margin: '0 20px 20px 0',
+    alignItems: 'flex-end'
+};
+
+export const DEFAULT_TOAST_POSITION_CSS = {
+    right: '12px',
+    left: 'auto',
+    bottom: '90px'
+};

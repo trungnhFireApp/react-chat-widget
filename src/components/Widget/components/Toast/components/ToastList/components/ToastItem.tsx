@@ -1,4 +1,4 @@
-import { Message } from './../../../../../types';
+import { Message } from './../../../../../../../../livechat/types';
 import React from 'react';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 function ToastItem({ message, position, deleteToast }: Props) {
     return (
         <div
-            className={`ms-notification ms-toast ms-${position}`}
+            className={`ms-notification ms-toast`}
             // style={{ backgroundColor: toast.backgroundColor }}
         >
             <div className="ms-notification-message">{message.message}</div>

@@ -1,7 +1,9 @@
 import { createReducer } from '../../utils/createReducer';
 import { BehaviorState } from '../types';
+import { CustomWidget } from '../customTypes';
 import defaultCustomWidget from './../../utils/defaultCustomWidget';
 import { uid } from './../../utils/helper';
+import _merge from 'lodash.merge';
 
 import {
     BehaviorActions,
@@ -45,7 +47,7 @@ const behaviorReducer = {
 
     [SET_CUSTOM_WIDGET]: (state: BehaviorState, { customWidget }) => ({
         ...state,
-        customWidget: customWidget
+        customWidget: _merge(defaultCustomWidget, customWidget)
     }),
 
     [TRIGGER_SCROLL_TO_BOTTOM]: (state: BehaviorState) => ({

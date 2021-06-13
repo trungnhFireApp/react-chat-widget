@@ -4,14 +4,20 @@ import cn from 'classnames';
 
 import { GlobalState } from 'src/store/types';
 import { AnyFunction } from 'src/utils/types';
-import { openFullscreenPreview } from '@actions';
+import { openFullscreenPreview, markMessageRead } from '@actions';
 
 import Conversation from './components/Conversation';
 import Launcher from './components/Launcher';
 import FullScreenPreview from './components/FullScreenPreview';
-// import Toast from './components/Toast';
+import Toast from './components/Toast';
 
 import './style.scss';
+import {
+    DEFAULT_TOAST_POSITION_CSS,
+    DEFAULT_WIDGET_POSITION_CSS,
+    WIDGET_POSITION
+} from './../../constants';
+import { getCssValue } from './../../utils/helper';
 
 type Props = {
     title: string;
@@ -40,6 +46,8 @@ type Props = {
     hasConversation: boolean;
     audienceId: number;
     handleGetAudience: AnyFunction;
+    unreadMessagesInBubble?: Array<any>;
+    handleMarkMessageAsRead?: AnyFunction;
 };
 
 function WidgetLayout({
@@ -68,11 +76,16 @@ function WidgetLayout({
     handleScrollTop,
     hasConversation,
     audienceId,
-    handleGetAudience
+    handleGetAudience,
+    unreadMessagesInBubble,
+    handleMarkMessageAsRead
 }: Props) {
     const dispatch = useDispatch();
     const {
         customWidgetBehavior,
+        customWidgetStyle: {
+            standby: { position }
+        },
         dissableInput,
         showChat,
         visible
@@ -80,10 +93,17 @@ function WidgetLayout({
         showChat: state.behavior.showChat,
         dissableInput: state.behavior.disabledInput,
         customWidgetBehavior: state.behavior.customWidget.behaviour,
+        customWidgetStyle: state.behavior.customWidget.style,
         visible: state.preview.visible
     }));
 
     const [showWidget, setShowWidget] = useState<boolean>(false);
+    const [widgetPosition, setWidgetPosition] = useState<any>({
+        ...DEFAULT_WIDGET_POSITION_CSS
+    });
+    const [toastPosition, setToastPosition] = useState<any>({
+        ...DEFAULT_TOAST_POSITION_CSS
+    });
 
     const messageRef = useRef<HTMLDivElement | null>(null);
 
@@ -137,6 +157,36 @@ function WidgetLayout({
         );
     }, [fullScreenMode, visible]);
 
+    //set position for widet, toast
+    useEffect(() => {
+        try {
+            let tmpWidgetPosition = { ...DEFAULT_WIDGET_POSITION_CSS };
+            let tmpToastPosition = {
+                ...DEFAULT_TOAST_POSITION_CSS,
+                bottom: `${getCssValue(position.botton_spacing) + 70}px`
+            };
+            if (position.position === WIDGET_POSITION.LEFT_BOTTOM) {
+                //widget
+                tmpWidgetPosition.left = '0px';
+                tmpWidgetPosition.right = 'auto';
+                tmpWidgetPosition.alignItems = 'flex-start';
+                tmpWidgetPosition.margin = `0 0 ${position.botton_spacing} ${position.side_spacing}`;
+                //toast
+                tmpToastPosition.left = `${position.side_spacing}`;
+                tmpToastPosition.right = 'auto';
+            } else {
+                tmpWidgetPosition.margin = `0 ${position.side_spacing} ${position.botton_spacing} 0`;
+                //toast
+                tmpToastPosition.left = 'auto';
+                tmpToastPosition.right = `${position.side_spacing}`;
+            }
+            setToastPosition(tmpToastPosition);
+            setWidgetPosition(tmpWidgetPosition);
+        } catch (error) {
+            console.log('error :>> ', error);
+        }
+    }, [position]);
+
     useEffect(() => {
         setShowWidget(customWidgetBehavior.visitor.show_launcher.enable);
     }, [customWidgetBehavior]);
@@ -145,11 +195,24 @@ function WidgetLayout({
         <>
             {showWidget && (
                 <>
+                    <Toast
+                        unreadMessagesInBubble={unreadMessagesInBubble}
+                        position={`${
+                            position.position === WIDGET_POSITION.LEFT_BOTTOM
+                                ? 'bottom-left'
+                                : 'bottom-right'
+                        }`}
+                        autoDelete={false}
+                        handleMarkMessageAsRead={handleMarkMessageAsRead}
+                        markMessageRead={markMessageRead}
+                        style={toastPosition}
+                    />
                     <div
                         className={cn('rcw-widget-container', {
                             'rcw-full-screen': fullScreenMode,
                             'rcw-previewer': imagePreview
                         })}
+                        style={widgetPosition}
                     >
                         {showChat && (
                             <Conversation

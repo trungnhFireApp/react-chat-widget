@@ -24,15 +24,16 @@ const defaultCustomWidget = {
     },
     style: {
         standby: {
-            background: 'white',
+            background: '#1C82FF',
             icon: {
                 theme: 'dark', //dark, light, custom
-                icon_url: ''
+                icon_url:
+                    'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/launcher.svg'
             },
             position: {
                 position: 'right_bottom',
-                side_spacing: '10px',
-                botton_spacing: '10px'
+                side_spacing: '20px',
+                botton_spacing: '20px'
             },
             display_blinking_message: true,
             play_sound_message: true,

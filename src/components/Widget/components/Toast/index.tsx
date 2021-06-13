@@ -1,7 +1,7 @@
-import { Message } from './../../types';
+import { Message } from './../../../../../livechat/types';
 import React from 'react';
 // import { useSelector } from 'react-redux';
-import { AnyFunction } from './../../utils/types';
+import { AnyFunction } from './../../../../utils/types';
 import ToastList from './components/ToastList';
 import './style.scss';
 
@@ -12,6 +12,7 @@ type Props = {
     handleMarkMessageAsRead?: AnyFunction;
     unreadMessagesInBubble?: Array<Message>;
     markMessageRead?: AnyFunction;
+    style?: any;
 };
 
 function Toast({
@@ -20,7 +21,8 @@ function Toast({
     dismissTime,
     handleMarkMessageAsRead,
     unreadMessagesInBubble,
-    markMessageRead
+    markMessageRead,
+    style
 }: Props) {
     // const { messages } = useSelector((state: GlobalState) => ({
     //     messages: state.messages.messages
@@ -33,6 +35,7 @@ function Toast({
             dismissTime={dismissTime}
             handleMarkMessageAsRead={handleMarkMessageAsRead}
             markMessageRead={markMessageRead}
+            style={style}
         ></ToastList>
     );
 }

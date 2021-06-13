@@ -1,7 +1,7 @@
-import { Message } from './../../../../types';
+import { Message } from './../../../../../../../livechat/types';
 import React, { useEffect, useState } from 'react';
 import ToastItem from './components/ToastItem';
-import { AnyFunction } from './../../../../utils/types';
+import { AnyFunction } from './../../../../../../utils/types';
 
 type Props = {
     toastList: Message[];
@@ -10,6 +10,7 @@ type Props = {
     dismissTime?: number;
     handleMarkMessageAsRead?: AnyFunction;
     markMessageRead?: AnyFunction;
+    style?: any;
 };
 
 function ToastList({
@@ -18,7 +19,8 @@ function ToastList({
     dismissTime,
     toastList,
     handleMarkMessageAsRead,
-    markMessageRead
+    markMessageRead,
+    style
 }: Props) {
     const [list, setList] = useState(toastList);
     useEffect(() => {
@@ -42,7 +44,10 @@ function ToastList({
     };
     return (
         <>
-            <div className={`ms-notification-container ms-${position}`}>
+            <div
+                style={style}
+                className={`ms-notification-container ms-${position}`}
+            >
                 {list.map((toast, i) => (
                     <ToastItem
                         key={i}

@@ -39,6 +39,8 @@ type Props = {
     hasConversation: boolean;
     audienceId: number;
     handleGetAudience: AnyFunction;
+    unreadMessagesInBubble?: Array<any>;
+    handleMarkMessageAsRead?: AnyFunction;
 };
 
 function Widget({
@@ -68,7 +70,9 @@ function Widget({
     handleScrollTop,
     hasConversation,
     audienceId,
-    handleGetAudience
+    handleGetAudience,
+    unreadMessagesInBubble,
+    handleMarkMessageAsRead
 }: Props) {
     const dispatch = useDispatch();
 
@@ -127,6 +131,8 @@ function Widget({
             hasConversation={hasConversation}
             audienceId={audienceId}
             handleGetAudience={handleGetAudience}
+            unreadMessagesInBubble={unreadMessagesInBubble}
+            handleMarkMessageAsRead={handleMarkMessageAsRead}
         />
     );
 }

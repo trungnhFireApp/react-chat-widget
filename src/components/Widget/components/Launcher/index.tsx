@@ -29,9 +29,16 @@ function Launcher({
     closeLabel
 }: Props) {
     const dispatch = useDispatch();
-    const { showChat, badgeCount } = useSelector((state: GlobalState) => ({
+    const {
+        customWidget: {
+            style: { standby }
+        },
+        showChat,
+        badgeCount
+    } = useSelector((state: GlobalState) => ({
         showChat: state.behavior.showChat,
-        badgeCount: state.messages.badgeCount
+        badgeCount: state.messages.badgeCount,
+        customWidget: state.behavior.customWidget
     }));
 
     const toggleChat = () => {
@@ -46,17 +53,20 @@ function Launcher({
                 className={cn('rcw-launcher', { 'rcw-hide-sm': showChat })}
                 onClick={toggleChat}
                 aria-controls={chatId}
+                style={{ background: standby.background }}
             >
                 {!showChat && <Badge badge={badgeCount} />}
                 {showChat ? (
                     <img
-                        src={closeImg || close}
+                        // src={closeImg || close}
+                        src={standby.icon.icon_url}
                         className="rcw-close-launcher"
                         alt={openLabel}
                     />
                 ) : (
                     <img
-                        src={openImg || openLauncher}
+                        // src={openImg || openLauncher}
+                        src={standby.icon.icon_url}
                         className="rcw-open-launcher"
                         alt={closeLabel}
                     />

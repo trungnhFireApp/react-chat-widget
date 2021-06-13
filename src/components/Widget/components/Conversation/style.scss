@@ -8,6 +8,7 @@
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
     // min-height: 524px;
     background: $white;
+    width: 100%;
     &.active {
         opacity: 1;
         transform: translateY(0px);
