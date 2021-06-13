@@ -46,3 +46,13 @@ export const getMessages = async payload => {
     });
     return result;
 };
+
+export const getWidgetSetting = async payload => {
+    const url = `${URI_API}/livechat/get_widget_settings`;
+    const result = await request({
+        url: url,
+        method: 'GET',
+        ...payload
+    });
+    return result;
+};

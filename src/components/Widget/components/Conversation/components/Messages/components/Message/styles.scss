@@ -2,55 +2,62 @@
 @import 'common';
 
 .rcw-message {
-  margin: 10px;
-  display: flex;
-  word-wrap: break-word;
+    margin: 10px;
+    display: flex;
+    word-wrap: break-word;
 }
 
 .rcw-timestamp {
-  font-size: 10px;
-  margin-top: 5px;
+    font-size: 10px;
+    margin-top: 5px;
 }
 
 .rcw-client {
-  display: flex;
-  flex-direction: column;
-  margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
 
-  .rcw-message-text {
-    @include message-bubble($turqois-2);
-  }
+    .rcw-message-text {
+        @include message-bubble($grey-8);
+        p {
+            color: $black;
+        }
+    }
 
-  .rcw-timestamp {
-    align-self: flex-end;
-  }
+    .rcw-timestamp {
+        align-self: flex-end;
+    }
 }
 
 .rcw-response {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
-  .rcw-message-text {
-    @include message-bubble($grey-2);
-  }
+    .rcw-message-text {
+        @include message-bubble($blue);
+        p {
+            color: $white;
+        }
+    }
 }
 
 /* For markdown elements created with default styles */
 .rcw-message-text {
-  p {
-    margin: 0;
-  }
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
 
-  img {
-    width: 100%;
-    object-fit: contain;
-  }
+    img {
+        width: 100%;
+        object-fit: contain;
+    }
 }
 
 .rcw-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 100%;
-  margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    margin-right: 10px;
 }

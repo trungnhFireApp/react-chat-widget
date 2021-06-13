@@ -55,7 +55,7 @@ const defaultCustomWidget = {
             ],
             background: {
                 background_type: 'color', // color, image
-                color: 'white',
+                color: '#1C82FF',
                 image: 'url'
             },
             text_color_type: 'light', // light, dark

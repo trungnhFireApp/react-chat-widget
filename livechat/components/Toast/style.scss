@@ -57,11 +57,11 @@
     box-sizing: unset;
 }
 
-.ms-notification:hover {
-    box-shadow: 0 0 12px #fff;
-    opacity: 1;
-    cursor: pointer;
-}
+// .ms-notification:hover {
+//     box-shadow: 0 0 12px #fff;
+//     opacity: 1;
+//     cursor: pointer;
+// }
 
 .ms-notification-title {
     font-weight: 700;
@@ -71,18 +71,6 @@
     margin-bottom: 6px;
     width: 300px;
     height: 18px;
-}
-
-.ms-notification-message {
-    font-family: 'Roboto', sans-serif;
-    color: #fff;
-    margin: 0;
-    text-align: left;
-    height: 18px;
-    margin-left: -1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .ms-notification-image {
@@ -96,18 +84,36 @@
 }
 
 .ms-toast {
-    height: 40px;
     width: 265px;
     color: #fff;
-    padding: 20px 15px 10px 10px;
-    background: #454f5b;
+    padding: 10px;
+    background: $white;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    display: flex;
+}
+
+.ms-notification-message {
+    font-family: 'Roboto', sans-serif;
+    color: $black;
+    font-size: 14px;
+    margin: 0;
+    text-align: left;
+    height: 18px;
+    margin-left: -1px;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+    // white-space: nowrap;
+    width: calc(100% - 32px);
+    height: 66px;
+    overflow: hidden;
 }
 
 .ms-notification-container button {
     position: relative;
-    right: -0.3em;
-    top: -0.3em;
-    float: right;
+    // right: -0.3em;
+    // top: -0.3em;
+    // float: right;
     font-weight: 300;
     color: #fff;
     outline: none;
@@ -120,6 +126,14 @@
     cursor: pointer;
     background: 0 0;
     border: 0;
+    width: 32px;
+    margin-left: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    svg {
+        width: 20px;
+    }
 }
 
 @keyframes toast-in-right {

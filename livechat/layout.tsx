@@ -22,7 +22,8 @@ import {
     openConversation,
     getMessages,
     markAllAsRead,
-    markMessageAsRead
+    markMessageAsRead,
+    getWidgetSetting
 } from './service/conversion';
 import { findAudience } from './service/audience';
 import { requestCancel } from './utils/request';
@@ -430,6 +431,9 @@ const Layout = () => {
     };
 
     const fetchGetWidgetSetting = async (): Promise<any> => {
+        const { shop_id } = getShopInfoFromStorage();
+        const req = await getWidgetSetting({ shop_id });
+
         return new Promise(resolve => {
             setTimeout(() => {
                 resolve(defaultCustomWidget);
