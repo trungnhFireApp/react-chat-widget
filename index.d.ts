@@ -80,5 +80,5 @@ export function setBadgeCount(count: number): void;
 export function setCustomWidget(customWidget: CustomWidget): void;
 export type CustomWidgetType = CustomWidget;
 export function setErrors(errors: string[]): void;
-
+export function triggerScrollToBottom(): void;
 export as namespace ReactChatWidget;

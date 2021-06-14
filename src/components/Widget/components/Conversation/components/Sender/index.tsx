@@ -24,7 +24,13 @@ function Sender({
     onTextInputChange,
     buttonAlt
 }: Props) {
-    const { showChat } = useSelector((state: GlobalState) => ({
+    const {
+        customWidgetStyle: {
+            active: { button_color, default_content }
+        },
+        showChat
+    } = useSelector((state: GlobalState) => ({
+        customWidgetStyle: state.behavior.customWidget.style,
         showChat: state.behavior.showChat
     }));
     const [text, setText] = useState('');
@@ -46,7 +52,7 @@ function Sender({
                 className="rcw-new-message"
                 name="message"
                 ref={inputRef}
-                placeholder={placeholder}
+                placeholder={default_content.input_placeholder}
                 disabled={disabledInput}
                 autoFocus={autofocus}
                 autoComplete="off"
@@ -63,7 +69,7 @@ function Sender({
                 >
                     <path
                         d="M5.03366 27.2L28.3003 17.2267C29.3803 16.76 29.3803 15.24 28.3003 14.7733L5.03366 4.8C4.15366 4.41334 3.18033 5.06667 3.18033 6.01334L3.16699 12.16C3.16699 12.8267 3.66033 13.4 4.32699 13.48L23.167 16L4.32699 18.5067C3.66033 18.6 3.16699 19.1733 3.16699 19.84L3.18033 25.9867C3.18033 26.9333 4.15366 27.5867 5.03366 27.2Z"
-                        fill="#919EAB"
+                        fill={text ? button_color : '#919eab'}
                     />
                 </svg>
             </button>

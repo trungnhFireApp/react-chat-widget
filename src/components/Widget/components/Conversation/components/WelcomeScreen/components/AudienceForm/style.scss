@@ -2,6 +2,7 @@
 @import 'variables/colors';
 
 .rcw-audience-form {
+    font-family: inherit;
     padding: 16px;
     border: 1px solid $grey-6;
     border-radius: 8px;
@@ -9,6 +10,7 @@
         margin-bottom: 10px;
     }
     .rcw-audience-form_input {
+        font-family: inherit;
         font-size: 14px;
         border: none;
         border-bottom: 0.5px solid $grey-6;

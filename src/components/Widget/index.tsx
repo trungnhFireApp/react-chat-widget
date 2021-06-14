@@ -91,7 +91,7 @@ function Widget({
         }
 
         handleSubmit?.(event, userInput, (event, userInput) => {
-            dispatch(addUserMessage(userInput));
+            // dispatch(addUserMessage(userInput));
             handleNewUserMessage(userInput);
             event.target.message.value = '';
             dispatch(triggerScrollToBottom());

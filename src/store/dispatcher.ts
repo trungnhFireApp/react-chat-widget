@@ -111,3 +111,7 @@ export function setCustomWidget(customWidget: CustomWidget) {
 export function setErrors(errors: string[]) {
     store.dispatch(actions.setErrors(errors));
 }
+
+export function triggerScrollToBottom() {
+    store.dispatch(actions.triggerScrollToBottom());
+}

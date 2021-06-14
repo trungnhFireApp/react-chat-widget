@@ -1,6 +1,10 @@
 import { GlobalState } from '@types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import {
+    DEFAULT_HEADER_CSS,
+    BACKGROUND_TYPE
+} from './../../../../../../constants';
 import TeammateComponent from './components/TeammateComponent';
 
 // const close = require('../../../../../../../assets/clear-button.svg') as string;
@@ -42,15 +46,29 @@ function Header({
                     teammate = defaultData.teammate,
                     default_content: {
                         welcome_message = defaultData.welcome_message
-                    }
+                    },
+                    background
                 }
             }
         }
     } = useSelector((state: GlobalState) => ({
         customWidget: state.behavior.customWidget
     }));
+
+    const [headerStyle, setHeaderStyle] = useState({ ...DEFAULT_HEADER_CSS });
+
+    useEffect(() => {
+        let tmpHeaderStyle = { ...headerStyle };
+        if (background.background_type === BACKGROUND_TYPE.COLOR) {
+            tmpHeaderStyle.backgroundColor = background.color;
+        } else {
+            tmpHeaderStyle.backgroundImage = `url(${background.image})`;
+        }
+        setHeaderStyle(tmpHeaderStyle);
+    }, [background]);
+
     return (
-        <div className="rcw-header">
+        <div className="rcw-header" style={headerStyle}>
             <TeammateComponent
                 teammate={teammate}
                 welcome_message={welcome_message}

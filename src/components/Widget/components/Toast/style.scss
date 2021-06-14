@@ -1,7 +1,7 @@
 @import 'variables/colors';
 
 .ms-notification-container {
-    font-family: 'Roboto', sans-serif;
+    font-family: inherit;
     font-size: 14px;
     box-sizing: border-box;
     position: fixed;
@@ -95,7 +95,7 @@
 }
 
 .ms-notification-message {
-    font-family: 'Roboto', sans-serif;
+    font-family: inherit;
     color: $black;
     font-size: 14px;
     margin: 0;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { DEFAULT_AVATAR_URL } from './../../../../../../../constants';
 import { Teammate } from './../../../../../../../store/customTypes';
 
 const statusMapping = {
@@ -25,7 +26,7 @@ function TeammateComponent({ teammate, welcome_message }: Props) {
                             >
                                 <div className="rcw-avatar">
                                     <img
-                                        src={p.avatar}
+                                        src={p.avatar || DEFAULT_AVATAR_URL}
                                         className="avatar"
                                         alt="profile"
                                     />

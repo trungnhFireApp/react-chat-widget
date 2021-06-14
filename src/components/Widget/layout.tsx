@@ -84,7 +84,8 @@ function WidgetLayout({
     const {
         customWidgetBehavior,
         customWidgetStyle: {
-            standby: { position }
+            standby: { position },
+            active
         },
         dissableInput,
         showChat,
@@ -191,8 +192,18 @@ function WidgetLayout({
         setShowWidget(customWidgetBehavior.visitor.show_launcher.enable);
     }, [customWidgetBehavior]);
 
+    //append fonts
+    useEffect(() => {
+        //ms-live-chat
+        const containerEl = document.getElementById('ms-widget');
+        if (containerEl) {
+            containerEl.insertAdjacentHTML('afterbegin', active.font_url);
+            containerEl.style.fontFamily = active.font_family;
+        }
+    }, [active]);
+
     return (
-        <>
+        <div id="ms-widget">
             {showWidget && (
                 <>
                     <Toast
@@ -260,7 +271,7 @@ function WidgetLayout({
                     </div>
                 </>
             )}
-        </>
+        </div>
     );
 }
 

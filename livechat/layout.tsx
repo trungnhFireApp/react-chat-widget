@@ -14,7 +14,8 @@ import {
     setBadgeCount,
     isWidgetOpened,
     setCustomWidget,
-    setErrors
+    setErrors,
+    triggerScrollToBottom
 } from '../index';
 import socketService, { Socket } from './service/socket';
 import {
@@ -188,7 +189,7 @@ const Layout = () => {
 
     const handleReceiveMessage = data => {
         //do not show response message with audience sender
-        if (data?.sender !== MESSAGE_SENDER.CLIENT) {
+        if (data?.sender === MESSAGE_SENDER.RESPONSE) {
             addResponseMessage(data.message, data.id);
             if (!isWidgetOpened()) {
                 dispatch(setUnreadCount(unreadCount + 1));
@@ -201,6 +202,10 @@ const Layout = () => {
                 // đánh dấu message đã đọc nếu widget đang mở
                 // socketClient.emit('messageId_action', { _id: data.id });
             }
+        }
+        if (data?.sender === MESSAGE_SENDER.CLIENT) {
+            addUserMessage(data.message, data.id);
+            triggerScrollToBottom();
         }
     };
 

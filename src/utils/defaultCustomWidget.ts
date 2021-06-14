@@ -56,14 +56,15 @@ const defaultCustomWidget = {
             ],
             background: {
                 background_type: 'color', // color, image
-                color: 'white',
-                image: 'url'
+                color: '#1C82FF',
+                image: 'https://app-stag.manysales.io/images/homepage-50.svg'
             },
             text_color_type: 'light', // light, dark
             text_color: '#fff',
-            font_family: '',
-            font_url: '',
-            button_color: 'white',
+            font_family: 'Inter',
+            font_url:
+                '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">',
+            button_color: '#1C82FF',
             bubble_color_type: 'light', // light, dark
             bubble_color: '#fff',
             default_content: {
@@ -72,7 +73,7 @@ const defaultCustomWidget = {
                     default: "Let's chat",
                     office_hour: {}
                 },
-                input_placeholder: 'Type here...'
+                input_placeholder: 'Your message'
             }
         }
     }

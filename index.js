@@ -18,7 +18,8 @@ import {
     markMessageRead,
     setBadgeCount,
     setCustomWidget,
-    setErrors
+    setErrors,
+    triggerScrollToBottom
 } from './src/store/dispatcher';
 
 export {
@@ -41,5 +42,6 @@ export {
     markMessageRead,
     setBadgeCount,
     setCustomWidget,
-    setErrors
+    setErrors,
+    triggerScrollToBottom
 };

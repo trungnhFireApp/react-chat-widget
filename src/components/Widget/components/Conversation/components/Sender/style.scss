@@ -14,6 +14,7 @@
 }
 
 .rcw-new-message {
+    font-family: inherit;
     width: 100%;
     border: 0;
     background-color: $grey-5;
@@ -47,10 +48,12 @@
     border: 0;
     padding: 0;
     margin-left: 16px;
-
-    &.has-value .rcw-send-icon path {
-        fill: $blue;
-    }
+    // .rcw-send-icon path {
+    //     fill: #919eab;
+    // }
+    // &.has-value .rcw-send-icon path {
+    //     fill: $blue;
+    // }
     .rcw-send-icon {
         height: 32px;
         vertical-align: middle;

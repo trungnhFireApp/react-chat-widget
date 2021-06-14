@@ -24,6 +24,11 @@ export const WIDGET_POSITION = {
     LEFT_BOTTOM: 'left_bottom'
 };
 
+export const BACKGROUND_TYPE = {
+    COLOR: 'color',
+    IMAGE: 'image'
+};
+
 export const DEFAULT_WIDGET_POSITION_CSS = {
     right: '0px',
     left: 'auto',
@@ -36,3 +41,14 @@ export const DEFAULT_TOAST_POSITION_CSS = {
     left: 'auto',
     bottom: '90px'
 };
+
+export const DEFAULT_HEADER_CSS = {
+    backgroundColor: '#1C82FF',
+    backgroundImage: 'url()',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+};
+
+export const DEFAULT_AVATAR_URL =
+    'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg';
