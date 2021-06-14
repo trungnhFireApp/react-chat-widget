@@ -34,7 +34,7 @@ const defaultCustomWidget = {
             position: {
                 position: 'right_bottom',
                 side_spacing: '20px',
-                botton_spacing: '20px'
+                bottom_spacing: '20px'
             },
             display_blinking_message: true,
             play_sound_message: true,

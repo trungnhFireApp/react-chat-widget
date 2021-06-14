@@ -16,7 +16,7 @@ type Styling = {
         position: {
             position: string;
             side_spacing: string;
-            botton_spacing: string;
+            bottom_spacing: string;
         };
         display_blinking_message: boolean;
         play_sound_message: boolean;

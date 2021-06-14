@@ -41,6 +41,7 @@ type Props = {
     handleGetAudience: AnyFunction;
     unreadMessagesInBubble?: Array<any>;
     handleMarkMessageAsRead?: AnyFunction;
+    handleMarkAllMessageAsRead?: AnyFunction;
 };
 
 function Widget({
@@ -72,7 +73,8 @@ function Widget({
     audienceId,
     handleGetAudience,
     unreadMessagesInBubble,
-    handleMarkMessageAsRead
+    handleMarkMessageAsRead,
+    handleMarkAllMessageAsRead
 }: Props) {
     const dispatch = useDispatch();
 
@@ -133,6 +135,7 @@ function Widget({
             handleGetAudience={handleGetAudience}
             unreadMessagesInBubble={unreadMessagesInBubble}
             handleMarkMessageAsRead={handleMarkMessageAsRead}
+            handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
         />
     );
 }

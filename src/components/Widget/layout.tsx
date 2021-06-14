@@ -13,11 +13,9 @@ import Toast from './components/Toast';
 
 import './style.scss';
 import {
-    DEFAULT_TOAST_POSITION_CSS,
     DEFAULT_WIDGET_POSITION_CSS,
     WIDGET_POSITION
 } from './../../constants';
-import { getCssValue } from './../../utils/helper';
 
 type Props = {
     title: string;
@@ -48,6 +46,7 @@ type Props = {
     handleGetAudience: AnyFunction;
     unreadMessagesInBubble?: Array<any>;
     handleMarkMessageAsRead?: AnyFunction;
+    handleMarkAllMessageAsRead?: AnyFunction;
 };
 
 function WidgetLayout({
@@ -78,7 +77,8 @@ function WidgetLayout({
     audienceId,
     handleGetAudience,
     unreadMessagesInBubble,
-    handleMarkMessageAsRead
+    handleMarkMessageAsRead,
+    handleMarkAllMessageAsRead
 }: Props) {
     const dispatch = useDispatch();
     const {
@@ -101,9 +101,6 @@ function WidgetLayout({
     const [showWidget, setShowWidget] = useState<boolean>(false);
     const [widgetPosition, setWidgetPosition] = useState<any>({
         ...DEFAULT_WIDGET_POSITION_CSS
-    });
-    const [toastPosition, setToastPosition] = useState<any>({
-        ...DEFAULT_TOAST_POSITION_CSS
     });
 
     const messageRef = useRef<HTMLDivElement | null>(null);
@@ -162,26 +159,15 @@ function WidgetLayout({
     useEffect(() => {
         try {
             let tmpWidgetPosition = { ...DEFAULT_WIDGET_POSITION_CSS };
-            let tmpToastPosition = {
-                ...DEFAULT_TOAST_POSITION_CSS,
-                bottom: `${getCssValue(position.botton_spacing) + 70}px`
-            };
             if (position.position === WIDGET_POSITION.LEFT_BOTTOM) {
                 //widget
                 tmpWidgetPosition.left = '0px';
                 tmpWidgetPosition.right = 'auto';
                 tmpWidgetPosition.alignItems = 'flex-start';
-                tmpWidgetPosition.margin = `0 0 ${position.botton_spacing} ${position.side_spacing}`;
-                //toast
-                tmpToastPosition.left = `${position.side_spacing}`;
-                tmpToastPosition.right = 'auto';
+                tmpWidgetPosition.margin = `0 0 ${position.bottom_spacing} ${position.side_spacing}`;
             } else {
-                tmpWidgetPosition.margin = `0 ${position.side_spacing} ${position.botton_spacing} 0`;
-                //toast
-                tmpToastPosition.left = 'auto';
-                tmpToastPosition.right = `${position.side_spacing}`;
+                tmpWidgetPosition.margin = `0 ${position.side_spacing} ${position.bottom_spacing} 0`;
             }
-            setToastPosition(tmpToastPosition);
             setWidgetPosition(tmpWidgetPosition);
         } catch (error) {
             console.log('error :>> ', error);
@@ -216,7 +202,7 @@ function WidgetLayout({
                         autoDelete={false}
                         handleMarkMessageAsRead={handleMarkMessageAsRead}
                         markMessageRead={markMessageRead}
-                        style={toastPosition}
+                        handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
                     />
                     <div
                         className={cn('rcw-widget-container', {

@@ -37,6 +37,7 @@ type Props = {
     handleGetAudience: AnyFunction;
     unreadMessagesInBubble?: Array<any>;
     handleMarkMessageAsRead?: AnyFunction;
+    handleMarkAllMessageAsRead?: AnyFunction;
 } & typeof defaultProps;
 
 function ConnectedWidget({
@@ -68,7 +69,8 @@ function ConnectedWidget({
     audienceId,
     handleGetAudience,
     unreadMessagesInBubble,
-    handleMarkMessageAsRead
+    handleMarkMessageAsRead,
+    handleMarkAllMessageAsRead
 }: Props) {
     return (
         <Provider store={store}>
@@ -102,6 +104,7 @@ function ConnectedWidget({
                 handleGetAudience={handleGetAudience}
                 unreadMessagesInBubble={unreadMessagesInBubble}
                 handleMarkMessageAsRead={handleMarkMessageAsRead}
+                handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
             />
         </Provider>
     );

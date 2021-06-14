@@ -202,6 +202,14 @@ const Layout = () => {
                 dispatch(setUnreadMessages([data as Message], true));
             } else {
                 // đánh dấu message đã đọc nếu widget đang mở
+                const { shop_id } = getShopInfoFromStorage();
+                if (data?._id && conversation && shop_id) {
+                    markMessageAsRead({
+                        conversation_id: conversation.id,
+                        messageId: data._id,
+                        shop_id
+                    });
+                }
                 // socketClient.emit('messageId_action', { _id: data.id });
             }
         }
@@ -381,15 +389,19 @@ const Layout = () => {
         callback?.(event, userInput);
     };
 
+    const handleMarkAllMessageAsRead = async () => {
+        dispatch(setUnreadCount(0));
+        dispatch(setUnreadMessages([]));
+        setBadgeCount(0);
+        await postMarkAllAsRead();
+    };
+
     const handleToggle = async toggleValue => {
         try {
             if (toggleValue) {
                 //mark all messages as read
                 if (unreadCount > 0) {
-                    dispatch(setUnreadCount(0));
-                    dispatch(setUnreadMessages([]));
-                    setBadgeCount(0);
-                    await postMarkAllAsRead();
+                    await handleMarkAllMessageAsRead();
                 }
                 //nếu không yêu cầu audience info thì tìm audience bằng msUUID
                 if (
@@ -456,7 +468,7 @@ const Layout = () => {
     const handleMarkMessageAsRead = async messageId => {
         if (conversation) {
             const { shop_id } = getShopInfoFromStorage();
-            if (messageId) {
+            if (messageId && shop_id) {
                 dispatch(
                     setUnreadMessages([
                         ...unreadMessages.filter(p => p._id !== messageId)
@@ -494,6 +506,7 @@ const Layout = () => {
                         handleScrollTop={handleScrollTop}
                         handleGetAudience={handleGetAudience}
                         unreadMessagesInBubble={unreadMessages}
+                        handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
                     />
                 </>
             )}
