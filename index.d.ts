@@ -3,39 +3,48 @@
 // Definitions by: Martín Callegari <https://github.com/mcallegari10>
 
 import { ElementType } from 'react';
+import { MessageLink } from './src/store/types';
 import { CustomWidget } from './src/store/customTypes';
 
 declare const Widget: ElementType;
 
 export function addUserMessage(text: string): void;
 export function addUserMessage(text: string, id: string): void;
-export function addUserMessage(text: string, id: string, timestamp: Date): void;
+export function addUserMessage(
+    text: string,
+    id?: string,
+    timestamp?: Date,
+    message_links?: MessageLink[]
+): void;
 export function unshiftUserMessage(
     text: string,
-    id: string,
-    timestamp: Date
+    id?: string,
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ): void;
 
 export function addResponseMessage(text: string): void;
-export function addResponseMessage(text: string, id: string): void;
+export function addResponseMessage(text: string, id?: string): void;
 export function addResponseMessage(
     text: string,
-    id: string,
-    unread: boolean
+    id?: string,
+    unread?: boolean
 ): void;
 
 export function addResponseMessage(
     text: string,
-    id: string,
-    unread: boolean,
-    timestamp: Date
+    id?: string,
+    unread?: boolean,
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ): void;
 
 export function unshiftResponseMessage(
     text: string,
-    id: string,
-    unread: boolean,
-    timestamp: Date
+    id?: string,
+    unread?: boolean,
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ): void;
 
 export function addLinkSnippet(link: {

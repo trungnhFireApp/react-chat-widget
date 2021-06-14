@@ -4,7 +4,8 @@ import {
     Message as MessageI,
     Link,
     CustomCompMessage,
-    LinkParams
+    LinkParams,
+    MessageLink
 } from '../store/types';
 
 import Message from '../components/Widget/components/Conversation/components/Messages/components/Message';
@@ -128,3 +129,25 @@ export function scrollToBottom(messagesDiv: HTMLDivElement | null) {
     if (scrollOffset)
         scrollWithSlowMotion(messagesDiv, scrollTop, scrollOffset);
 }
+
+export const linkify = (
+    message: string,
+    message_links?: MessageLink[]
+): string => {
+    try {
+        let tmpMes = message;
+        if (message_links?.length) {
+            for (let i = 0; i < message_links.length; i++) {
+                const link = message_links[i];
+                tmpMes = tmpMes.replace(
+                    new RegExp(link.origin, 'gi'),
+                    `<a href="${link.shorten}" target="blank">${link.origin}</a>`
+                );
+            }
+        }
+        return tmpMes;
+    } catch (error) {
+        console.log('error :>> ', error);
+        return '';
+    }
+};

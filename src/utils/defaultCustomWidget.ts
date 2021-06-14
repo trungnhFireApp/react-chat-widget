@@ -28,7 +28,8 @@ const defaultCustomWidget = {
             icon: {
                 theme: 'dark', //dark, light, custom
                 icon_url:
-                    'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/launcher.svg'
+                    'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/launcher.svg',
+                upload_url: ''
             },
             position: {
                 position: 'right_bottom',

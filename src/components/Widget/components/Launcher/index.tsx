@@ -59,14 +59,14 @@ function Launcher({
                 {showChat ? (
                     <img
                         // src={closeImg || close}
-                        src={standby.icon.icon_url}
+                        src={standby.icon.upload_url || standby.icon.icon_url}
                         className="rcw-close-launcher"
                         alt={openLabel}
                     />
                 ) : (
                     <img
                         // src={openImg || openLauncher}
-                        src={standby.icon.icon_url}
+                        src={standby.icon.upload_url || standby.icon.icon_url}
                         className="rcw-open-launcher"
                         alt={closeLabel}
                     />

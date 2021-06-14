@@ -52,13 +52,20 @@ export const setUnreadCount = (
 };
 
 export const setUnreadMessages = (
-    payload: Message[]
+    unreadMessages: Message[],
+    isConcat?: boolean
 ): ThunkAction<void, GlobalState, null, Action<string>> => (
-    dispatch: Dispatch<actionTypes.MessageActions>
+    dispatch: Dispatch<actionTypes.MessageActions>,
+    getState: () => GlobalState
 ) => {
+    const { messages } = getState();
+    let result = [...unreadMessages];
+    if (isConcat) {
+        result = [...messages.unreadMessages].concat(unreadMessages);
+    }
     dispatch({
         type: actionTypes.SET_UNREAD_MESSAGES,
-        unreadMessages: payload
+        unreadMessages: result
     });
 };
 

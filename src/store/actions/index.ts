@@ -1,7 +1,7 @@
 import { ElementType } from 'react';
 
 import * as actionsTypes from './types';
-import { LinkParams, ImageState } from '../types';
+import { LinkParams, ImageState, MessageLink } from '../types';
 import { CustomWidget } from '../customTypes';
 
 export function toggleChat(): actionsTypes.ToggleChat {
@@ -25,13 +25,15 @@ export function toggleWidgetLoader(): actionsTypes.ToggleWidgetLoader {
 export function addUserMessage(
     text: string,
     id?: string,
-    timestamp?: Date
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ): actionsTypes.AddUserMessage {
     return {
         type: actionsTypes.ADD_NEW_USER_MESSAGE,
         text,
         id,
-        timestamp
+        timestamp,
+        message_links
     };
 }
 
@@ -39,27 +41,31 @@ export function addResponseMessage(
     text: string,
     id?: string,
     unread?: boolean,
-    timestamp?: Date
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ): actionsTypes.AddResponseMessage {
     return {
         type: actionsTypes.ADD_NEW_RESPONSE_MESSAGE,
         text,
         id,
         unread,
-        timestamp
+        timestamp,
+        message_links
     };
 }
 
 export function unshiftUserMessage(
     text: string,
     id?: string,
-    timestamp?: Date
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ): actionsTypes.UnshiftUserMessage {
     return {
         type: actionsTypes.UNSHIFT_NEW_USER_MESSAGE,
         text,
         id,
-        timestamp
+        timestamp,
+        message_links
     };
 }
 
@@ -67,14 +73,16 @@ export function unshiftResponseMessage(
     text: string,
     id?: string,
     unread?: boolean,
-    timestamp?: Date
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ): actionsTypes.UnshiftResponseMessage {
     return {
         type: actionsTypes.UNSHIFT_NEW_RESPONSE_MESSAGE,
         text,
         id,
         unread,
-        timestamp
+        timestamp,
+        message_links
     };
 }
 

@@ -12,6 +12,11 @@ type BaseMessage = {
     props?: any;
 };
 
+export type MessageLink = {
+    origin: string;
+    shorten: string;
+};
+
 export interface Message extends BaseMessage {
     text: string;
 }

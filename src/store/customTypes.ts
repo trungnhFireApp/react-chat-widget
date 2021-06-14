@@ -11,6 +11,7 @@ type Styling = {
         icon: {
             theme: string; //dark, light, custom
             icon_url: string;
+            upload_url: string;
         };
         position: {
             position: string;

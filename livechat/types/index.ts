@@ -9,6 +9,11 @@ type Shop = {
     msUUID: string;
 };
 
+export type MessageLink = {
+    origin: string;
+    shorten: string;
+};
+
 export interface Message {
     _id: string;
     created_at: Date;
@@ -18,7 +23,7 @@ export interface Message {
     sender_id: string;
     status: string;
     conversation_id?: string;
-    message_links?: Array<any>[];
+    message_links?: MessageLink[];
 }
 
 export interface SocketMessagePayload {

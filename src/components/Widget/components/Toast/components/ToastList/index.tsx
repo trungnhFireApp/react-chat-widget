@@ -1,5 +1,6 @@
 import { Message } from './../../../../../../../livechat/types';
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ToastItem from './components/ToastItem';
 import { AnyFunction } from './../../../../../../utils/types';
 
@@ -22,6 +23,7 @@ function ToastList({
     markMessageRead,
     style
 }: Props) {
+    const dispatch = useDispatch();
     const [list, setList] = useState(toastList);
     useEffect(() => {
         setList([...toastList]);
@@ -38,7 +40,7 @@ function ToastList({
     }, [toastList, autoDelete, dismissTime, list]);
     const deleteToast = id => {
         if (id) {
-            markMessageRead?.(id);
+            dispatch(markMessageRead?.(id));
             handleMarkMessageAsRead?.(id);
         }
     };

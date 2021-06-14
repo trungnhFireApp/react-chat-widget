@@ -25,7 +25,7 @@ function Message({ message, showTimeStamp }: Props) {
         customWidgetStyle: state.behavior.customWidget.style,
         showChat: state.behavior.showChat
     }));
-    const sanitizedHTML = markdownIt()
+    const sanitizedHTML = markdownIt({ html: true })
         .use(markdownItClass, {
             img: ['rcw-message-img']
         })
@@ -35,7 +35,6 @@ function Message({ message, showTimeStamp }: Props) {
             attrs: { target: '_blank', rel: 'noopener' }
         })
         .render(message.text);
-
     return (
         <div className={`rcw-${message.sender}`}>
             <div

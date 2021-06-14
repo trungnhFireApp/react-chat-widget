@@ -1,6 +1,6 @@
 import { ElementType } from 'react';
 
-import { LinkParams, FullscreenPreviewState } from '../types';
+import { LinkParams, FullscreenPreviewState, MessageLink } from '../types';
 import { CustomWidget } from '../customTypes';
 
 export const TOGGLE_CHAT = 'BEHAVIOR/TOGGLE_CHAT';
@@ -44,6 +44,7 @@ export interface AddUserMessage {
     text: string;
     id?: string;
     timestamp?: Date;
+    message_links?: MessageLink[];
 }
 
 export interface AddResponseMessage {
@@ -52,6 +53,7 @@ export interface AddResponseMessage {
     id?: string;
     unread?: boolean;
     timestamp?: Date;
+    message_links?: MessageLink[];
 }
 
 export interface UnshiftUserMessage {
@@ -59,6 +61,7 @@ export interface UnshiftUserMessage {
     text: string;
     id?: string;
     timestamp?: Date;
+    message_links?: MessageLink[];
 }
 
 export interface UnshiftResponseMessage {
@@ -67,6 +70,7 @@ export interface UnshiftResponseMessage {
     id?: string;
     unread?: boolean;
     timestamp?: Date;
+    message_links?: MessageLink[];
 }
 
 export interface ToggleMsgLoader {

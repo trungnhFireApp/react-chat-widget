@@ -3,36 +3,56 @@ import { ElementType } from 'react';
 import store from '.';
 import * as actions from './actions';
 import { CustomWidget } from './customTypes';
-import { LinkParams, ImageState } from './types';
+import { LinkParams, ImageState, MessageLink } from './types';
 
-export function addUserMessage(text: string, id?: string, timestamp?: Date) {
-    store.dispatch(actions.addUserMessage(text, id, timestamp));
+export function addUserMessage(
+    text: string,
+    id?: string,
+    timestamp?: Date,
+    message_links?: MessageLink[]
+) {
+    store.dispatch(actions.addUserMessage(text, id, timestamp, message_links));
 }
 
 export function addResponseMessage(
     text: string,
     id?: string,
     unread?: boolean,
-    timestamp?: Date
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ) {
-    store.dispatch(actions.addResponseMessage(text, id, unread, timestamp));
+    store.dispatch(
+        actions.addResponseMessage(text, id, unread, timestamp, message_links)
+    );
 }
 
 export function unshiftUserMessage(
     text: string,
     id?: string,
-    timestamp?: Date
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ) {
-    store.dispatch(actions.unshiftUserMessage(text, id, timestamp));
+    store.dispatch(
+        actions.unshiftUserMessage(text, id, timestamp, message_links)
+    );
 }
 
 export function unshiftResponseMessage(
     text: string,
     id?: string,
     unread?: boolean,
-    timestamp?: Date
+    timestamp?: Date,
+    message_links?: MessageLink[]
 ) {
-    store.dispatch(actions.unshiftResponseMessage(text, id, unread, timestamp));
+    store.dispatch(
+        actions.unshiftResponseMessage(
+            text,
+            id,
+            unread,
+            timestamp,
+            message_links
+        )
+    );
 }
 
 export function addLinkSnippet(link: LinkParams, id?: string) {

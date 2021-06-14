@@ -190,21 +190,28 @@ const Layout = () => {
     const handleReceiveMessage = data => {
         //do not show response message with audience sender
         if (data?.sender === MESSAGE_SENDER.RESPONSE) {
-            addResponseMessage(data.message, data.id);
+            addResponseMessage(
+                data.message,
+                data._id,
+                undefined,
+                undefined,
+                data.message_links
+            );
             if (!isWidgetOpened()) {
                 dispatch(setUnreadCount(unreadCount + 1));
-                dispatch(
-                    setUnreadMessages(
-                        [...unreadMessages].concat(data as Message)
-                    )
-                );
+                dispatch(setUnreadMessages([data as Message], true));
             } else {
                 // đánh dấu message đã đọc nếu widget đang mở
                 // socketClient.emit('messageId_action', { _id: data.id });
             }
         }
         if (data?.sender === MESSAGE_SENDER.CLIENT) {
-            addUserMessage(data.message, data.id);
+            addUserMessage(
+                data.message,
+                data._id,
+                undefined,
+                data.message_links
+            );
             triggerScrollToBottom();
         }
     };
@@ -228,7 +235,8 @@ const Layout = () => {
                     unshiftUserMessage(
                         meg.message,
                         meg._id,
-                        new Date(meg.created_at)
+                        new Date(meg.created_at),
+                        meg.message_links
                     );
                 }
                 if (meg.sender === MESSAGE_SENDER.RESPONSE) {
@@ -236,7 +244,8 @@ const Layout = () => {
                         meg.message,
                         meg._id,
                         false,
-                        new Date(meg.created_at)
+                        new Date(meg.created_at),
+                        meg.message_links
                     ); // default set unread for all messages from api
                 }
             }
