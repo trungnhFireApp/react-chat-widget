@@ -52,3 +52,26 @@ export const DEFAULT_HEADER_CSS = {
 
 export const DEFAULT_AVATAR_URL =
     'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/logo.svg';
+
+export const BUBBLE_THEME = {
+    light: {
+        response: {
+            BACKGROUND_COLOR: '#CEE4FF',
+            TEXT_COLOR: '#FFFFFF'
+        },
+        client: {
+            BACKGROUND_COLOR: '#E2E4E5',
+            TEXT_COLOR: '#FFFFFF'
+        }
+    },
+    dark: {
+        response: {
+            BACKGROUND_COLOR: '#003A81',
+            TEXT_COLOR: '#454F5B'
+        },
+        client: {
+            BACKGROUND_COLOR: '#454F5B',
+            TEXT_COLOR: '#454F5B'
+        }
+    }
+};

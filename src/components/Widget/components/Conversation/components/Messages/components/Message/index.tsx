@@ -6,9 +6,10 @@ import markdownItSanitizer from 'markdown-it-sanitizer';
 import markdownItClass from '@toycode/markdown-it-class';
 import markdownItLinkAttributes from 'markdown-it-link-attributes';
 
-import { Message } from 'src/store/types';
-
+import { GlobalState, Message } from 'src/store/types';
+import { BUBBLE_THEME } from './../../../../../../../../constants';
 import './styles.scss';
+import { useSelector } from 'react-redux';
 
 type Props = {
     message: Message;
@@ -16,6 +17,14 @@ type Props = {
 };
 
 function Message({ message, showTimeStamp }: Props) {
+    const {
+        customWidgetStyle: {
+            active: { bubble_color_type, text_color_type }
+        }
+    } = useSelector((state: GlobalState) => ({
+        customWidgetStyle: state.behavior.customWidget.style,
+        showChat: state.behavior.showChat
+    }));
     const sanitizedHTML = markdownIt()
         .use(markdownItClass, {
             img: ['rcw-message-img']
@@ -31,6 +40,16 @@ function Message({ message, showTimeStamp }: Props) {
         <div className={`rcw-${message.sender}`}>
             <div
                 className="rcw-message-text"
+                style={{
+                    backgroundColor:
+                        BUBBLE_THEME[bubble_color_type][message.sender][
+                            'BACKGROUND_COLOR'
+                        ],
+                    color:
+                        BUBBLE_THEME[text_color_type][message.sender][
+                            'TEXT_COLOR'
+                        ]
+                }}
                 dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
             />
             {showTimeStamp && (

@@ -59,7 +59,7 @@ const defaultCustomWidget = {
                 color: '#1C82FF',
                 image: 'https://app-stag.manysales.io/images/homepage-50.svg'
             },
-            text_color_type: 'light', // light, dark
+            text_color_type: 'dark', // light, dark
             text_color: '#fff',
             font_family: 'Inter',
             font_url:

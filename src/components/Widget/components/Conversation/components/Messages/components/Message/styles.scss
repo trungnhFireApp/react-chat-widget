@@ -20,7 +20,8 @@
     .rcw-message-text {
         @include message-bubble($grey-8);
         p {
-            color: $black;
+            // color: $black;
+            color: inherit;
         }
     }
 
@@ -37,7 +38,8 @@
     .rcw-message-text {
         @include message-bubble($blue);
         p {
-            color: $white;
+            // color: $white;
+            color: inherit;
         }
     }
 }
