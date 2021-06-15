@@ -26,9 +26,9 @@ const defaultCustomWidget = {
         standby: {
             background: '#1C82FF',
             icon: {
-                theme: 'dark', //dark, light, custom
+                theme: 'light', //dark, light, custom
                 icon_url:
-                    'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/launcher.svg',
+                    'https://s3-ap-southeast-1.amazonaws.com/static.manysales.io/1.svg',
                 upload_url: ''
             },
             position: {

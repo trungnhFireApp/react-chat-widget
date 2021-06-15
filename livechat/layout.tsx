@@ -292,23 +292,7 @@ const Layout = () => {
     const handleGetMessages = async (payload = {}) => {
         const data = await fetchGetMessages(payload);
         if (data?.docs && Array.isArray(data?.docs)) {
-            dispatch(
-                setMessages(
-                    [...data?.docs].map(
-                        p =>
-                            ({
-                                _id: p._id,
-                                created_at: p.created_at,
-                                is_seen: p.is_seen,
-                                message: p.message,
-                                sender: p.sender,
-                                sender_id: p.sender_id,
-                                status: p.status,
-                                conversation_id: p.conversation_id
-                            } as Message)
-                    )
-                )
-            );
+            dispatch(setMessages([...data?.docs]));
         }
     };
 
