@@ -97,7 +97,15 @@ const Layout = () => {
         // addResponseMessage(
         //     '![vertical](https://d2sofvawe08yqg.cloudfront.net/reintroducing-react/hero2x?1556470143)'
         // );
+        window.addEventListener(
+            'onMsLiveChatMessagesChange',
+            handleCampaignMessage
+        );
         return () => {
+            window.removeEventListener(
+                'onMsLiveChatMessagesChange',
+                handleCampaignMessage
+            );
             rc.cancel();
         };
     }, []);
@@ -353,6 +361,8 @@ const Layout = () => {
             }
         }
     };
+
+    const handleCampaignMessage = e => {};
 
     // ===========WIDGET COMPONENT HANDLER=======
     // =================================
