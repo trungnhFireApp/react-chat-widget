@@ -100,8 +100,8 @@ function Conversation({
                             />
                         </>
                     )}
+                    <ErrorMessages />
                 </div>
-                <ErrorMessages />
                 <QuickButtons onQuickButtonClicked={onQuickButtonClicked} />
                 {audienceId && (
                     <Sender
