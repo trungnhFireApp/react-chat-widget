@@ -284,7 +284,9 @@ const Layout = () => {
         });
         if (data?.docs && Array.isArray(data?.docs) && !isWidgetOpened()) {
             dispatch(setUnreadCount(data.totalDocs));
-            dispatch(setUnreadMessages(data.docs.map(p => p as Message)));
+            dispatch(
+                setUnreadMessages(data.docs.reverse().map(p => p as Message))
+            );
             setBadgeCount(data.totalDocs > 100 ? 99 : data.totalDocs);
         }
     };
