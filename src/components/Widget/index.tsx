@@ -1,5 +1,6 @@
+import { GlobalState } from './../../store/types';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
     toggleChat,
@@ -78,9 +79,21 @@ function Widget({
 }: Props) {
     const dispatch = useDispatch();
 
+    const {
+        customWidget: {
+            behaviour: {
+                visitor: { require_information }
+            }
+        }
+    } = useSelector((state: GlobalState) => ({
+        customWidget: state.behavior.customWidget
+    }));
+
     const toggleConversation = () => {
         dispatch(toggleChat());
-        handleToggle ? handleToggle(isWidgetOpened()) : null;
+        handleToggle
+            ? handleToggle(isWidgetOpened(), require_information.enable)
+            : null;
     };
 
     const handleMessageSubmit = event => {

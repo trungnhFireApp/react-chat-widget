@@ -197,6 +197,7 @@ const Layout = () => {
                 undefined,
                 data.message_links
             );
+            triggerScrollToBottom();
             if (!isWidgetOpened()) {
                 dispatch(setUnreadCount(unreadCount + 1));
                 dispatch(setUnreadMessages([data as Message], true));
@@ -396,7 +397,7 @@ const Layout = () => {
         await postMarkAllAsRead();
     };
 
-    const handleToggle = async toggleValue => {
+    const handleToggle = async (toggleValue, isRequireAudienceInfo) => {
         try {
             if (toggleValue) {
                 //mark all messages as read
@@ -404,11 +405,7 @@ const Layout = () => {
                     await handleMarkAllMessageAsRead();
                 }
                 //nếu không yêu cầu audience info thì tìm audience bằng msUUID
-                if (
-                    !customWidgetSetting?.behaviour?.visitor
-                        ?.require_information?.enable &&
-                    !audienceId
-                ) {
+                if (!isRequireAudienceInfo && !audienceId) {
                     await handleGetAudience();
                 }
             }
