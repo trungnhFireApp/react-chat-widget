@@ -75,9 +75,25 @@ function AudienceForm({ handleGetAudience }: Props) {
     };
 
     const handleSubmit = () => {
-        if (when.value === AUDIENCE_FORM_REQUIRE_WHEN.ALWAYS && validate()) {
+        if (when.value === AUDIENCE_FORM_REQUIRE_WHEN.ALWAYS) {
+            if (validate()) {
+                handleGetAudience({
+                    ...(fields.name ? { name: audienceInfo.name } : {}),
+                    ...(fields.email ? { email: audienceInfo.email } : {}),
+                    ...(fields.phone ? { phone: audienceInfo.phone } : {})
+                });
+            }
+        } else {
             handleGetAudience({
-                ...audienceInfo
+                ...(audienceInfo.name.trim()
+                    ? { name: audienceInfo.name }
+                    : {}),
+                ...(audienceInfo.email.trim()
+                    ? { email: audienceInfo.email }
+                    : {}),
+                ...(audienceInfo.phone.trim()
+                    ? { phone: audienceInfo.phone }
+                    : {})
             });
         }
     };
