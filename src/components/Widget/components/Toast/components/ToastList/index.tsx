@@ -31,7 +31,10 @@ function ToastList({
 }: Props) {
     const dispatch = useDispatch();
     const {
-        customWidgetStyle: { standby }
+        customWidgetStyle: {
+            standby,
+            active: { teammate }
+        }
     } = useSelector((state: GlobalState) => ({
         customWidgetStyle: state.behavior.customWidget.style
     }));
@@ -104,6 +107,7 @@ function ToastList({
                         position={position}
                         deleteToast={deleteToast}
                         message={toast as Message}
+                        teammate={teammate?.[0]}
                     />
                 ))}
             </div>

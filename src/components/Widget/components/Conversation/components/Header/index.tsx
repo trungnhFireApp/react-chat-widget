@@ -11,19 +11,6 @@ import TeammateComponent from './components/TeammateComponent';
 
 import './style.scss';
 
-//define default data để nếu api lỗi hay die thì cũng có data default hiển thị
-const defaultData = {
-    teammate: [
-        {
-            name: 'ManySales - Pop-up, Email, SMS',
-            avatar:
-                'https://cdn.shopify.com/s/files/1/0269/3490/2873/files/Webp.net-resizeimage_32x32.png?v=1585904252',
-            status: 'online'
-        }
-    ],
-    welcome_message: 'Welcome'
-};
-
 type Props = {
     title: string;
     subtitle: string;
@@ -43,10 +30,8 @@ function Header({
         customWidget: {
             style: {
                 active: {
-                    teammate = defaultData.teammate,
-                    default_content: {
-                        welcome_message = defaultData.welcome_message
-                    },
+                    teammate,
+                    default_content: { welcome_message },
                     background
                 }
             }

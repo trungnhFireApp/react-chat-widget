@@ -110,6 +110,11 @@
     // overflow: hidden;
 }
 
+.ms-notification-item {
+    display: flex;
+    align-items: center;
+}
+
 .ms-notification-container button {
     position: relative;
     // right: -0.3em;
@@ -136,6 +141,22 @@
     svg {
         width: 16px;
         height: 16px;
+    }
+}
+
+.ms-notification-avatar {
+    background: green;
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.12));
+    border-radius: 50%;
+    margin-right: 6px;
+    margin-bottom: 8px;
+    align-self: flex-end;
+    img {
+        width: 100%;
+        border-radius: 50%;
+        border: none;
     }
 }
 
