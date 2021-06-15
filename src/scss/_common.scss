@@ -13,6 +13,7 @@
     margin: 0;
     max-width: none;
     width: 100%;
+    margin: 0 !important;
 }
 
 @mixin header-fs {
@@ -26,7 +27,7 @@
 }
 
 @mixin close-button-fs {
-    background-color: $turqois-1;
+    // background-color: $turqois-1;
     border: 0;
     display: block;
     position: absolute;

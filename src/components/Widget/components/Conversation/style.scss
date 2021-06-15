@@ -32,11 +32,8 @@
 }
 
 .rcw-conversation-body {
-    // border-radius: 16px 16px 0 0;
-    // overflow: hidden;
     height: 50vh;
     max-height: 364px;
-    // background: $white;
 }
 
 .rcw-full-screen {
@@ -48,5 +45,12 @@
 @media screen and (max-width: 800px) {
     .rcw-conversation-container {
         @include conversation-container-fs;
+    }
+    .rcw-conversation-wrapper {
+        height: 100%;
+    }
+    .rcw-conversation-body {
+        max-height: unset;
+        height: calc(100% - 84px);
     }
 }

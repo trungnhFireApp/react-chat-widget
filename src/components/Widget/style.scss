@@ -2,6 +2,11 @@
 @import 'animation';
 @import 'common';
 
+#ms-widget {
+    position: relative;
+    z-index: 2147483648;
+}
+
 .rcw-widget-container {
     bottom: 0;
     display: flex;

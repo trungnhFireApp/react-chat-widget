@@ -123,9 +123,9 @@
             @include header-fs;
         }
 
-        .rcw-title {
-            @include title-fs;
-        }
+        // .rcw-title {
+        //     @include title-fs;
+        // }
 
         .rcw-close-button {
             @include close-button-fs;
