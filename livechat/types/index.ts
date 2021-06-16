@@ -16,7 +16,7 @@ export type MessageLink = {
 
 export interface Message {
     _id: string;
-    created_at: Date;
+    created_at?: Date;
     is_seen: boolean;
     message: string;
     sender: string;
@@ -24,6 +24,7 @@ export interface Message {
     status: string;
     conversation_id?: string;
     message_links?: MessageLink[];
+    isCampaignMessage?: boolean;
 }
 
 export interface SocketMessagePayload {

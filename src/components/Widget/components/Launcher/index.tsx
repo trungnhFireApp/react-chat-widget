@@ -4,7 +4,6 @@ import cn from 'classnames';
 
 import Badge from './components/Badge';
 import { GlobalState } from '../../../../store/types';
-import { setBadgeCount } from '../../../../store/actions';
 
 import './style.scss';
 
@@ -41,17 +40,12 @@ function Launcher({
         customWidget: state.behavior.customWidget
     }));
 
-    const toggleChat = () => {
-        toggle();
-        if (!showChat) dispatch(setBadgeCount(0));
-    };
-
     return (
         <>
             <button
                 type="button"
                 className={cn('rcw-launcher', { 'rcw-hide-sm': showChat })}
-                onClick={toggleChat}
+                onClick={toggle}
                 aria-controls={chatId}
                 style={{ background: standby.background }}
             >

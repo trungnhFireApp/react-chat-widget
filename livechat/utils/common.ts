@@ -1,5 +1,5 @@
 import { getStorage, setStorage, STORAGE_KEY } from '../storage';
-import { Conversation } from '../types';
+import { Conversation, Message } from '../types';
 import { Nullable } from './types';
 
 export const getConversationInfoFromStorage = (): Nullable<Conversation> => {
@@ -47,4 +47,39 @@ export const getAudienceIdFromStorage = () => {
 
 export const setAudienceIdToStorage = (value): void => {
     setStorage(STORAGE_KEY.ms_audienceId, value);
+};
+
+export function uid() {
+    return (
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substr(2)
+    );
+}
+
+export const createMessage = ({
+    _id = uid(),
+    created_at = new Date(),
+    is_seen = false,
+    message,
+    sender,
+    sender_id,
+    conversation_id = '',
+    status = 'open',
+    message_links = [],
+    isCampaignMessage = false
+}): Message => {
+    return {
+        _id: _id,
+        created_at: created_at,
+        is_seen: is_seen,
+        message: message,
+        sender: sender,
+        sender_id: sender_id,
+        status: status,
+        conversation_id: conversation_id,
+        message_links: message_links,
+        isCampaignMessage: isCampaignMessage
+    };
 };

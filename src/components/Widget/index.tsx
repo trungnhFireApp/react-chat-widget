@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     toggleChat,
     addUserMessage,
-    triggerScrollToBottom
+    triggerScrollToBottom,
+    setBadgeCount
 } from '../../store/actions';
 import { isWidgetOpened } from '../../store/dispatcher';
 import { AnyFunction } from '../../utils/types';
@@ -43,6 +44,7 @@ type Props = {
     unreadMessagesInBubble?: Array<any>;
     handleMarkMessageAsRead?: AnyFunction;
     handleMarkAllMessageAsRead?: AnyFunction;
+    handleClickToastMessage?: AnyFunction;
 };
 
 function Widget({
@@ -75,7 +77,8 @@ function Widget({
     handleGetAudience,
     unreadMessagesInBubble,
     handleMarkMessageAsRead,
-    handleMarkAllMessageAsRead
+    handleMarkAllMessageAsRead,
+    handleClickToastMessage
 }: Props) {
     const dispatch = useDispatch();
 
@@ -84,8 +87,10 @@ function Widget({
             behaviour: {
                 visitor: { require_information }
             }
-        }
+        },
+        showChat
     } = useSelector((state: GlobalState) => ({
+        showChat: state.behavior.showChat,
         customWidget: state.behavior.customWidget
     }));
 
@@ -94,6 +99,7 @@ function Widget({
         handleToggle
             ? handleToggle(isWidgetOpened(), require_information.enable)
             : null;
+        if (!showChat) dispatch(setBadgeCount(0));
     };
 
     const handleMessageSubmit = event => {
@@ -149,6 +155,7 @@ function Widget({
             unreadMessagesInBubble={unreadMessagesInBubble}
             handleMarkMessageAsRead={handleMarkMessageAsRead}
             handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
+            handleClickToastMessage={handleClickToastMessage}
         />
     );
 }

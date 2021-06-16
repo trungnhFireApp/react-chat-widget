@@ -32,7 +32,9 @@ import {
     getShopInfoFromStorage,
     setConversationInfoToStorage,
     getAudienceIdFromStorage,
-    setAudienceIdToStorage
+    setAudienceIdToStorage,
+    uid,
+    createMessage
 } from './utils/common';
 
 import './styles.scss';
@@ -79,7 +81,7 @@ const Layout = () => {
     }));
 
     const [socketClient, setSocketClient] = useState<Nullable<Socket>>();
-    const [unSendMessages, setUnSendMessages] = useState<string[]>([]);
+    const [unSendMessages, setUnSendMessages] = useState<Message[]>([]);
 
     const [customWidgetSetting, setCustomWidgetSetting] = useState<any>();
     const [audienceId, setAudienceId] = useState<Nullable<number>>();
@@ -97,15 +99,7 @@ const Layout = () => {
         // addResponseMessage(
         //     '![vertical](https://d2sofvawe08yqg.cloudfront.net/reintroducing-react/hero2x?1556470143)'
         // );
-        window.addEventListener(
-            'onMsLiveChatMessagesChange',
-            handleCampaignMessage
-        );
         return () => {
-            window.removeEventListener(
-                'onMsLiveChatMessagesChange',
-                handleCampaignMessage
-            );
             rc.cancel();
         };
     }, []);
@@ -149,7 +143,11 @@ const Layout = () => {
     useEffect(() => {
         if (socketClient?.connected && unSendMessages.length) {
             for (let i = 0; i < unSendMessages.length; i++) {
-                emitMessage(unSendMessages[i]);
+                emitMessage(
+                    unSendMessages[i].message,
+                    unSendMessages[i].sender,
+                    unSendMessages[i].sender_id
+                );
             }
         }
     }, [socketClient?.connected, unSendMessages]);
@@ -185,12 +183,16 @@ const Layout = () => {
         socketClient?.close();
     };
 
-    const emitMessage = (newMes: string) => {
-        if (conversation) {
+    const emitMessage = (
+        newMes: string,
+        sender: string,
+        sender_id?: string
+    ) => {
+        if (conversation && sender_id) {
             socketClient?.emit(conversation.id, {
                 message: newMes,
-                sender: MESSAGE_SENDER.CLIENT,
-                sender_id: audienceId
+                sender: sender,
+                sender_id: sender_id
             });
         }
     };
@@ -237,6 +239,10 @@ const Layout = () => {
     // =================================
 
     useEffect(() => {
+        setBadgeCount(unreadCount);
+    }, [unreadCount]);
+
+    useEffect(() => {
         if (conversation) {
             handleConnectToConversation();
             handleGetMessages(defaultPagingConfig);
@@ -252,7 +258,7 @@ const Layout = () => {
                     unshiftUserMessage(
                         meg.message,
                         meg._id,
-                        new Date(meg.created_at),
+                        meg?.created_at ? new Date(meg.created_at) : new Date(),
                         meg.message_links
                     );
                 }
@@ -261,7 +267,7 @@ const Layout = () => {
                         meg.message,
                         meg._id,
                         false,
-                        new Date(meg.created_at),
+                        meg?.created_at ? new Date(meg.created_at) : new Date(),
                         meg.message_links
                     ); // default set unread for all messages from api
                 }
@@ -295,7 +301,6 @@ const Layout = () => {
             dispatch(
                 setUnreadMessages(data.docs.reverse().map(p => p as Message))
             );
-            setBadgeCount(data.totalDocs > 100 ? 99 : data.totalDocs);
         }
     };
 
@@ -362,17 +367,57 @@ const Layout = () => {
         }
     };
 
-    const handleCampaignMessage = e => {};
+    useEffect(() => {
+        window.addEventListener(
+            'onMsLiveChatMessagesChange',
+            handleCampaignMessage
+        );
+        return () => {
+            window.removeEventListener(
+                'onMsLiveChatMessagesChange',
+                handleCampaignMessage
+            );
+        };
+    }, [unreadMessages, conversation, unreadCount]);
+
+    const handleCampaignMessage = e => {
+        const { shop_id } = getShopInfoFromStorage();
+        if (e && Array.isArray(e.detail) && e.detail.length && conversation) {
+            dispatch(setUnreadCount(unreadCount + e.detail.length));
+            dispatch(
+                setUnreadMessages([
+                    ...unreadMessages,
+                    ...e.detail.map(p => ({
+                        _id: uid(),
+                        is_seen: false,
+                        message: p.message,
+                        sender: MESSAGE_SENDER.RESPONSE,
+                        sender_id: shop_id,
+                        status: 'open',
+                        conversation_id: conversation?.id,
+                        isCampaignMessage: true
+                    }))
+                ])
+            );
+        }
+    };
 
     // ===========WIDGET COMPONENT HANDLER=======
     // =================================
 
     const handleSendMessage = (newMessage: string) => {
         if (socketClient?.connected && conversation) {
-            emitMessage(newMessage);
+            emitMessage(newMessage, MESSAGE_SENDER.CLIENT, `${audienceId}`);
         } else {
             setUnSendMessages(state => {
-                return [...state, newMessage];
+                return [
+                    ...state,
+                    createMessage({
+                        message: newMessage,
+                        sender: MESSAGE_SENDER.CLIENT,
+                        sender_id: audienceId
+                    })
+                ];
             });
         }
     };
@@ -389,7 +434,6 @@ const Layout = () => {
     const handleMarkAllMessageAsRead = async () => {
         dispatch(setUnreadCount(0));
         dispatch(setUnreadMessages([]));
-        setBadgeCount(0);
         await postMarkAllAsRead();
     };
 
@@ -416,6 +460,25 @@ const Layout = () => {
             defaultPagingConfig.page += 1;
             await handleGetMessages(defaultPagingConfig);
             dispatch(setLoadMessage(false));
+        }
+    };
+
+    const handleClickToastMessage = messageId => {
+        const mes = unreadMessages.find(p => p._id === messageId);
+        if (mes?.isCampaignMessage) {
+            const { shop_id } = getShopInfoFromStorage();
+            if (conversation) {
+                emitMessage(mes.message, MESSAGE_SENDER.RESPONSE, shop_id);
+            } else {
+                setUnSendMessages(state => [
+                    ...state,
+                    createMessage({
+                        message: mes.message,
+                        sender: MESSAGE_SENDER.RESPONSE,
+                        sender_id: shop_id
+                    })
+                ]);
+            }
         }
     };
 
@@ -461,18 +524,23 @@ const Layout = () => {
     const handleMarkMessageAsRead = async messageId => {
         if (conversation) {
             const { shop_id } = getShopInfoFromStorage();
-            if (messageId && shop_id) {
+            const mes = unreadMessages.find(p => p._id === messageId);
+            if (mes && shop_id) {
+                const isCampaignMessage = mes.isCampaignMessage;
                 dispatch(
                     setUnreadMessages([
                         ...unreadMessages.filter(p => p._id !== messageId)
                     ])
                 );
-                const req = await markMessageAsRead({
-                    conversation_id: conversation.id,
-                    // reader_id: messageId,
-                    messageId,
-                    shop_id
-                });
+                //message từ campaign không phải message chat nên không cần đánh dấu đã đọc.
+                if (!isCampaignMessage) {
+                    await markMessageAsRead({
+                        conversation_id: conversation.id,
+                        // reader_id: messageId,
+                        messageId,
+                        shop_id
+                    });
+                }
             }
         }
     };
@@ -500,6 +568,7 @@ const Layout = () => {
                         handleGetAudience={handleGetAudience}
                         unreadMessagesInBubble={unreadMessages}
                         handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
+                        handleClickToastMessage={handleClickToastMessage}
                     />
                 </>
             )}

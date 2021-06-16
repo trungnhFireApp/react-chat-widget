@@ -18,6 +18,8 @@ type Props = {
     handleMarkMessageAsRead?: AnyFunction;
     markMessageRead?: AnyFunction;
     handleMarkAllMessageAsRead?: AnyFunction;
+    toggleChat: () => void;
+    handleClickToastMessage?: AnyFunction;
 };
 
 function ToastList({
@@ -27,7 +29,9 @@ function ToastList({
     toastList,
     handleMarkMessageAsRead,
     markMessageRead,
-    handleMarkAllMessageAsRead
+    handleMarkAllMessageAsRead,
+    toggleChat,
+    handleClickToastMessage
 }: Props) {
     const dispatch = useDispatch();
     const {
@@ -88,6 +92,12 @@ function ToastList({
         }
     };
 
+    const handleClickMessage = (e, messageId) => {
+        e.preventDefault();
+        handleClickToastMessage?.(messageId);
+        toggleChat();
+    };
+
     return (
         <>
             <div
@@ -108,6 +118,7 @@ function ToastList({
                         deleteToast={deleteToast}
                         message={toast as Message}
                         teammate={teammate?.[0]}
+                        handleClickMessage={handleClickMessage}
                     />
                 ))}
             </div>

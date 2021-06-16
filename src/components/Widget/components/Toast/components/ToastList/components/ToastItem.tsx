@@ -2,15 +2,23 @@ import { Message } from './../../../../../../../../livechat/types';
 import React from 'react';
 import { Teammate } from './../../../../../../../store/customTypes';
 import { DEFAULT_AVATAR_URL } from '../../../../../../../constants';
+import { AnyFunction } from './../../../../../../../utils/types';
 
 type Props = {
     message: Message;
     position: string;
     deleteToast: (id?: string) => void;
     teammate?: Teammate;
+    handleClickMessage: AnyFunction;
 };
 
-function ToastItem({ message, position, deleteToast, teammate }: Props) {
+function ToastItem({
+    message,
+    position,
+    deleteToast,
+    teammate,
+    handleClickMessage
+}: Props) {
     return (
         <div className="ms-notification-item">
             {teammate && (
@@ -22,7 +30,11 @@ function ToastItem({ message, position, deleteToast, teammate }: Props) {
                 className={`ms-notification ms-toast`}
                 // style={{ backgroundColor: toast.backgroundColor }}
             >
-                <div className="ms-notification-message">{message.message}</div>
+                <div
+                    onClick={e => handleClickMessage(e, message._id)}
+                    className="ms-notification-message"
+                    dangerouslySetInnerHTML={{ __html: message.message }}
+                ></div>
                 <button
                     onClick={() => deleteToast(message._id)}
                     className="ms-notification-close-btn"

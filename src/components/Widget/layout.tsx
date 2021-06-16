@@ -47,6 +47,7 @@ type Props = {
     unreadMessagesInBubble?: Array<any>;
     handleMarkMessageAsRead?: AnyFunction;
     handleMarkAllMessageAsRead?: AnyFunction;
+    handleClickToastMessage?: AnyFunction;
 };
 
 function WidgetLayout({
@@ -78,7 +79,8 @@ function WidgetLayout({
     handleGetAudience,
     unreadMessagesInBubble,
     handleMarkMessageAsRead,
-    handleMarkAllMessageAsRead
+    handleMarkAllMessageAsRead,
+    handleClickToastMessage
 }: Props) {
     const dispatch = useDispatch();
     const {
@@ -203,6 +205,8 @@ function WidgetLayout({
                         handleMarkMessageAsRead={handleMarkMessageAsRead}
                         markMessageRead={markMessageRead}
                         handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
+                        toggleChat={onToggleConversation}
+                        handleClickToastMessage={handleClickToastMessage}
                     />
                     <div
                         className={cn('rcw-widget-container', {
