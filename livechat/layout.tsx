@@ -382,7 +382,7 @@ const Layout = () => {
 
     const handleCampaignMessage = e => {
         const { shop_id } = getShopInfoFromStorage();
-        if (e && Array.isArray(e.detail) && e.detail.length && conversation) {
+        if (e && Array.isArray(e.detail) && e.detail.length) {
             dispatch(setUnreadCount(unreadCount + e.detail.length));
             dispatch(
                 setUnreadMessages([
@@ -522,25 +522,23 @@ const Layout = () => {
     };
 
     const handleMarkMessageAsRead = async messageId => {
-        if (conversation) {
-            const { shop_id } = getShopInfoFromStorage();
-            const mes = unreadMessages.find(p => p._id === messageId);
-            if (mes && shop_id) {
-                const isCampaignMessage = mes.isCampaignMessage;
-                dispatch(
-                    setUnreadMessages([
-                        ...unreadMessages.filter(p => p._id !== messageId)
-                    ])
-                );
-                //message từ campaign không phải message chat nên không cần đánh dấu đã đọc.
-                if (!isCampaignMessage) {
-                    await markMessageAsRead({
-                        conversation_id: conversation.id,
-                        // reader_id: messageId,
-                        messageId,
-                        shop_id
-                    });
-                }
+        const { shop_id } = getShopInfoFromStorage();
+        const mes = unreadMessages.find(p => p._id === messageId);
+        if (mes && shop_id) {
+            const isCampaignMessage = mes.isCampaignMessage;
+            dispatch(
+                setUnreadMessages([
+                    ...unreadMessages.filter(p => p._id !== messageId)
+                ])
+            );
+            //message từ campaign không phải message chat nên không cần đánh dấu đã đọc.
+            if (!isCampaignMessage && conversation) {
+                await markMessageAsRead({
+                    conversation_id: conversation.id,
+                    // reader_id: messageId,
+                    messageId,
+                    shop_id
+                });
             }
         }
     };
