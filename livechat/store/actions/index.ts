@@ -63,6 +63,10 @@ export const setUnreadMessages = (
     if (isConcat) {
         result = [...messages.unreadMessages].concat(unreadMessages);
     }
+
+    //unique message
+    result = [...new Map(result.map(item => [item['_id'], item])).values()];
+
     dispatch({
         type: actionTypes.SET_UNREAD_MESSAGES,
         unreadMessages: result

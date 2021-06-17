@@ -15,7 +15,8 @@ import {
     isWidgetOpened,
     setCustomWidget,
     setErrors,
-    triggerScrollToBottom
+    triggerScrollToBottom,
+    deleteMessages
 } from '../index';
 import socketService, { Socket } from './service/socket';
 import {
@@ -81,7 +82,8 @@ const Layout = () => {
     }));
 
     const [socketClient, setSocketClient] = useState<Nullable<Socket>>();
-    const [unSendMessages, setUnSendMessages] = useState<Message[]>([]);
+    const [unSendMessages, setUnSendMessages] = useState<Message[]>([]); //chứa các message khi có connect socket sẽ dc gửi đi ngay.
+    const [campaignMessages, setCampaignMessages] = useState<Message[]>([]); // chứa campaign messages.
 
     const [customWidgetSetting, setCustomWidgetSetting] = useState<any>();
     const [audienceId, setAudienceId] = useState<Nullable<number>>();
@@ -141,14 +143,20 @@ const Layout = () => {
     }, [socketClient]);
 
     useEffect(() => {
+        // không được bỏ check unSendMessages.length vì dẫn đến infinity loop
         if (socketClient?.connected && unSendMessages.length) {
             for (let i = 0; i < unSendMessages.length; i++) {
                 emitMessage(
                     unSendMessages[i].message,
                     unSendMessages[i].sender,
-                    unSendMessages[i].sender_id
+                    unSendMessages[i].sender_id,
+                    unSendMessages[i]._id
                 );
+                //gõ message đã emit ra ngoải widget component
+                //vì message này sẽ được thay thế khi socket trả về.
+                deleteMessages(1, unSendMessages[i]._id);
             }
+            setUnSendMessages([]);
         }
     }, [socketClient?.connected, unSendMessages]);
 
@@ -186,7 +194,8 @@ const Layout = () => {
     const emitMessage = (
         newMes: string,
         sender: string,
-        sender_id?: string
+        sender_id?: string,
+        id?: string
     ) => {
         if (conversation && sender_id) {
             socketClient?.emit(conversation.id, {
@@ -194,11 +203,11 @@ const Layout = () => {
                 sender: sender,
                 sender_id: sender_id
             });
+            id && handleEmitCampaignMessage(id);
         }
     };
 
     const handleReceiveMessage = data => {
-        //do not show response message with audience sender
         if (data?.sender === MESSAGE_SENDER.RESPONSE) {
             addResponseMessage(
                 data.message,
@@ -380,25 +389,42 @@ const Layout = () => {
         };
     }, [unreadMessages, conversation, unreadCount]);
 
+    useEffect(() => {
+        if (campaignMessages.length) {
+            dispatch(setUnreadMessages(campaignMessages, true));
+        }
+    }, [campaignMessages]);
+
     const handleCampaignMessage = e => {
         const { shop_id } = getShopInfoFromStorage();
         if (e && Array.isArray(e.detail) && e.detail.length) {
-            dispatch(setUnreadCount(unreadCount + e.detail.length));
+            setCampaignMessages(state => [
+                ...state,
+                ...e.detail.map(p => ({
+                    _id: uid(),
+                    is_seen: false,
+                    message: p.message,
+                    sender: MESSAGE_SENDER.RESPONSE,
+                    sender_id: shop_id,
+                    status: 'open',
+                    conversation_id: conversation?.id,
+                    isCampaignMessage: true
+                }))
+            ]);
+        }
+    };
+
+    const handleEmitCampaignMessage = (messageId: string): void => {
+        const isCampaignMessage = unSendMessages.find(
+            p => p.isCampaignMessage && p._id === messageId
+        );
+        if (isCampaignMessage) {
             dispatch(
                 setUnreadMessages([
-                    ...unreadMessages,
-                    ...e.detail.map(p => ({
-                        _id: uid(),
-                        is_seen: false,
-                        message: p.message,
-                        sender: MESSAGE_SENDER.RESPONSE,
-                        sender_id: shop_id,
-                        status: 'open',
-                        conversation_id: conversation?.id,
-                        isCampaignMessage: true
-                    }))
+                    ...unreadMessages.filter(p => !p.isCampaignMessage)
                 ])
             );
+            setCampaignMessages([]);
         }
     };
 
@@ -434,20 +460,25 @@ const Layout = () => {
     const handleMarkAllMessageAsRead = async () => {
         dispatch(setUnreadCount(0));
         dispatch(setUnreadMessages([]));
-        await postMarkAllAsRead();
+        if (unreadMessages.filter(p => !p.isCampaignMessage).length) {
+            await postMarkAllAsRead();
+        }
     };
 
     const handleToggle = async (toggleValue, isRequireAudienceInfo) => {
         try {
             if (toggleValue) {
                 //mark all messages as read
-                if (unreadCount > 0) {
-                    await handleMarkAllMessageAsRead();
-                }
+                await handleMarkAllMessageAsRead();
                 //nếu không yêu cầu audience info thì tìm audience bằng msUUID
                 if (!isRequireAudienceInfo && !audienceId) {
                     await handleGetAudience();
                 }
+            } else {
+                //khi đóng widget thì add campaign message vào lại unread message để show dạng teaser bubble
+                dispatch(
+                    setUnreadMessages([...unreadMessages, ...campaignMessages])
+                );
             }
         } catch (error) {
             dispatch(setLoadConversation(false));
@@ -464,20 +495,27 @@ const Layout = () => {
     };
 
     const handleClickToastMessage = messageId => {
-        const mes = unreadMessages.find(p => p._id === messageId);
-        if (mes?.isCampaignMessage) {
+        const mes = campaignMessages.find(p => p._id === messageId);
+        if (mes) {
             const { shop_id } = getShopInfoFromStorage();
             if (conversation) {
-                emitMessage(mes.message, MESSAGE_SENDER.RESPONSE, shop_id);
+                emitMessage(
+                    mes.message,
+                    MESSAGE_SENDER.RESPONSE,
+                    shop_id,
+                    messageId
+                );
             } else {
-                setUnSendMessages(state => [
-                    ...state,
-                    createMessage({
-                        message: mes.message,
-                        sender: MESSAGE_SENDER.RESPONSE,
-                        sender_id: shop_id
-                    })
-                ]);
+                const mesObj = createMessage({
+                    _id: messageId,
+                    message: mes.message,
+                    sender: MESSAGE_SENDER.RESPONSE,
+                    sender_id: shop_id,
+                    isCampaignMessage: true
+                });
+                setUnSendMessages(state => [...state, mesObj]);
+                //add responsive message vào widget
+                dispatch(setMessages([...messages, mesObj]));
             }
         }
     };

@@ -194,20 +194,25 @@ function WidgetLayout({
         <div id="ms-widget">
             {showWidget && (
                 <>
-                    <Toast
-                        unreadMessagesInBubble={unreadMessagesInBubble}
-                        position={`${
-                            position.position === WIDGET_POSITION.LEFT_BOTTOM
-                                ? 'bottom-left'
-                                : 'bottom-right'
-                        }`}
-                        autoDelete={false}
-                        handleMarkMessageAsRead={handleMarkMessageAsRead}
-                        markMessageRead={markMessageRead}
-                        handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
-                        toggleChat={onToggleConversation}
-                        handleClickToastMessage={handleClickToastMessage}
-                    />
+                    {!showChat && (
+                        <Toast
+                            unreadMessagesInBubble={unreadMessagesInBubble}
+                            position={`${
+                                position.position ===
+                                WIDGET_POSITION.LEFT_BOTTOM
+                                    ? 'bottom-left'
+                                    : 'bottom-right'
+                            }`}
+                            autoDelete={false}
+                            handleMarkMessageAsRead={handleMarkMessageAsRead}
+                            markMessageRead={markMessageRead}
+                            handleMarkAllMessageAsRead={
+                                handleMarkAllMessageAsRead
+                            }
+                            toggleChat={onToggleConversation}
+                            handleClickToastMessage={handleClickToastMessage}
+                        />
+                    )}
                     <div
                         className={cn('rcw-widget-container', {
                             'rcw-full-screen': fullScreenMode,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import cn from 'classnames';
 
@@ -66,11 +66,14 @@ function Conversation({
                 }
             }
         },
-        widgetLoader
+        widgetLoader,
+        messages
     } = useSelector((state: GlobalState) => ({
         customWidget: state.behavior.customWidget,
-        widgetLoader: state.behavior.widgetLoader
+        widgetLoader: state.behavior.widgetLoader,
+        messages: state.messages.messages
     }));
+
     return (
         <div
             className={cn('rcw-conversation-container', className)}
@@ -87,6 +90,7 @@ function Conversation({
                 <Spinner loading={widgetLoader} />
                 <div className="rcw-conversation-body">
                     {hasConversation ? (
+                        //khi có connect socket thì show
                         <Messages
                             profileAvatar={profileAvatar}
                             showTimeStamp={showTimeStamp}
@@ -94,10 +98,18 @@ function Conversation({
                         />
                     ) : (
                         <>
-                            <WelcomeScreen
-                                handleGetAudience={handleGetAudience}
-                                audienceId={audienceId}
-                            />
+                            {audienceId && messages.length ? ( //khi chưa có connect socket mà có audience id và có message(khi click từ campaign message) thì show
+                                <Messages
+                                    profileAvatar={profileAvatar}
+                                    showTimeStamp={showTimeStamp}
+                                    handleScrollTop={handleScrollTop}
+                                />
+                            ) : (
+                                <WelcomeScreen
+                                    handleGetAudience={handleGetAudience}
+                                    audienceId={audienceId}
+                                />
+                            )}
                         </>
                     )}
                     <ErrorMessages />
