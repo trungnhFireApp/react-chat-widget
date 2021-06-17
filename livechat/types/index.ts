@@ -25,6 +25,7 @@ export interface Message {
     conversation_id?: string;
     message_links?: MessageLink[];
     isCampaignMessage?: boolean;
+    version_id?: number;
 }
 
 export interface SocketMessagePayload {

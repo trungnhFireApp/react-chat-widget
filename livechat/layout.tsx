@@ -51,7 +51,7 @@ import {
     setMessages
 } from './store/actions';
 
-import { MESSAGE_SENDER } from './constant';
+import { MESSAGE_SENDER, WIDGET_EVENT_LISTENERS } from './constant';
 // import defaultCustomWidget from './storage/defaultCustomWidget';
 import { Nullable } from './utils/types';
 
@@ -409,23 +409,33 @@ const Layout = () => {
                     sender_id: shop_id,
                     status: 'open',
                     conversation_id: conversation?.id,
-                    isCampaignMessage: true
+                    isCampaignMessage: true,
+                    version_id: p.version_id
                 }))
             ]);
         }
     };
 
     const handleEmitCampaignMessage = (messageId: string): void => {
-        const isCampaignMessage = unSendMessages.find(
-            p => p.isCampaignMessage && p._id === messageId
-        );
-        if (isCampaignMessage) {
+        const mes = campaignMessages.find(p => p._id === messageId);
+        if (mes) {
+            //dispatch event
+            const evt = new CustomEvent(
+                WIDGET_EVENT_LISTENERS.ON_MS_REPLY_CAMPAIGN,
+                {
+                    detail: {
+                        version_id: mes.version_id
+                    }
+                }
+            );
+            //clear hết campaign sau khi đã reply 1 campagaign
             dispatch(
                 setUnreadMessages([
                     ...unreadMessages.filter(p => !p.isCampaignMessage)
                 ])
             );
             setCampaignMessages([]);
+            window.dispatchEvent(evt);
         }
     };
 
@@ -468,6 +478,11 @@ const Layout = () => {
 
     const handleClearAll = async () => {
         setCampaignMessages([]);
+        //dispatch event
+        const evt = new CustomEvent(
+            WIDGET_EVENT_LISTENERS.ON_MS_CLEAR_ALL_CAMPAIGN
+        );
+        window.dispatchEvent(evt);
         await handleMarkAllMessageAsRead();
     };
 
@@ -517,7 +532,8 @@ const Layout = () => {
                     message: mes.message,
                     sender: MESSAGE_SENDER.RESPONSE,
                     sender_id: shop_id,
-                    isCampaignMessage: true
+                    isCampaignMessage: true,
+                    version_id: mes.version_id
                 });
                 setUnSendMessages(
                     uniqueByKey([...unSendMessages, mesObj], '_id')
@@ -581,6 +597,17 @@ const Layout = () => {
             setCampaignMessages(state =>
                 state.filter(p => p._id !== messageId)
             );
+            mes.version_id;
+            //dispatch event
+            const evt = new CustomEvent(
+                WIDGET_EVENT_LISTENERS.ON_MS_CLOSE_CAMPAIGN,
+                {
+                    detail: {
+                        version_id: mes.version_id
+                    }
+                }
+            );
+            window.dispatchEvent(evt);
 
             //message từ campaign không phải message chat nên không cần đánh dấu đã đọc.
             if (!isCampaignMessage && conversation) {

@@ -68,7 +68,8 @@ export const createMessage = ({
     conversation_id = '',
     status = 'open',
     message_links = [],
-    isCampaignMessage = false
+    isCampaignMessage = false,
+    version_id = -1
 }): Message => {
     return {
         _id: _id,
@@ -80,7 +81,8 @@ export const createMessage = ({
         status: status,
         conversation_id: conversation_id,
         message_links: message_links,
-        isCampaignMessage: isCampaignMessage
+        isCampaignMessage: isCampaignMessage,
+        version_id: version_id
     };
 };
 
