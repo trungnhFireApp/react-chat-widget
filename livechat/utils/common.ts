@@ -83,3 +83,7 @@ export const createMessage = ({
         isCampaignMessage: isCampaignMessage
     };
 };
+
+export const uniqueByKey = (arr: Array<any>, key: string): Array<any> => {
+    return [...new Map(arr.map(item => [item[key], item])).values()];
+};

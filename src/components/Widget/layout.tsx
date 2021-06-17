@@ -48,6 +48,7 @@ type Props = {
     handleMarkMessageAsRead?: AnyFunction;
     handleMarkAllMessageAsRead?: AnyFunction;
     handleClickToastMessage?: AnyFunction;
+    handleClearAll?: AnyFunction;
 };
 
 function WidgetLayout({
@@ -80,7 +81,8 @@ function WidgetLayout({
     unreadMessagesInBubble,
     handleMarkMessageAsRead,
     handleMarkAllMessageAsRead,
-    handleClickToastMessage
+    handleClickToastMessage,
+    handleClearAll
 }: Props) {
     const dispatch = useDispatch();
     const {
@@ -211,6 +213,7 @@ function WidgetLayout({
                             }
                             toggleChat={onToggleConversation}
                             handleClickToastMessage={handleClickToastMessage}
+                            handleClearAll={handleClearAll}
                         />
                     )}
                     <div

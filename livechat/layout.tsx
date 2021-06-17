@@ -16,7 +16,8 @@ import {
     setCustomWidget,
     setErrors,
     triggerScrollToBottom,
-    deleteMessages
+    deleteMessages,
+    dropMessages
 } from '../index';
 import socketService, { Socket } from './service/socket';
 import {
@@ -35,7 +36,8 @@ import {
     getAudienceIdFromStorage,
     setAudienceIdToStorage,
     uid,
-    createMessage
+    createMessage,
+    uniqueByKey
 } from './utils/common';
 
 import './styles.scss';
@@ -77,7 +79,7 @@ const Layout = () => {
         loadMessage: state.behavior.loadMessage,
         conversation: state.conversation.conversation,
         unreadCount: state.messages.unreadCount,
-        unreadMessages: state.messages.unreadMessages,
+        unreadMessages: state.messages.unreadMessages, // chứa các response messages chưa đọc (hiển thị dạng teaser bubble)
         messages: state.messages.messages
     }));
 
@@ -230,7 +232,6 @@ const Layout = () => {
                         shop_id
                     });
                 }
-                // socketClient.emit('messageId_action', { _id: data.id });
             }
         }
         if (data?.sender === MESSAGE_SENDER.CLIENT) {
@@ -465,6 +466,11 @@ const Layout = () => {
         }
     };
 
+    const handleClearAll = async () => {
+        setCampaignMessages([]);
+        await handleMarkAllMessageAsRead();
+    };
+
     const handleToggle = async (toggleValue, isRequireAudienceInfo) => {
         try {
             if (toggleValue) {
@@ -513,8 +519,10 @@ const Layout = () => {
                     sender_id: shop_id,
                     isCampaignMessage: true
                 });
-                setUnSendMessages(state => [...state, mesObj]);
-                //add responsive message vào widget
+                setUnSendMessages(
+                    uniqueByKey([...unSendMessages, mesObj], '_id')
+                );
+                dropMessages(); //gỡ hết message trong widget trước khi cập nhật lại
                 dispatch(setMessages([...messages, mesObj]));
             }
         }
@@ -569,6 +577,11 @@ const Layout = () => {
                     ...unreadMessages.filter(p => p._id !== messageId)
                 ])
             );
+            //clear in campaign message
+            setCampaignMessages(state =>
+                state.filter(p => p._id !== messageId)
+            );
+
             //message từ campaign không phải message chat nên không cần đánh dấu đã đọc.
             if (!isCampaignMessage && conversation) {
                 await markMessageAsRead({
@@ -605,6 +618,7 @@ const Layout = () => {
                         unreadMessagesInBubble={unreadMessages}
                         handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
                         handleClickToastMessage={handleClickToastMessage}
+                        handleClearAll={handleClearAll}
                     />
                 </>
             )}

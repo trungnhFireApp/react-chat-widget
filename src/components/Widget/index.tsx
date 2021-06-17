@@ -45,6 +45,7 @@ type Props = {
     handleMarkMessageAsRead?: AnyFunction;
     handleMarkAllMessageAsRead?: AnyFunction;
     handleClickToastMessage?: AnyFunction;
+    handleClearAll?: AnyFunction;
 };
 
 function Widget({
@@ -78,7 +79,8 @@ function Widget({
     unreadMessagesInBubble,
     handleMarkMessageAsRead,
     handleMarkAllMessageAsRead,
-    handleClickToastMessage
+    handleClickToastMessage,
+    handleClearAll
 }: Props) {
     const dispatch = useDispatch();
 
@@ -156,6 +158,7 @@ function Widget({
             handleMarkMessageAsRead={handleMarkMessageAsRead}
             handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
             handleClickToastMessage={handleClickToastMessage}
+            handleClearAll={handleClearAll}
         />
     );
 }

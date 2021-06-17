@@ -15,6 +15,7 @@ type Props = {
     handleMarkAllMessageAsRead?: AnyFunction;
     toggleChat: () => void;
     handleClickToastMessage?: AnyFunction;
+    handleClearAll?: AnyFunction;
 };
 
 function Toast({
@@ -26,7 +27,8 @@ function Toast({
     markMessageRead,
     handleMarkAllMessageAsRead,
     toggleChat,
-    handleClickToastMessage
+    handleClickToastMessage,
+    handleClearAll
 }: Props) {
     // const { messages } = useSelector((state: GlobalState) => ({
     //     messages: state.messages.messages
@@ -42,6 +44,7 @@ function Toast({
             handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
             toggleChat={toggleChat}
             handleClickToastMessage={handleClickToastMessage}
+            handleClearAll={handleClearAll}
         ></ToastList>
     );
 }

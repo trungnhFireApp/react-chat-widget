@@ -3,6 +3,7 @@ import { ThunkAction } from 'redux-thunk';
 
 import * as actionTypes from '../actions/types';
 import { Conversation, GlobalState, Message } from '../../types';
+import { uniqueByKey } from '../../utils/common';
 
 /* Conversation actions */
 export const setConversationInfo = (
@@ -64,12 +65,9 @@ export const setUnreadMessages = (
         result = [...messages.unreadMessages].concat(unreadMessages);
     }
 
-    //unique message
-    result = [...new Map(result.map(item => [item['_id'], item])).values()];
-
     dispatch({
         type: actionTypes.SET_UNREAD_MESSAGES,
-        unreadMessages: result
+        unreadMessages: uniqueByKey(result, '_id') //unique message
     });
 };
 
@@ -80,6 +78,6 @@ export const setMessages = (
 ) => {
     dispatch({
         type: actionTypes.SET_MESSAGES,
-        messages: payload
+        messages: uniqueByKey(payload, '_id')
     });
 };

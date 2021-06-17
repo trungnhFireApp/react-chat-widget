@@ -20,6 +20,7 @@ type Props = {
     handleMarkAllMessageAsRead?: AnyFunction;
     toggleChat: () => void;
     handleClickToastMessage?: AnyFunction;
+    handleClearAll?: AnyFunction;
 };
 
 function ToastList({
@@ -31,7 +32,8 @@ function ToastList({
     markMessageRead,
     handleMarkAllMessageAsRead,
     toggleChat,
-    handleClickToastMessage
+    handleClickToastMessage,
+    handleClearAll
 }: Props) {
     const dispatch = useDispatch();
     const {
@@ -105,7 +107,7 @@ function ToastList({
                 className={`ms-notification-container ms-${position}`}
             >
                 <div
-                    onClick={() => handleMarkAllMessageAsRead?.()}
+                    onClick={() => handleClearAll?.()}
                     className="ms-notification-clear-all"
                     style={{ display: list.length ? 'block' : 'none' }}
                 >

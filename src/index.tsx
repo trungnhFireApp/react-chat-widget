@@ -39,6 +39,7 @@ type Props = {
     handleMarkMessageAsRead?: AnyFunction;
     handleMarkAllMessageAsRead?: AnyFunction;
     handleClickToastMessage?: AnyFunction;
+    handleClearAll?: AnyFunction;
 } & typeof defaultProps;
 
 function ConnectedWidget({
@@ -72,7 +73,8 @@ function ConnectedWidget({
     unreadMessagesInBubble,
     handleMarkMessageAsRead,
     handleMarkAllMessageAsRead,
-    handleClickToastMessage
+    handleClickToastMessage,
+    handleClearAll
 }: Props) {
     return (
         <Provider store={store}>
@@ -108,6 +110,7 @@ function ConnectedWidget({
                 handleMarkMessageAsRead={handleMarkMessageAsRead}
                 handleMarkAllMessageAsRead={handleMarkAllMessageAsRead}
                 handleClickToastMessage={handleClickToastMessage}
+                handleClearAll={handleClearAll}
             />
         </Provider>
     );
