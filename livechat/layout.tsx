@@ -129,6 +129,19 @@ const Layout = () => {
         setShowWidget(true);
     };
 
+    useEffect(() => {
+        window.addEventListener(
+            'onMsLiveChatMessagesChange',
+            handleCampaignMessage
+        );
+        return () => {
+            window.removeEventListener(
+                'onMsLiveChatMessagesChange',
+                handleCampaignMessage
+            );
+        };
+    }, [unreadMessages, conversation, unreadCount]);
+
     // ===========SOCKET PROGRESS=======
     // =================================
 
@@ -378,19 +391,6 @@ const Layout = () => {
     };
 
     useEffect(() => {
-        window.addEventListener(
-            'onMsLiveChatMessagesChange',
-            handleCampaignMessage
-        );
-        return () => {
-            window.removeEventListener(
-                'onMsLiveChatMessagesChange',
-                handleCampaignMessage
-            );
-        };
-    }, [unreadMessages, conversation, unreadCount]);
-
-    useEffect(() => {
         if (campaignMessages.length) {
             dispatch(setUnreadMessages(campaignMessages, true));
         }
@@ -516,6 +516,7 @@ const Layout = () => {
     };
 
     const handleClickToastMessage = messageId => {
+        //click vào campaign message
         const mes = campaignMessages.find(p => p._id === messageId);
         if (mes) {
             const { shop_id } = getShopInfoFromStorage();
@@ -535,11 +536,10 @@ const Layout = () => {
                     isCampaignMessage: true,
                     version_id: mes.version_id
                 });
-                setUnSendMessages(
-                    uniqueByKey([...unSendMessages, mesObj], '_id')
-                );
+
+                setUnSendMessages([mesObj]);
                 dropMessages(); //gỡ hết message trong widget trước khi cập nhật lại
-                dispatch(setMessages([...messages, mesObj]));
+                dispatch(setMessages([mesObj]));
             }
         }
     };
